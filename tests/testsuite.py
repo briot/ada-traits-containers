@@ -15,4 +15,4 @@ if __name__ == '__main__':
     try:
         ContainerTestsuite(os.path.dirname(__file__)).testsuite_main()
     except KeyboardInterrupt:
-        print " interrupted !"
+        print(" interrupted !")

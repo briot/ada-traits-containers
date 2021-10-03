@@ -42,7 +42,6 @@ package Conts.Lists.Impl with SPARK_Mode is
    subtype Constant_Returned_Type is Storage.Elements.Constant_Returned_Type;
 
    use type Storage.Elements.Element_Type;
-   use type Storage.Elements.Constant_Returned_Type;
 
    type Base_List is new Storage.Container with private
      with Default_Initial_Condition => Length (Base_List) = 0;

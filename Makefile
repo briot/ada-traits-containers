@@ -34,29 +34,33 @@ all:
 install:
 	${GPRINSTALL} -P${GPR_CONTS} --prefix=${PREFIX}
 
+# Run Ada tests (not using gnatpython)
+ada_test:
+	cd tests/perfs; python3 ./generate_test.py && gprbuild -XBUILD=${BUILD} && ./obj/main && open index.html
+
 # Run all tests, except manual ones
 test:
-	cd tests; ${PPATH} python ./testsuite.py -j0 --enable-color
+	cd tests; ${PPATH} python3 ./testsuite.py -j0 --enable-color
 
 # Run all tests with valgrind
 test_with_valgrind:
-	cd tests; ${PPATH} python ./testsuite.py -j0 --enable-color --valgrind
+	cd tests; ${PPATH} python3 ./testsuite.py -j0 --enable-color --valgrind
 
 # Verify memory leaks in tests
 test_with_leaks:
-	cd tests; ${PPATH} python ./testsuite.py -j0 --enable-color --leaks
+	cd tests; ${PPATH} python3 ./testsuite.py -j0 --enable-color --leaks
 
 # Run manual tests
 perfs:
 	${GPRBUILD} -P${GPR_CONTS} -XBUILD=Production
-	cd tests; ${PPATH} python ./testsuite.py -j0 --enable-color $@
+	cd tests; ${PPATH} python3 ./testsuite.py -j0 --enable-color $@
 spark:
 	${GPRBUILD} -P${GPR_CONTS} -XBUILD=Debug
-	cd tests; ${PPATH} python ./testsuite.py -j0 --enable-color $@
+	cd tests; ${PPATH} python3 ./testsuite.py -j0 --enable-color $@
 
 # Create all project files, for use with GPS
 projects:
-	cd tests; python ./testsuite.py -c
+	cd tests; python3 ./testsuite.py -c
 
 clean:
 	${PPATH} gprclean -P${GPR_ROOT} -XBUILD=Debug -r -q

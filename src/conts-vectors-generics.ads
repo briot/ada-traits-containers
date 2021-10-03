@@ -243,8 +243,6 @@ package Conts.Vectors.Generics with SPARK_Mode is
    -----------
    --  The following subprograms are used to write loop invariants for SPARK
 
-   use type Impl.M.Sequence;
-
    function Model (Self : Vector'Class) return Impl.M.Sequence
      is (Impl.Model (Self))
      with Ghost;
@@ -258,7 +256,7 @@ package Conts.Vectors.Generics with SPARK_Mode is
    -------------
 
    package Cursors is
-      function Index_First (Self : Base_Vector'Class) return Index_Type
+      function Index_First (Self_Ignored : Base_Vector'Class) return Index_Type
         is (Index_Type'First) with Inline;
       function Distance (Left, Right : Index_Type) return Integer
         is (Integer (To_Count (Left)) - Integer (To_Count (Right)))

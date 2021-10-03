@@ -25,7 +25,6 @@ with Graph1_Support;                use Graph1_Support;
 with Conts.Elements.Null_Elements;  use Conts.Elements.Null_Elements;
 with Conts.Graphs.Adjacency_List;
 with Conts.Graphs.Components;       use Conts.Graphs.Components;
-with Report;                        use Report;
 with Perf_Support;
 with Ada.Text_IO;                   use Ada.Text_IO;
 
@@ -43,7 +42,6 @@ package body Custom_Graph is
          Vertex_Properties   => Conts.Elements.Null_Elements.Traits,
          Edge_Properties     => Conts.Elements.Null_Elements.Traits,
          Container_Base_Type => Ada.Finalization.Controlled);
-      use Graphs;
 
       type My_Visitor is new Graphs.Traits.DFS_Visitor with null record;
       overriding procedure Finish_Vertex
@@ -64,7 +62,6 @@ package body Custom_Graph is
          (Graphs.Traits, Graphs.Integer_Maps.As_Map);
 
       subtype Vertex is Graphs.Vertex;
-      use type Vertex;
 
    begin
       Stdout.Start_Container_Test ("adjacency list", Category => "Graph");

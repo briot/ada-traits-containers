@@ -23,8 +23,6 @@ pragma Ada_2012;
 
 package body Conts.Properties.Indexed is
 
-   use Value_Vectors;
-
    -----------
    -- Clear --
    -----------

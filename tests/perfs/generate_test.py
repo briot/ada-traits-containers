@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 This script is used to generate test for the various container combinations.
 """
@@ -22,7 +22,7 @@ class Comments(object):
     def __getattr__(self, key):
         return self.comments.get(key, '')
 
-    
+
 #############
 # Templates #
 #############
@@ -37,7 +37,7 @@ def wrap(name, text, group=True, expected=True):
 
       Co := 0;
       Stdout.Start_Test ("%(name)s", "{comments.%(name)s}", Start_Group => %(group)s);""" % repl
-      
+
     r += text
     r += "\n      Stdout.End_Test;" % repl
 
@@ -72,8 +72,7 @@ pragma Warnings (On, "unit * is not referenced");
 procedure {test_name}
    (Stdout : not null access Output'Class)
 is
-   {suppress}{instance}
-   use Container;{adaptors}
+   {suppress}{instance}{adaptors}
 
    procedure Run (V2 : in out Container.{type});
    --  Force dynamic dispatching for the container (if relevant), as a
@@ -113,8 +112,7 @@ end {test_name};"""
 
     list_copy = wrap("copy", """
       declare
-         V_Copy : Container.{type}'Class := V2{copy};
-         pragma Unreferenced (V_Copy);
+         V_Copy : Container.{type}'Class := {copy}{unref_if_not_clear};
       begin
          --  Measure the time before we destroy the copy
          Stdout.End_Test;{clear_copy}
@@ -199,8 +197,7 @@ end {test_name};"""
 
     map_copy = wrap("copy", """
       declare
-         V_Copy : Container.{type}'Class := V2{copy};
-         pragma Unreferenced (V_Copy);
+         V_Copy : Container.{type}'Class := {copy}{unref_if_not_clear};
       begin
          --  Measure the time before we destroy the copy
          Stdout.End_Test;{clear_copy}
@@ -224,7 +221,7 @@ end {test_name};"""
       --  Doing iteration on keys would be slower, with an extra lookup
       --     for Key of V2 loop
       --        if Predicate (V2.Get (Key)) then
-      --  So instead we iterate on cursors                           
+      --  So instead we iterate on cursors
       for C in V2 loop
          if {cursor_loop_predicate} (V2.Element (C)) then
             Co := Co + 1;
@@ -282,14 +279,14 @@ end {test_name};"""
             return (Templates.map_fill, Templates.map_copy,
                     Templates.map_cursor_loop,
                     Templates.map_for_of_loop
-                       if not std_ada else Templates.map_ada2012_for_of_loop,                    
+                       if not std_ada else Templates.map_ada2012_for_of_loop,
                     Templates.map_count_if, Templates.int_int_indexing_loop,
                     Templates.map_find)
         else:
             return (Templates.map_fill, Templates.map_copy,
                     Templates.map_cursor_loop,
                     Templates.map_for_of_loop
-                       if not std_ada else Templates.map_ada2012_for_of_loop,                    
+                       if not std_ada else Templates.map_ada2012_for_of_loop,
                     Templates.map_count_if, Templates.str_str_indexing_loop,
                     Templates.map_find)
 
@@ -319,14 +316,14 @@ class Tests(object):
             """   Run_Test ("{filename}", {test_name}'Access);""".format(**self.args))
 
     def gen(self, adaptor="Constant_Returned", adaptors="{type}_Adaptors",
-            disable_checks=False, 
+            disable_checks=False,
             cursor_loop_predicate="Predicate",
             find_predicate="Predicate"):
 
         self.args['suppress'] = ""
         if disable_checks:
             self.args['suppress'] = "pragma Suppress (Container_Checks);\n   "
-            
+
         self.args['cursor_loop_predicate'] = cursor_loop_predicate
         self.args['find_predicate'] = find_predicate
 
@@ -420,22 +417,24 @@ class List(Tests):
             instance=instance,
             get=get,
             withs=withs,
-            copy='',
+            copy='V2',
             call_count_if='',
             discriminant='',
             favorite=favorite,
             comments=comments or Comments(),
             clear='',       # Explicit clear the container
             clear_copy='',  # Explicit clear the copy of the container
-            prefix='',      # Prefix for Element, Next and Has_Element
+            unref_if_not_clear=' with Unreferenced',
+            prefix='Container.',      # Prefix for Element, Next and Has_Element
             adaptors='',    # Creating adaptors for standard containers
             append=append)
 
         if limited:
             # Need an explicit copy since ":=" is not defined for limited types
-            self.args['copy'] = '.Copy'
+            self.args['copy'] = 'Container.Copy (V2)'
             self.args['clear'] = '\n      V.Clear;'
             self.args['clear_copy'] = '\n         V_Copy.Clear;'
+            self.args['unref_if_not_clear'] = ''
 
         if not unbounded:
             self.args['discriminant'] = ' (Capacity => Items_Count)'
@@ -446,7 +445,7 @@ class List(Tests):
     def tests(self):
         return Templates.lists(self.elem_type)
 
-    
+
 #######
 # Map #
 #######
@@ -503,7 +502,7 @@ class Map(Tests):
             instance=instance,
             withs=withs,
             expected=expected,
-            copy='',
+            copy='V2',
             get=get,
             set=set,
             call_count_if='',
@@ -514,19 +513,21 @@ class Map(Tests):
             comments=comments or Comments(),
             clear='',       # Explicit clear the container
             clear_copy='',  # Explicit clear the copy of the container
-            prefix='',      # Prefix for Element, Next and Has_Element
+            unref_if_not_clear=' with Unreferenced',
+            prefix='Container.',      # Prefix for Element, Next and Has_Element
             adaptors='',    # Creating adaptors for standard containers
             append=append.format(set=set))
 
         if limited:
             # Need an explicit copy since ":=" is not defined for limited types
-            self.args['copy'] = '.Copy'
+            self.args['copy'] = 'Container.Copy (V2)'
             self.args['clear'] = '\n      V.Clear;'
             self.args['clear_copy'] = '\n         V_Copy.Clear;'
+            self.args['unref_if_not_clear'] = ''
 
         if not unbounded:
             self.args['discriminant'] = ' (Capacity => Items_Count, ' + \
-                ' Modulus => Default_Modulus (Items_Count))'
+                ' Modulus => Container.Default_Modulus (Items_Count))'
 
         self.args['test_name'] = "{type}_{elem_type}_{filename}".format(
             **self.args)
@@ -534,7 +535,7 @@ class Map(Tests):
     def tests(self):
         return Templates.maps(self.elem_type, std_ada=self.ada2012)
 
-    
+
 ##########
 # Vector #
 ##########
@@ -816,7 +817,7 @@ Map("IntInt",
 Map("IntInt",
     'function Hash (K : Integer) return Conts.Hash_Type is\n'
      + '   (Conts.Hash_Type (K)) with Inline;\n'
-     + 'package Container is new Ada.Containers.Hashed_Maps'
+     + '   package Container is new Ada.Containers.Hashed_Maps'
      + ' (Integer, Integer, Hash, "=");',
     "with Ada.Containers.Hashed_Maps;",
     unbounded=True, ada2012=True,

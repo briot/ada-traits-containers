@@ -35,7 +35,7 @@ package Conts.Vectors.Storage.Unbounded with SPARK_Mode is
    package Impl with SPARK_Mode is
       type Container is abstract new Container_Base_Type with private;
 
-      function Max_Capacity (Self : Container'Class) return Count_Type
+      function Max_Capacity (Self_Ignored : Container'Class) return Count_Type
          is (Count_Type'Last - Min_Index + 1) with Inline;
       function Capacity (Self : Container'Class) return Count_Type
          with Inline;

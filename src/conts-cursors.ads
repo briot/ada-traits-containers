@@ -127,11 +127,12 @@ package Conts.Cursors with SPARK_Mode is
       function "-" (Left : Index_Type; N : Integer) return Index_Type
         is (Left + (-N)) with Inline;
 
-      function Next (Self : Container_Type; Idx : Index_Type) return Index_Type
+      function Next
+        (Self_Ignored : Container_Type; Idx : Index_Type) return Index_Type
         is (Idx + 1) with Inline;
 
       function Previous
-        (Self : Container_Type; Idx : Index_Type) return Index_Type
+        (Self_Ignored : Container_Type; Idx : Index_Type) return Index_Type
         is (Idx - 1) with Inline;
 
       function Has_Element

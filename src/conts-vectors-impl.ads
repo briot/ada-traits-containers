@@ -49,7 +49,6 @@ package Conts.Vectors.Impl with SPARK_Mode is
 
    use type Storage.Elements.Element_Type;
    use type Storage.Elements.Constant_Returned_Type;
-   use type Storage.Elements.Returned_Type;
 
    type Base_Vector is new Storage.Container with private with
      Default_Initial_Condition => Length (Base_Vector) = 0;

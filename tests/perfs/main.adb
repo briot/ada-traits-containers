@@ -20,7 +20,7 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Ada.Command_Line; use Ada.Command_Line;
+with Ada.Command_Line;
 with Ada.Text_IO;      use Ada.Text_IO;
 with GNAT.Strings;     use GNAT.Strings;
 with GNATCOLL.Utils;   use GNATCOLL.Utils;

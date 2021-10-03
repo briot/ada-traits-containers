@@ -55,9 +55,7 @@ package Conts.Maps.Impl with SPARK_Mode is
    subtype Constant_Returned_Key_Type is Keys.Constant_Returned_Type;
 
    use type Elements.Element_Type;
-   use type Elements.Constant_Returned_Type;
    use type Keys.Element_Type;
-   use type Keys.Constant_Returned_Type;
 
    type Base_Map is new Container_Base_Type with private;
 

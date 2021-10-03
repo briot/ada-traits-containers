@@ -1,5 +1,5 @@
-with "containers";
-with "containers_shared";
+with "../../src/containers";
+with "../../src/containers_shared";
 with "gnatcoll";
 
 project Tests_Perfs is

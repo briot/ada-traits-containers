@@ -76,7 +76,7 @@ package Conts.Lists.Storage.Unbounded_SPARK with SPARK_Mode is
         (Self : in out Nodes_List'Class;
          N    : Node_Access;
          E    : Elements.Stored_Type) with Inline;
-      function Capacity (Self : Nodes_List'Class) return Count_Type
+      function Capacity (Self_Ignored : Nodes_List'Class) return Count_Type
         is (Count_Type'Last) with Inline;
       procedure Assign
         (Nodes    : in out Nodes_List'Class;
