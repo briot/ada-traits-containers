@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vector data type &#8212; Generic Ada Library for Algorithms and Containers (GALAC) 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="List data type" href="lists.html" />
+    <link rel="prev" title="Element Traits" href="elements.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vector-data-type">
+<h1><cite>Vector</cite> data type<a class="headerlink" href="#vector-data-type" title="Permalink to this headline">¶</a></h1>
+<p>Vectors are similar to Ada arrays, but can in general grow in size.
+They use contiguous storage for their elements, which improves
+caching on the processor, compared to lists, and therefore are
+generally significantly faster when accessing elements.</p>
+<p>Adding an element at the end of a vector is done in constant time.
+In some cases, the vector will need to increase its capacity to
+make space for the new element. For efficiency reasons, it will
+then allocate more memory than it needs, so that the next time an
+element is appended it won’t need to reallocate memory again (and
+potentially copy the elements).</p>
+<p>As opposed to lists, inserting at the beginning or the middle of
+a vector might be slow since all elements potentially need to be
+copied.</p>
+<div class="section" id="vector-nodes">
+<h2>Vector nodes<a class="headerlink" href="#vector-nodes" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Conts.Vectors.Storage</span></code> package is a generic package that provides
+the low-level implementation of vectors. It is used to instantiate an
+actual vector, but not meant to be used directly by applications.</p>
+<p>Instead, it lets you chose between various possible implementations for
+the vectors:</p>
+<blockquote>
+<div><p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-unbounded.ads</span></code></p>
+<blockquote>
+<div><p>This is the type of nodes that should be used for <strong>unbounded vectors</strong>,
+that will grow automatically as more elements are added to it. See the
+<a class="reference internal" href="#vector-resizing-strategy"><span class="std std-ref">Resizing strategy</span></a> section below.</p>
+</div></blockquote>
+<p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-bounded.ads</span></code></p>
+<blockquote>
+<div><p>This package provides support for <strong>bounded vectors</strong>. Such vectors have a
+statically known maximal capacity, and no more than this many elements can
+be added to the vector. In exchange, no dynamic memory allocation is
+performed by the vector (unless the elements themselves require it, of
+course). This might be necessary in some contexts (embedded programming
+for instance often has a restriction on memory allocations). These are
+very similar to Ada arrays in practice, but work better with the rest of
+this library since they provide the usual cursors needed by algorithms,
+for instance.</p>
+<p>The maximal capacity of a bounded container is given by a discrimant on
+the container type.</p>
+</div></blockquote>
+</div></blockquote>
+<p>It is possible, although not trivial, to provide new implementations for the nodes.</p>
+<p>To instantiate any of the packages above, several parameters are needed for the
+generic:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Elements</span></code></p>
+<blockquote>
+<div><p>This is an instance of the element traits package (<a class="reference internal" href="elements.html#element-traits"><span class="std std-ref">Element Traits</span></a>),
+which describes which elements are stored in the vector, and how to do so.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">Container_Base_Type</span></code></p>
+<blockquote>
+<div><p>A vector is always implemented as a <a class="reference internal" href="conventions.html#tagged-and-controlled-types"><span class="std std-ref">tagged type</span></a>. But sometimes applications will want them
+as controlled types with automatic memory deallocation (set the
+<code class="docutils literal notranslate"><span class="pre">Container_Base_Type</span></code> to <code class="docutils literal notranslate"><span class="pre">Ada.Finalization.Controlled</span></code>), whereas in
+other cases we want the container to simply be a limited type (set the
+<code class="docutils literal notranslate"><span class="pre">Container_Base_Type</span></code> to <code class="docutils literal notranslate"><span class="pre">Conts.Limited_Base</span></code>).</p>
+<p>Other combinations are of course possible. You could chose to have all
+your containers derive from a common base type for instance.</p>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="resizing-strategy">
+<span id="vector-resizing-strategy"></span><h2>Resizing strategy<a class="headerlink" href="#resizing-strategy" title="Permalink to this headline">¶</a></h2>
+<p>When the <em>capacity</em> of a vector needs to be increased, it will reallocate its
+internal array to make space for the new elements.  For performance reasons, it
+should then allocate more memory than just one element. Standard strategies
+include doubling the capacity, increasing by a fixed number of elements, and
+perhaps alternate between the two depending on the current capacity of the
+vector.</p>
+<p>All these strategies try to find the best compromise between memory usage and
+speed.</p>
+<p>The default strategy used in this library is to increase the capacity by half,
+but you get full control via</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Resizing_Strategy</span></code></p>
+<blockquote>
+<div><p>A generic traits package that provides two operators <code class="docutils literal notranslate"><span class="pre">Grow</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Shrink</span></code>. Given the current capacity of a vector and the minimal
+expected size, they return the new capacity that shoud be allocated.</p>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="generic-vectors">
+<h2>Generic vectors<a class="headerlink" href="#generic-vectors" title="Permalink to this headline">¶</a></h2>
+<p>If you need full control on the implementation of your vector packages, you
+might chose to directly instantiate the package
+<code class="file docutils literal notranslate"><span class="pre">conts-vector-generics.ads</span></code>. This package requires two pieces of
+information:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Index_Type</span></code></p>
+<blockquote>
+<div><p>This is the type used to reference elements in the vector. It will
+often be an integer type (natural or positive for instance).
+It is invalid for this type to be either <cite>Integer</cite>, or an enumeration
+type because the package needs a way to indicate an invalid index,
+for instance when using <cite>Last</cite> on an empty vector.
+To use an enumeration type, you will in fact need a subtype for which
+the base type has one more element, as in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span> <span class="n">Base_Enum</span> <span class="ow">is</span> <span class="p">(</span><span class="n">Invalid</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">E</span><span class="p">);</span>
+<span class="n">subtype</span> <span class="n">Enum</span> <span class="ow">is</span> <span class="n">Base_Enum</span> <span class="nb">range</span> <span class="n">A</span> <span class="o">..</span> <span class="n">Base_Enum</span><span class="s1">&#39;Last;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">Storage</span></code></p>
+<blockquote>
+<div><p>This is the choice of the vector nodes package for the low-level
+implementation, as described above. This lets you chose between
+<strong>bounded</strong> and <strong>unbounded</strong> vectors.</p>
+</div></blockquote>
+</div></blockquote>
+<p>The following operations are provided for vectors:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Reserve_Capacity</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">Shrink_To_Fit</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">Length</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">Is_Empty</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">Element</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">Last_Element</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">Replace_Element</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">Append</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">Clear</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">Delete</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">Delete_Last</span></code></p>
+</div></blockquote>
+<p>It also provides cursors that can be used for any of the algorithms. They
+however do not provide the cursor traits package (which cannot be
+instantiated yet). See the <a class="reference internal" href="#simple-vectors"><span class="std std-ref">Simple vectors</span></a> section for vectors that
+provide these by default.</p>
+<p>These vectors also do not provide support for Ada2012 iterators and the
+for-of loop. See the package below as well.</p>
+<p>Here is an example creating a full vector from scratch:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span>  <span class="n">show</span> <span class="n">an</span> <span class="n">example</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="simple-vectors">
+<span id="id1"></span><h2>Simple vectors<a class="headerlink" href="#simple-vectors" title="Permalink to this headline">¶</a></h2>
+<p>Instantiating the full package above requires several steps. Although this
+is not a difficult operation, it can make the code harder to read, and is
+not compatible with the standard Ada vectors.</p>
+<p>For this, this library provides a set of packages that are easier to
+instantiate:</p>
+<blockquote>
+<div><p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-definite_bounded.ads</span></code></p>
+<blockquote>
+<div><p>Support for bounded containers of definite elements. Such vectors never
+need to allocate any memory, so are very efficient.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span>  <span class="n">show</span> <span class="n">an</span> <span class="n">example</span> <span class="n">on</span> <span class="n">how</span> <span class="n">to</span> <span class="n">specify</span> <span class="n">the</span> <span class="n">capacity</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-definite_unbounded.ads</span></code></p>
+<blockquote>
+<div><p>Support for unbounded containers of definite elements. They need to
+allocate memory for the low-level array, but not for the elements
+themselves. The vector will grow as needed.</p>
+</div></blockquote>
+<p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-indefinite_unbounded.ads</span></code></p>
+<blockquote>
+<div><p>Support for unbounded containers of indefinite elements. Memory is
+allocated for both the low-level array and for each of the elements.</p>
+</div></blockquote>
+<p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-indefinte_unbounded_ref.ads</span></code></p>
+<blockquote>
+<div><p>Similar to the previous one, but the elements are returned as
+reference types, which might be more efficent in general.</p>
+</div></blockquote>
+</div></blockquote>
+<p>All these packages improve on the generic vector by also providing the
+necessary aspects to support Ada’s <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">E</span> <span class="pre">of</span> <span class="pre">Vec</span></code> loops, as well as
+the direct indexing, as in <code class="docutils literal notranslate"><span class="pre">Vec</span> <span class="pre">(1)</span></code> rather than <code class="docutils literal notranslate"><span class="pre">Vec.Element</span> <span class="pre">(1)</span></code>.</p>
+<p>They also pre-instantiate the cursors traits package for convenient use
+in the algorithms.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Generic Ada Library for Algorithms and Containers (GALAC)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="making_of.html">The “making of” of a generic library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html">Naming and Coding Conventions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elements.html">Element Traits</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><cite>Vector</cite> data type</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vector-nodes">Vector nodes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#resizing-strategy">Resizing strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generic-vectors">Generic vectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simple-vectors">Simple vectors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lists.html"><cite>List</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maps.html"><cite>Map</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphs.html"><cite>Graph</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_algorithms.html">Graph algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_considerations.html">Design considerations</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="elements.html" title="previous chapter">Element Traits</a></li>
+      <li>Next: <a href="lists.html" title="next chapter"><cite>List</cite> data type</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, AdaCore.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/vectors.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

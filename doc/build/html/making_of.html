@@ -1,0 +1,502 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The “making of” of a generic library &#8212; Generic Ada Library for Algorithms and Containers (GALAC) 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Naming and Coding Conventions" href="conventions.html" />
+    <link rel="prev" title="Introduction" href="intro.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-making-of-of-a-generic-library">
+<h1>The “making of” of a generic library<a class="headerlink" href="#the-making-of-of-a-generic-library" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="design-axis">
+<h2>Design axis<a class="headerlink" href="#design-axis" title="Permalink to this headline">¶</a></h2>
+<p>There already exists lots of libraries that provide various sets of containers
+for Ada. Why, then, provide yet another one ?</p>
+<p>This chapter describes how the usual containers have a very limited genericity,
+which limits their actual reuse or configurability. It also describes how we
+ended up with the current design, and how this design provides a much better
+control.</p>
+<p>All modern programing languages provide a set of containers that can be used by
+applications. These containers typically include lists, vectors, dictionaries
+(or maps) and sets. Other libraries also include graphs data structures.</p>
+<p>In all these cases, the implementers of the library have taken a number of
+design choices, which all influence various aspects of the containers:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Efficiency</strong>: must be at least as efficient as hand-coded data
+structures, or developers will reimplement their own;</p></li>
+<li><p><strong>Safety</strong>: must avoid common pitfalls, like dangling pointers,
+thread-safety,… This typically requires additional runtime checks and
+thus conflicts with efficiency;</p></li>
+<li><p><strong>Reusability</strong>: the containers, and especially their algorithms, should
+apply to various contexts. Typical examples are sorting, merging and graph
+traversals.</p></li>
+<li><p><strong>Provability</strong>: users of formal verification tools like SPARK should have
+access to these containers, which adds constraints on memory allocations,
+pre and post conditions,…</p></li>
+</ul>
+</div></blockquote>
+<p>In C++, the strong emphasis is on performance. The STL is not safe, in the
+sense that you can keep using an iterator after the corresponding element has
+been deleted, for instance. STL algorithms are very reusable, thanks to the
+concept of iterators and template specialization. An algorithm like find for
+instance takes the container as parameter, and for a vector will be implemented
+as a loop that checks all elements in turn, whereas it can be implemented much
+more efficiently for a set.</p>
+<p>In Ada, on the other hand, the emphasis is on safety. A large number of checks
+are mandated by the standard to ensure that the user is not modifying a
+container while iterating, among others. These checks, however, have an impact
+on performance. Reusability of the algorithms is not good since the formal
+generic parameter must specify which type of container is expected (the
+containers do not share anything). It is possible, via pragmas, to disable
+container checks and thus improve performance at the cost of safety.</p>
+<p>Containers have traditionally been split along two axis: whether they store
+elements with a known size (<strong>definite</strong> elements) or not (<strong>indefinite</strong>), and
+whether they store a known maximum number of elements (<strong>bounded</strong> containers)
+or an unlimited number of elements (<strong>unbounded</strong>). These attributes have an
+impact on when and how often memory is allocated, which in turn has a direct
+impact on performance.</p>
+<p>In C++, these axis are hidden from the user. Thanks to template specialization,
+the STL choses automatically the implementation for each containers, although
+it can’t always do the best choice. In Ada, on the other hand, users have to
+chose which variant to use when they instantiate a container. This gives more
+control, at the cost of slightly more complexity for users (who must understand
+the concepts) and often code duplication in the library.</p>
+<p>There are yet other considerations when designing a container library: should
+the containers be <strong>thread-safe</strong>, should the memory be allocated in a special
+<strong>pool</strong> (Ada calls them storage_pools, C++ calls them allocators), should
+storage be <strong>persistant</strong>, etc…</p>
+</div>
+<div class="section" id="generic-lists">
+<h2>Generic lists<a class="headerlink" href="#generic-lists" title="Permalink to this headline">¶</a></h2>
+<p>A library could conceptually provide a specialized implementation for all the
+aspects we described above. That would result in a very large library if all
+combinations were supported. Fortunately, the proper use of generic programming
+(or templates) provides a nice implementation strategy here.</p>
+<p>Let’s build a simple container, a list, as an example.</p>
+<p>Our list should be able to store any kind of element, including for instance a
+<cite>String</cite> whose size is unknown at compile time. Since we do not know the type
+of elements, that must be a generic package. This is in general the amount of
+genericity provided in standard libraries. The initial code would look like:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kd">type</span> <span class="kt">Element</span> <span class="p">(&lt;&gt;)</span> <span class="kr">is</span> <span class="kd">private</span><span class="p">;</span>
+<span class="kd">package</span> <span class="nc">Lists</span> <span class="kr">is</span>
+   <span class="kd">type</span> <span class="kt">List</span> <span class="kr">is</span> <span class="kd">private</span><span class="p">;</span>
+   <span class="kd">procedure</span> <span class="nf">Prepend</span> <span class="p">(</span><span class="nv">Self</span> <span class="p">: </span><span class="nv">in</span> <span class="nv">out</span> <span class="nv">List</span><span class="p">;</span> <span class="nv">E</span> <span class="p">: </span><span class="nv">Element</span><span class="p">);</span>
+<span class="kd">private</span>
+   <span class="kd">type</span> <span class="kt">Element_Access</span> <span class="kr">is</span> <span class="kr">access</span> <span class="n">Element</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Node_Record</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Node</span> <span class="kr">is</span> <span class="kr">access</span> <span class="n">Node_Record</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Node_Record</span> <span class="kr">is</span> <span class="kr">record</span>
+      <span class="n">Value</span> <span class="p">:</span> <span class="n">Element_Access</span><span class="p">;</span>
+      <span class="n">Next</span>  <span class="p">:</span> <span class="n">Node</span><span class="p">;</span>
+   <span class="kr">end record</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">List</span> <span class="kr">is</span> <span class="kr">record</span>
+      <span class="n">Head</span> <span class="p">:</span> <span class="n">Node</span><span class="p">;</span>
+   <span class="kr">end record</span><span class="p">;</span>
+<span class="kr">end</span> <span class="nf">Lists</span><span class="p">;</span>
+
+<span class="kd">package</span> <span class="kd">body</span> <span class="nc">Lists</span> <span class="kr">is</span>
+  <span class="kd">procedure</span> <span class="nf">Prepend</span> <span class="p">(</span><span class="nv">Self</span> <span class="p">: </span><span class="nv">in</span> <span class="nv">out</span> <span class="nv">List</span><span class="p">;</span> <span class="nv">E</span> <span class="p">: </span><span class="nv">Element</span><span class="p">)</span> <span class="kr">is</span>
+  <span class="kr">begin</span>
+     <span class="n">Self</span><span class="p">.</span><span class="n">Head</span> <span class="p">:=</span> <span class="kr">new</span> <span class="n">Node_Record</span><span class="p">&#39;</span>
+       <span class="p">(</span><span class="n">Value</span> <span class="p">=&gt;</span> <span class="kr">new</span> <span class="n">Element</span><span class="p">&#39;(</span><span class="n">E</span><span class="p">),</span> <span class="n">Next</span> <span class="p">=&gt;</span> <span class="n">Self</span><span class="p">.</span><span class="n">Head</span><span class="p">);</span>
+  <span class="kr">end</span> <span class="nf">Prepend</span><span class="p">;</span>
+<span class="kr">end</span> <span class="nf">Lists</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The code declares a list as a pointer to a node, which itself contains an
+element and points to the next node in the list. When we add an element in
+front of the list, we are just changing the head of the list (using the Ada
+aggregate syntax to ensure that all fields of the node are properly initialized
+even if we later add another field like a <cite>Tail</cite>).</p>
+<p>This implementation works fine, and is in fact almost optimal for an unbounded
+list of indefinite elements. We need one allocation for the node, and one for
+the element (since we do not know its size statically). However, these two
+allocations will make the lists very slow (compared to other implementations)
+for a list of integers. An integer always uses the same size, so can be stored
+directly in a <cite>Node</cite>, we do not need to allocate memory.</p>
+</div>
+<div class="section" id="element-policies">
+<h2>Element Policies<a class="headerlink" href="#element-policies" title="Permalink to this headline">¶</a></h2>
+<p>Let’s assume however that the whole code for a list, with all its operations,
+is large and we do not want to duplicate it to better handle definite elements.
+We will then introduce a new package that describe the storage policy for
+elements. The term <strong>policy</strong> has been used before in the C++ world (see [1]).
+Another similar term is <strong>strategy</strong>. In the Ada world, the term <strong>signature
+package</strong> has been used for a similar concept. Another close concept are the
+<strong>traits</strong> packages in C++, although they are generally used to discover
+attributes of types at compile time (like the type of elements stored in an
+array for instance).</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kd">type</span> <span class="kt">Element</span> <span class="p">(&lt;&gt;)</span> <span class="kr">is</span> <span class="kd">private</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Stored</span> <span class="kr">is</span> <span class="kd">private</span><span class="p">;</span>
+   <span class="kn">with</span> <span class="nn">function</span> <span class="n">To_Stored</span> <span class="p">(</span><span class="n">E</span> <span class="p">:</span> <span class="n">Element</span><span class="p">)</span> <span class="kr">return</span> <span class="n">Stored</span><span class="p">;</span>
+   <span class="kn">with</span> <span class="nn">function</span> <span class="n">To_Element</span> <span class="p">(</span><span class="n">S</span> <span class="p">:</span> <span class="n">Stored</span><span class="p">)</span> <span class="kr">return</span> <span class="n">Element</span><span class="p">;</span>
+<span class="kd">package</span> <span class="nc">Elements_Policy</span> <span class="kr">is</span>
+<span class="kr">end</span> <span class="nf">Elements_Policy</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This package does nothing useful. It is just a way to encapsulate various
+pieces of information about the types. For instance, we have declared that an
+Element type can be anything (possibly an indefinite or abstract type). Such a
+type cannot be stored in a record, so we need an associated type that we can
+store, and conversion functions between the two. This declaration is enough to
+improve our list package:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Elements</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Elements_Policy</span> <span class="p">(&lt;&gt;)</span>
+<span class="kd">package</span> <span class="nc">Lists</span> <span class="kr">is</span>
+   <span class="kd">type</span> <span class="kt">List</span> <span class="kr">is</span> <span class="kd">private</span><span class="p">;</span>
+   <span class="kd">procedure</span> <span class="nf">Prepend</span> <span class="p">(</span><span class="nv">Self</span> <span class="p">: </span><span class="nv">in</span> <span class="nv">out</span> <span class="nv">List</span><span class="p">;</span> <span class="nv">E</span> <span class="p">: </span><span class="nv">Elements</span><span class="p">.</span><span class="nv">Element</span><span class="p">);</span>
+<span class="kd">private</span>
+   <span class="kd">type</span> <span class="kt">Node_Record</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Node</span> <span class="kr">is</span> <span class="kr">access</span> <span class="n">Node_Record</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Node_Record</span> <span class="kr">is</span> <span class="kr">record</span>
+      <span class="n">Value</span> <span class="p">:</span> <span class="n">Elements</span><span class="p">.</span><span class="n">Stored</span><span class="p">;</span>
+      <span class="n">Next</span>  <span class="p">:</span> <span class="n">Node</span><span class="p">;</span>
+   <span class="kr">end record</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">List</span> <span class="kr">is</span> <span class="kr">record</span>
+      <span class="n">Head</span> <span class="p">:</span> <span class="n">Node</span><span class="p">;</span>
+   <span class="kr">end record</span><span class="p">;</span>
+<span class="kr">end</span> <span class="nf">Lists</span><span class="p">;</span>
+
+<span class="kd">package</span> <span class="kd">body</span> <span class="nc">Lists</span> <span class="kr">is</span>
+  <span class="kd">procedure</span> <span class="nf">Prepend</span> <span class="p">(</span><span class="nv">Self</span> <span class="p">: </span><span class="nv">in</span> <span class="nv">out</span> <span class="nv">List</span><span class="p">;</span> <span class="nv">E</span> <span class="p">: </span><span class="nv">Elements</span><span class="p">.</span><span class="nv">Element</span><span class="p">)</span> <span class="kr">is</span>
+  <span class="kr">begin</span>
+     <span class="n">Self</span><span class="p">.</span><span class="n">Head</span> <span class="p">:=</span> <span class="kr">new</span> <span class="n">Node</span><span class="p">&#39;</span>
+       <span class="p">(</span><span class="n">Value</span> <span class="p">=&gt;</span> <span class="n">Elements</span><span class="p">.</span><span class="n">To_Stored</span> <span class="p">(</span><span class="n">E</span><span class="p">),</span> <span class="n">Next</span> <span class="p">=&gt;</span> <span class="n">Self</span><span class="p">.</span><span class="n">Head</span><span class="p">);</span>
+  <span class="kr">end</span> <span class="nf">Prepend</span><span class="p">;</span>
+<span class="kr">end</span> <span class="nf">Lists</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This new version no longer forces an explicit memory allocation for elements.
+The formal parameter has changed, too: we no longer take the element type, but
+a policy package.  For an integer, an elements policy would be:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nf">Identity</span> <span class="p">(</span><span class="nv">A</span> <span class="p">: </span><span class="nv">Integer</span><span class="p">)</span> <span class="kr">return</span> <span class="kt">Integer</span> <span class="kr">is</span> <span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="kn">with</span> <span class="nn">Inline</span><span class="p">;</span>
+<span class="kd">package</span> <span class="nc">Integer_Elements</span> <span class="kr">is new</span> <span class="nc">Elements_Policy</span>
+  <span class="p">(</span><span class="nv">Element</span> <span class="p">=&gt;</span> Integer<span class="p">,</span> <span class="nv">Stored</span> <span class="p">=&gt;</span> Integer<span class="p">,</span>
+   <span class="nv">To_Stored</span> <span class="p">=&gt;</span> Identity<span class="p">,</span> <span class="nv">To_Element</span> <span class="p">=&gt;</span> Identity<span class="p">);</span>
+
+<span class="kd">package</span> <span class="nc">Integer_Lists</span> <span class="kr">is new</span> <span class="nc">Lists</span> <span class="p">(</span>Integer_Elements<span class="p">);</span>
+</pre></div>
+</div>
+<p>No memory allocation needed, the list will be a lot faster, while remaining as
+safe.</p>
+<p>Instantiating the <cite>Elements_Policy</cite> package needs to be done once for each type
+of element that you intend to store, whatever the number or types of containers
+they will be stored in. As a helper, this library provides a
+<cite>Conts.Elements.Definite</cite> and a <cite>Conts.Elements.Indefinite</cite> packages, which are
+trivial to instantiate.</p>
+</div>
+<div class="section" id="node-policies">
+<h2>Node Policies<a class="headerlink" href="#node-policies" title="Permalink to this headline">¶</a></h2>
+<p>In our list implementation, there remains one memory allocation which might be
+lifted in the case of a bounded container. Such a container has a known maximum
+number of elements it can store, so basically we could store all elements in an
+array, and avoid allocating memory for each node.</p>
+<p>Let’s introduce another policy package:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Elements</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Elements_Policy</span> <span class="p">(&lt;&gt;);</span>
+   <span class="kd">type</span> <span class="kt">Container</span> <span class="p">(&lt;&gt;)</span> <span class="kr">is</span> <span class="kr">abstract</span> <span class="kr">tagged</span> <span class="kd">private</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Node</span> <span class="kr">is</span> <span class="kd">private</span><span class="p">;</span>
+   <span class="n">Null_Node</span> <span class="p">:</span> <span class="n">Node</span><span class="p">;</span>
+   <span class="kn">with</span> <span class="nn">function</span> <span class="n">Allocate</span>
+     <span class="p">(</span><span class="n">C</span> <span class="p">:</span> <span class="ow">in</span> <span class="kr">out</span> <span class="n">Container</span><span class="p">;</span> <span class="n">E</span> <span class="p">:</span> <span class="n">Elements</span><span class="p">.</span><span class="n">Element</span><span class="p">)</span> <span class="kr">return</span> <span class="n">Node</span><span class="p">;</span>
+   <span class="kn">with</span> <span class="nn">procedure</span> <span class="n">Set_Next</span> <span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">Next</span> <span class="p">:</span> <span class="n">Node</span><span class="p">);</span>
+<span class="kd">package</span> <span class="nc">Storage_Policy</span> <span class="kr">is</span>
+<span class="kr">end</span> <span class="nf">Storage_Policy</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This package needs to know about the elements, since those are stored in the
+nodes. Following our previous discussion, we therefore give it the elements
+policy. Nodes could be implemented as access types (as we did before), or as
+indexed into an array,.. That array, in fact, needs to be stored somewhere,
+which is why we also describe what a container will look like.</p>
+<p>We can now implement our list as:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Storage</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Storage_Policy</span> <span class="p">(&lt;&gt;);</span>
+<span class="kd">package</span> <span class="nc">Lists</span> <span class="kr">is</span>
+   <span class="kd">type</span> <span class="kt">List</span> <span class="kr">is</span> <span class="kd">private</span><span class="p">;</span>
+   <span class="kd">procedure</span> <span class="nf">Prepend</span> <span class="p">(</span><span class="nv">Self</span> <span class="p">: </span><span class="nv">in</span> <span class="nv">out</span> <span class="nv">List</span><span class="p">;</span> <span class="nv">E</span> <span class="p">: </span><span class="nv">Elements</span><span class="p">.</span><span class="nv">Element</span><span class="p">);</span>
+<span class="kd">private</span>
+   <span class="kd">type</span> <span class="kt">List</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Storage</span><span class="p">.</span><span class="n">Container</span> <span class="kr">with</span> <span class="kr">record</span>
+     <span class="n">Head</span> <span class="p">:</span> <span class="n">Storage</span><span class="p">.</span><span class="n">Node</span><span class="p">;</span>
+   <span class="kr">end record</span><span class="p">;</span>
+<span class="kr">end</span> <span class="nf">Lists</span><span class="p">;</span>
+
+<span class="kd">package</span> <span class="kd">body</span> <span class="nc">Lists</span> <span class="kr">is</span>
+  <span class="kd">procedure</span> <span class="nf">Prepend</span> <span class="p">(</span><span class="nv">Self</span> <span class="p">: </span><span class="nv">in</span> <span class="nv">out</span> <span class="nv">List</span><span class="p">;</span> <span class="nv">E</span> <span class="p">: </span><span class="nv">Elements</span><span class="p">.</span><span class="nv">Element</span><span class="p">)</span> <span class="kr">is</span>
+     <span class="no">N</span> <span class="p">:</span> <span class="kr">constant</span> <span class="n">Storage</span><span class="p">.</span><span class="n">Node</span> <span class="p">:=</span> <span class="n">Storage</span><span class="p">.</span><span class="n">Allocate</span> <span class="p">(</span><span class="n">Self</span><span class="p">,</span> <span class="n">E</span><span class="p">);</span>
+  <span class="kr">begin</span>
+     <span class="n">Storage</span><span class="p">.</span><span class="n">Set_Next</span> <span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">Self</span><span class="p">.</span><span class="n">Head</span><span class="p">);</span>
+     <span class="n">Self</span><span class="p">.</span><span class="n">Head</span> <span class="p">:=</span> <span class="n">N</span><span class="p">;</span>
+  <span class="kr">end</span> <span class="nf">Prepend</span><span class="p">;</span>
+<span class="kr">end</span> <span class="nf">Lists</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This list is no longer forcing any allocation. That decision is left to the two
+policy packages we use.  If we now want to provide a list of integers that will
+contain at most 1000 elements, we can provide a separate implementation for the
+nodes policy that does not do any allocation of memory. Compared to doing two
+allocation per elements in our original list, this will be much faster.</p>
+<p>Let’s look at two possible implementations of this policy. The first one ends
+up doing the same thing we were doing before. The nodes are allocated in
+memory, and therefore we do not really need the container. Note that we have
+declared <cite>Allocate</cite> and <cite>Set_Next</cite> as inline. This ensures that the compiler
+will in fact generate the same code it did before, as if we had not added an
+extra subprogram call. Thus performance is preserved, and yet our list is more
+flexible:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Elements</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Elements_Policy</span> <span class="p">(&lt;&gt;);</span>
+<span class="kd">package</span> <span class="nc">Unbounded_Storage</span> <span class="kr">is</span>
+   <span class="kd">type</span> <span class="kt">Container</span> <span class="kr">is</span> <span class="kr">tagged</span> <span class="kr">null record</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Node_Record</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Node</span> <span class="kr">is</span> <span class="kr">access</span> <span class="n">Node_Record</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Node_Record</span> <span class="kr">is</span> <span class="kr">record</span>
+      <span class="n">Value</span> <span class="p">:</span> <span class="n">Elements</span><span class="p">.</span><span class="n">Stored</span><span class="p">;</span>
+      <span class="n">Next</span>  <span class="p">:</span> <span class="n">Node</span><span class="p">;</span>
+   <span class="kr">end record</span><span class="p">;</span>
+   <span class="kd">function</span> <span class="nf">Allocate</span>
+     <span class="p">(</span><span class="nv">C</span> <span class="p">: </span><span class="nv">in</span> <span class="nv">out</span> <span class="nv">Container</span><span class="p">;</span> <span class="nv">E</span> <span class="p">: </span><span class="nv">Elements</span><span class="p">.</span><span class="nv">Element</span><span class="p">)</span> <span class="kr">return</span> <span class="n">Node</span>
+     <span class="kr">is</span> <span class="p">(</span><span class="kr">new</span> <span class="n">Node_Record</span><span class="p">&#39;</span>
+          <span class="p">(</span><span class="n">Value</span> <span class="p">=&gt;</span> <span class="n">Elements</span><span class="p">.</span><span class="n">To_Stored</span> <span class="p">(</span><span class="n">E</span><span class="p">),</span> <span class="n">Next</span> <span class="p">=&gt;</span> <span class="kc">null</span><span class="p">))</span>
+     <span class="kn">with</span> <span class="nn">Inline</span><span class="p">;</span>
+   <span class="kd">procedure</span> <span class="nf">Set_Next</span> <span class="p">(</span><span class="nv">N</span><span class="p">,</span> <span class="nv">Next</span> <span class="p">: </span><span class="nv">Node</span><span class="p">)</span> <span class="kn">with</span> <span class="nn">Inline</span><span class="p">;</span>
+   <span class="kd">package</span> <span class="nc">Policy</span> <span class="kr">is new</span> <span class="nc">Storage_Policy</span>
+      <span class="p">(</span>Elements<span class="p">,</span> Container<span class="p">,</span> Node<span class="p">,</span> null<span class="p">,</span> Allocate<span class="p">,</span> Set_Next<span class="p">);</span>
+<span class="kr">end</span> <span class="nf">Unbounded_Storage</span><span class="p">;</span>
+
+<span class="kd">package</span> <span class="kd">body</span> <span class="nc">Unbounded_Storage</span> <span class="kr">is</span>
+   <span class="kd">procedure</span> <span class="nf">Set_Next</span> <span class="p">(</span><span class="nv">N</span><span class="p">,</span> <span class="nv">Next</span> <span class="p">: </span><span class="nv">Node</span><span class="p">)</span> <span class="kr">is</span>
+   <span class="kr">begin</span>
+      <span class="n">N</span><span class="p">.</span><span class="n">Next</span> <span class="p">:=</span> <span class="n">Next</span><span class="p">;</span>
+   <span class="kr">end</span> <span class="nf">Set_Next</span><span class="p">;</span>
+<span class="kr">end</span> <span class="nf">Unbounded_Storage</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The second implementation is for a bounded list, with a known maximum
+number of elements:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Elements</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Elements_Policy</span> <span class="p">(&lt;&gt;);</span>
+<span class="kd">package</span> <span class="nc">Bounded_Storage</span> <span class="kr">is</span>
+   <span class="kd">type</span> <span class="kt">Node</span> <span class="kr">is</span> <span class="kr">new</span> <span class="kt">Integer</span> <span class="kr">range</span> <span class="mi">1</span> <span class="p">..</span> <span class="mi">1000</span><span class="p">;</span>
+   <span class="no">Unset</span> <span class="p">:</span> <span class="kr">constant</span> <span class="n">Node</span> <span class="p">:=</span> <span class="mi">0</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Element_Array</span> <span class="kr">is</span> <span class="kr">array</span> <span class="p">(</span><span class="n">Node</span><span class="p">)</span> <span class="kr">of</span> <span class="n">Elements</span><span class="p">.</span><span class="n">Stored</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Container</span> <span class="kr">is</span> <span class="kr">tagged</span> <span class="kr">record</span>
+      <span class="n">Elms</span> <span class="p">:</span> <span class="n">Element_Array</span><span class="p">;</span>
+      <span class="n">Last</span> <span class="p">:</span> <span class="n">Node</span> <span class="p">:=</span> <span class="n">Unset</span><span class="p">;</span>
+   <span class="kr">end record</span><span class="p">;</span>
+   <span class="kd">function</span> <span class="nf">Allocate</span>
+     <span class="p">(</span><span class="nv">C</span> <span class="p">: </span><span class="nv">in</span> <span class="nv">out</span> <span class="nv">Container</span><span class="p">;</span> <span class="nv">E</span> <span class="p">: </span><span class="nv">Elements</span><span class="p">.</span><span class="nv">Element</span><span class="p">)</span> <span class="kr">return</span> <span class="n">Node</span>
+      <span class="kn">with</span> <span class="nn">Inline</span><span class="p">;</span>
+   <span class="kd">procedure</span> <span class="nf">Set_Next</span> <span class="p">(</span><span class="nv">N</span><span class="p">,</span> <span class="nv">Next</span> <span class="p">: </span><span class="nv">Node</span><span class="p">)</span> <span class="kr">is</span> <span class="kc">null</span> <span class="kn">with</span> <span class="nn">Inline</span><span class="p">;</span>
+   <span class="kd">package</span> <span class="nc">Policy</span> <span class="kr">is new</span> <span class="nc">Storage_Policy</span>
+      <span class="p">(</span>Elements<span class="p">,</span> Container<span class="p">,</span> Node<span class="p">,</span> Unset<span class="p">,</span> Allocate<span class="p">,</span> Set_Next<span class="p">);</span>
+<span class="kr">end</span> <span class="nf">Bounded_Storage</span><span class="p">;</span>
+
+<span class="kd">package</span> <span class="kd">body</span> <span class="nc">Bounded_Storage</span> <span class="kr">is</span>
+   <span class="kd">function</span> <span class="nf">Allocate</span>
+     <span class="p">(</span><span class="nv">C</span> <span class="p">: </span><span class="nv">in</span> <span class="nv">out</span> <span class="nv">Container</span><span class="p">;</span> <span class="nv">E</span> <span class="p">: </span><span class="nv">Elements</span><span class="p">.</span><span class="nv">Element</span><span class="p">)</span> <span class="kr">return</span> <span class="n">Node</span> <span class="kr">is</span>
+   <span class="kr">begin</span>
+      <span class="n">C</span><span class="p">.</span><span class="n">Last</span> <span class="p">:=</span> <span class="n">C</span><span class="p">.</span><span class="n">Last</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="n">C</span><span class="p">.</span><span class="n">Elms</span> <span class="p">(</span><span class="n">C</span><span class="p">.</span><span class="n">Last</span><span class="p">)</span> <span class="p">:=</span> <span class="n">Elements</span><span class="p">.</span><span class="n">To_Stored</span> <span class="p">(</span><span class="n">E</span><span class="p">);</span>
+      <span class="kr">return</span> <span class="n">C</span><span class="p">.</span><span class="n">Last</span><span class="p">;</span>
+   <span class="kr">end</span> <span class="nf">Allocate</span><span class="p">;</span>
+<span class="kr">end</span> <span class="nf">Bounded_Storage</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Strictly speaking, this is closer to what a vector would be, not a list, but
+this is for purposes of illustration.</p>
+<p>Controlling the use of memory allocations (and more importantly deallocations)
+is also a major need when one is trying to prove code, for instance in the
+context of SPARK. Various implementations of the elements policy and nodes
+policy can prove more amenable to SPARK than the ones we just saw.</p>
+</div>
+<div class="section" id="algorithms">
+<h2>Algorithms<a class="headerlink" href="#algorithms" title="Permalink to this headline">¶</a></h2>
+<p>Standard Ada containers have a lot of similarities in their API (they all provide
+a <cite>Cursor</cite> type, most of them provide a <cite>Append</cite> or <cite>Include</cite> operation, …) This
+help users to learn the API and use the various types of containers.</p>
+<p>However, strictly speaking they have nothing in common (no inheritance for instance),
+so one cannot write an algorithm that are container agnostic. For instance, if
+we want to write a simple algorithm that counts the number of elements in a
+container, we need one implementation for each type of container:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Lists</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Doubly_Linked_Lists</span> <span class="p">(&lt;&gt;);</span>
+<span class="kd">function</span> <span class="nf">Count</span> <span class="p">(</span><span class="nv">L</span> <span class="p">: </span><span class="nv">Lists</span><span class="p">.</span><span class="nv">List</span><span class="p">)</span> <span class="kr">return</span> <span class="kt">Natural</span> <span class="kr">is</span>
+   <span class="n">Result</span> <span class="p">:</span> <span class="kt">Natural</span> <span class="p">:=</span> <span class="mi">0</span><span class="p">;</span>
+   <span class="n">C</span> <span class="p">:</span> <span class="n">Lists</span><span class="p">.</span><span class="kt">Cursor</span> <span class="p">:=</span> <span class="n">L</span><span class="p">.</span><span class="n">First</span><span class="p">;</span>
+<span class="kr">begin</span>
+   <span class="kr">while</span> <span class="n">Lists</span><span class="p">.</span><span class="n">Has_Element</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="kr">loop</span>
+      <span class="n">Result</span> <span class="p">:=</span> <span class="n">Result</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="n">Lists</span><span class="p">.</span><span class="n">Next</span> <span class="p">(</span><span class="n">C</span><span class="p">);</span>
+   <span class="kr">end</span> <span class="kr">loop</span><span class="p">;</span>
+   <span class="kr">return</span> <span class="n">Result</span><span class="p">;</span>
+<span class="kr">end</span> <span class="nf">Count</span><span class="p">;</span>
+
+<span class="kd">generic</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Vec</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Vectors</span> <span class="p">(&lt;&gt;);</span>
+<span class="kd">function</span> <span class="nf">Count</span> <span class="p">(</span><span class="nv">V</span> <span class="p">: </span><span class="nv">Vec</span><span class="p">.</span><span class="nv">Vector</span><span class="p">)</span> <span class="kr">return</span> <span class="kt">Natural</span> <span class="kr">is</span>
+   <span class="c1">--  ... same as above</span>
+</pre></div>
+</div>
+<p>We could actually write the algorithm once if we pass more formal parameters,
+as in:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kd">type</span> <span class="kt">Element</span> <span class="kr">is</span> <span class="kd">private</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Container</span> <span class="kr">is</span> <span class="kd">private</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Cursor</span> <span class="kr">is</span> <span class="kd">private</span><span class="p">;</span>
+   <span class="kn">with</span> <span class="nn">function</span> <span class="n">First</span> <span class="p">(</span><span class="n">Self</span> <span class="p">:</span> <span class="n">Container</span><span class="p">)</span> <span class="kr">return</span> <span class="kt">Cursor</span> <span class="kr">is</span> <span class="p">&lt;&gt;;</span>
+   <span class="kn">with</span> <span class="nn">function</span> <span class="n">Has_Element</span>
+      <span class="p">(</span><span class="n">Self</span> <span class="p">:</span> <span class="n">Container</span><span class="p">;</span> <span class="n">C</span> <span class="p">:</span> <span class="kt">Cursor</span><span class="p">)</span> <span class="kr">return</span> <span class="kt">Boolean</span> <span class="kr">is</span> <span class="p">&lt;&gt;;</span>
+   <span class="kn">with</span> <span class="nn">function</span> <span class="n">Element</span> <span class="p">(</span><span class="n">C</span> <span class="p">:</span> <span class="kt">Cursor</span><span class="p">)</span> <span class="kr">return</span> <span class="n">Element</span> <span class="kr">is</span> <span class="p">&lt;&gt;;</span>
+   <span class="kn">with</span> <span class="nn">procedure</span> <span class="n">Next</span> <span class="p">(</span><span class="n">C</span> <span class="p">:</span> <span class="ow">in</span> <span class="kr">out</span> <span class="kt">Cursor</span><span class="p">)</span> <span class="kr">is</span> <span class="p">&lt;&gt;;</span>
+<span class="kd">function</span> <span class="nf">Count</span> <span class="p">(</span><span class="nv">L</span> <span class="p">: </span><span class="nv">Container</span><span class="p">)</span> <span class="kr">return</span> <span class="kt">Natural</span> <span class="kr">is</span>
+   <span class="c1">--  ... same as before</span>
+</pre></div>
+</div>
+<p>This is now applicable to any type of container (even those not part of the
+standard Ada runtime. However, it has suddenly become a lot more work to
+instantiate, despise the use of <cite>is &lt;&gt;</cite> so that the compiler defaults to any
+visible subprogram with the correct profile.</p>
+<p>At this point, we can introduce our third policy package, the <strong>Cursors</strong>
+policy. Since we are only interested in moving forward, we’ll call these
+the <cite>Forward Cursors</cite>. At the same time, we’ll ruse our <cite>Element policy</cite>
+which, as we saw before, allow us to control memory allocation and storage
+of elements:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Elements</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Elements_Policy</span> <span class="p">(&lt;&gt;);</span>
+   <span class="kd">type</span> <span class="kt">Container</span> <span class="kr">is</span> <span class="kd">private</span><span class="p">;</span>
+   <span class="kd">type</span> <span class="kt">Cursor</span> <span class="kr">is</span> <span class="kd">private</span><span class="p">;</span>
+   <span class="kn">with</span> <span class="nn">function</span> <span class="n">First</span> <span class="p">(</span><span class="n">Self</span> <span class="p">:</span> <span class="n">Container</span><span class="p">)</span> <span class="kr">return</span> <span class="kt">Cursor</span> <span class="kr">is</span> <span class="p">&lt;&gt;;</span>
+   <span class="kn">with</span> <span class="nn">function</span> <span class="n">Has_Element</span>
+      <span class="p">(</span><span class="n">Self</span> <span class="p">:</span> <span class="n">Container</span><span class="p">;</span> <span class="n">C</span> <span class="p">:</span> <span class="kt">Cursor</span><span class="p">)</span> <span class="kr">return</span> <span class="kt">Boolean</span> <span class="kr">is</span> <span class="p">&lt;&gt;;</span>
+   <span class="kn">with</span> <span class="nn">function</span> <span class="n">Element</span> <span class="p">(</span><span class="n">C</span> <span class="p">:</span> <span class="kt">Cursor</span><span class="p">)</span> <span class="kr">return</span> <span class="n">Elements</span><span class="p">.</span><span class="n">Element</span> <span class="kr">is</span> <span class="p">&lt;&gt;;</span>
+   <span class="kn">with</span> <span class="nn">procedure</span> <span class="n">Next</span> <span class="p">(</span><span class="n">C</span> <span class="p">:</span> <span class="ow">in</span> <span class="kr">out</span> <span class="kt">Cursor</span><span class="p">)</span> <span class="kr">is</span> <span class="p">&lt;&gt;;</span>
+<span class="kd">package</span> <span class="nc">Forward_Cursors_Policy</span> <span class="kr">is</span>
+<span class="kr">end</span> <span class="nf">Forward_Cursors_Policy</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Our algorithms will now all have a similar list of formal parameters, for
+instance:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Cursors</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Forward_Cursors_Policy</span> <span class="p">(&lt;&gt;);</span>
+<span class="kd">function</span> <span class="nf">Count</span> <span class="p">(</span><span class="nv">L</span> <span class="p">: </span><span class="nv">Cursors</span><span class="p">.</span><span class="nv">Container</span><span class="p">)</span> <span class="kr">return</span> <span class="kt">Natural</span><span class="p">;</span>
+
+<span class="kd">generic</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Cursors</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Forward_Cursors_Policy</span> <span class="p">(&lt;&gt;);</span>
+<span class="kd">function</span> <span class="nf">Contains</span>
+   <span class="p">(</span><span class="nv">L</span> <span class="p">: </span><span class="nv">Cursors</span><span class="p">.</span><span class="nv">Container</span><span class="p">;</span> <span class="nv">E</span> <span class="p">: </span><span class="nv">Cursors</span><span class="p">.</span><span class="nv">Elements</span><span class="p">.</span><span class="nv">Element</span><span class="p">)</span>
+   <span class="kr">return</span> <span class="kt">Boolean</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Again, instantiating the <cite>Forward_Cursors_Policy</cite> package needs to be done only
+once for each type of data structure. In fact, when you are using the data
+structures provided in this library, they already provide the necessary
+<cite>Cursors</cite> packages, so that you can easily use them with any of the algorithms.</p>
+<p>This library also provides a <cite>Conts.Cursors.Adaptors</cite> which has a number of
+nested package that will provide cursors policies for the standard Ada
+containers. It is thus relatively easy to also reuse the library’s algorithms
+with the standard Ada containers.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Generic Ada Library for Algorithms and Containers (GALAC)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The “making of” of a generic library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#design-axis">Design axis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generic-lists">Generic lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#element-policies">Element Policies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#node-policies">Node Policies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#algorithms">Algorithms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html">Naming and Coding Conventions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elements.html">Element Traits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vectors.html"><cite>Vector</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lists.html"><cite>List</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maps.html"><cite>Map</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphs.html"><cite>Graph</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_algorithms.html">Graph algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_considerations.html">Design considerations</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="intro.html" title="previous chapter">Introduction</a></li>
+      <li>Next: <a href="conventions.html" title="next chapter">Naming and Coding Conventions</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, AdaCore.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/making_of.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

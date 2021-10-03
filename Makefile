@@ -31,6 +31,10 @@ GPRINSTALL=gprinstall ${RBD} -p -m ${GPRBUILD_OPTIONS} \
 all:
 	${GPRBUILD} -P${GPR_CONTS} -XBUILD=${BUILD}
 
+.PHONY: doc
+doc:
+	cd doc; ${MAKE} html
+
 install:
 	${GPRINSTALL} -P${GPR_CONTS} --prefix=${PREFIX}
 

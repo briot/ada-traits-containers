@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Map data type &#8212; Generic Ada Library for Algorithms and Containers (GALAC) 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Graph data type" href="graphs.html" />
+    <link rel="prev" title="List data type" href="lists.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="map-data-type">
+<h1><cite>Map</cite> data type<a class="headerlink" href="#map-data-type" title="Permalink to this headline">¶</a></h1>
+<p>A map is an association between two elements (the key and the value).
+Knowing the key (most often a <cite>String</cite>) gives fast (near constant
+time) access to the corresponding value.</p>
+<p>… to be completed</p>
+<div class="section" id="iteration">
+<h2>Iteration<a class="headerlink" href="#iteration" title="Permalink to this headline">¶</a></h2>
+<p>There exist several ways to iterate on maps, depending on what piece
+of information you need to retrieve.</p>
+<p>If you want to retrieve all the keys stored in the map (from which
+you can then retrieve the values), you can use:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span>
+   <span class="n">M</span> <span class="p">:</span> <span class="n">Map</span><span class="p">;</span>
+<span class="kr">begin</span>
+   <span class="kr">for</span> <span class="n">Key</span> <span class="kr">of</span> <span class="n">M</span> <span class="kr">loop</span>
+      <span class="p">...</span> <span class="n">M</span><span class="p">.</span><span class="n">Get</span> <span class="p">(</span><span class="n">Key</span><span class="p">)</span>   <span class="c1">--  to access the value</span>
+   <span class="kr">end</span> <span class="kr">loop</span><span class="p">;</span>
+<span class="kr">end</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Although retrieving an element from the key is very fast, it is
+still a bit slower than to have a more direct access to it. For this,
+you could use cursors instead:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span>
+   <span class="n">M</span> <span class="p">:</span> <span class="n">Map</span><span class="p">;</span>
+   <span class="n">C</span> <span class="p">:</span> <span class="kt">Cursor</span> <span class="p">:=</span> <span class="n">Map</span><span class="p">.</span><span class="n">First</span><span class="p">;</span>
+<span class="kr">begin</span>
+   <span class="kr">while</span> <span class="n">Map</span><span class="p">.</span><span class="n">Has_Element</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="kr">loop</span>
+      <span class="p">...</span> <span class="n">M</span><span class="p">.</span><span class="n">Key</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span>     <span class="c1">--  to retrieve the key</span>
+      <span class="p">...</span> <span class="n">M</span><span class="p">.</span><span class="n">Element</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="c1">--  to access the value</span>
+      <span class="n">Map</span><span class="p">.</span><span class="n">Next</span> <span class="p">(</span><span class="n">C</span><span class="p">);</span>
+   <span class="kr">end</span> <span class="kr">loop</span><span class="p">;</span>
+<span class="kr">end</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>or the simpler:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kr">declare</span>
+   <span class="n">M</span> <span class="p">:</span> <span class="n">Map</span><span class="p">;</span>
+<span class="kr">begin</span>
+   <span class="kr">for</span> <span class="n">C</span> <span class="ow">in</span> <span class="n">M</span> <span class="kr">loop</span>
+      <span class="p">...</span> <span class="n">M</span><span class="p">.</span><span class="n">Key</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span>     <span class="c1">--  to retrieve the key</span>
+      <span class="p">...</span> <span class="n">M</span><span class="p">.</span><span class="n">Element</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="c1">--  to access the value</span>
+   <span class="kr">end</span> <span class="kr">loop</span><span class="p">;</span>
+<span class="kr">end</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>These loops are significantly faster than the previous for-of loop when
+retrieving the values (but not faster if you are only interested in the
+keys).</p>
+<p>Note that the for-of loop differs from that of the standard Ada containers,
+in that it returns the keys stored in the map, not its elements. This is
+because once you have the key, it is easy and relatively fast to get the
+value. However, with the standard Ada containers, once you have the value
+there is no convenient way to retrieve the corresponding key.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Generic Ada Library for Algorithms and Containers (GALAC)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="making_of.html">The “making of” of a generic library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html">Naming and Coding Conventions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elements.html">Element Traits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vectors.html"><cite>Vector</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lists.html"><cite>List</cite> data type</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><cite>Map</cite> data type</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#iteration">Iteration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphs.html"><cite>Graph</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_algorithms.html">Graph algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_considerations.html">Design considerations</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="lists.html" title="previous chapter"><cite>List</cite> data type</a></li>
+      <li>Next: <a href="graphs.html" title="next chapter"><cite>Graph</cite> data type</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, AdaCore.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/maps.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

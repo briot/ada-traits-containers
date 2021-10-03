@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Naming and Coding Conventions &#8212; Generic Ada Library for Algorithms and Containers (GALAC) 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Element Traits" href="elements.html" />
+    <link rel="prev" title="The “making of” of a generic library" href="making_of.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="naming-and-coding-conventions">
+<h1>Naming and Coding Conventions<a class="headerlink" href="#naming-and-coding-conventions" title="Permalink to this headline">¶</a></h1>
+<p>This section describes some of the conventions and namings used throughout this
+library. As much as possible, all containers follow these conventions for
+consistency.</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Traits</span></code></p>
+<blockquote>
+<div><p>This suffix is added to package names that only have formal parameters,
+but provide no new capability on their own. They are used to encapsulate
+multiple related pieces of information, so that other packages can take a
+single instance of such a traits package, instead of a very large set of
+parameters. Although they require extra instantiations in the application
+code, they simplify the overall API.</p>
+<p>examples: <code class="docutils literal notranslate"><span class="pre">Conts.Elements.Traits</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Conts.Cursors.Constant_Forward_Traits</span></code></p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">_Type</span></code></p>
+<blockquote>
+<div><p>This suffix is used for formal type parameters of generic packages.  This
+follows the convention already used by the standard Ada container
+packages.  In addition, we provide renamings for these parameters inside
+the generic packages, as in:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kd">type</span> <span class="kt">Element_Type</span> <span class="p">(&lt;&gt;)</span> <span class="kr">is</span> <span class="kr">limited</span> <span class="kd">private</span><span class="p">;</span>
+<span class="kd">package</span> <span class="nc">Traits</span> <span class="kr">is</span>
+   <span class="kd">subtype</span> <span class="kt">Element</span> <span class="kr">is</span> <span class="n">Element_Type</span><span class="p">;</span>
+<span class="kr">end</span> <span class="nf">Traits</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The renamings are necessary because of the visibility defined by the
+standard. Basically, the compiler hides the declaration of
+<code class="docutils literal notranslate"><span class="pre">Element_Type</span></code> when it is known statically and there are therefore
+other ways to access it. For instance, in the following code, the
+declaration of <code class="docutils literal notranslate"><span class="pre">A</span></code> is illegal:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kn">with</span> <span class="nn">Cursors</span><span class="p">;</span>
+<span class="kd">package</span> <span class="kd">body</span> <span class="nc">Pkg</span> <span class="kr">is</span>
+   <span class="kd">package</span> <span class="nc">Int</span> <span class="kr">is new</span> <span class="nc">Traits</span> <span class="p">(</span>Integer<span class="p">);</span>
+
+   <span class="n">A</span> <span class="p">:</span> <span class="n">Int</span><span class="p">.</span><span class="n">Element_Type</span><span class="p">;</span>   <span class="c1">--  Illegal</span>
+   <span class="n">B</span> <span class="p">:</span> <span class="n">Int</span><span class="p">.</span><span class="n">Element</span><span class="p">;</span>
+<span class="kr">begin</span>
+   <span class="kc">null</span><span class="p">;</span>
+<span class="kr">end</span> <span class="nf">Pkg</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>For this reason, the subtype declaration ensures that the formal type is
+always illegal. In general, the code should use the subtype rather than
+the formal type. See also the Ada Reference Manual (12.7 10/2) for
+more information.</p>
+</div></blockquote>
+<p>Inlining</p>
+<blockquote>
+<div><p>A lot of the subprograms in this library are inlined. This is of course
+for performance reasons, since even through a generic instance, the
+compiler is able to completely bypass the cost of calling the subprogram.
+This results in very significant speed up when iterating over large
+containers. This is also an improvement when a function returns an
+unconstrained type (like the various <code class="docutils literal notranslate"><span class="pre">Identity</span></code> functions that just
+return their parameter).</p>
+</div></blockquote>
+<p>Expression functions</p>
+<blockquote>
+<div><p>In addition to being marked inline, a number of functions are written as
+expression functinos. When this function needs to access the private part
+of a package, we generally have a public spec, marked inline, and then in
+the private part the expression function itself.</p>
+<p>There doesn’t seem to be a benefit, performance-wise, but this keeps the
+code slightly shorter so has been adopted as a convention.</p>
+</div></blockquote>
+</div></blockquote>
+<blockquote id="tagged-and-controlled-types">
+<div><p>Tagged and controlled types</p>
+<blockquote>
+<div><p>All containers provided in this package are implemented as tagged types.
+One of the reasons to do so is to be able to use the dot notation to call
+primitive operations (as in <code class="docutils literal notranslate"><span class="pre">Vec.Append</span></code> for instance.</p>
+<p>The more important reason is that most applications will want those
+containers to be controlled types, so that memory is automatically
+released when the container is no longer used.</p>
+<p>Containers are not systematically controlled though, since this is not
+supported for the SPARK language. In such a case, the containers will
+instead extend the <code class="docutils literal notranslate"><span class="pre">Conts.Limited_Base</span></code>, which makes them limited
+types.</p>
+</div></blockquote>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Generic Ada Library for Algorithms and Containers (GALAC)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="making_of.html">The “making of” of a generic library</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Naming and Coding Conventions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elements.html">Element Traits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vectors.html"><cite>Vector</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lists.html"><cite>List</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maps.html"><cite>Map</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphs.html"><cite>Graph</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_algorithms.html">Graph algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_considerations.html">Design considerations</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="making_of.html" title="previous chapter">The “making of” of a generic library</a></li>
+      <li>Next: <a href="elements.html" title="next chapter">Element Traits</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, AdaCore.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/conventions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
