@@ -41,35 +41,18 @@ install:
 	${GPRINSTALL} -P${GPR_CONTS} --prefix=${PREFIX}
 
 # Run Ada tests (not using gnatpython)
-ada_test:
-	cd tests/perfs; \
-		python3 ./generate_test.py && \
-		${GPRBUILD} -XBUILD=Production && \
-		./obj/main
-
-# Run all tests, except manual ones
 test:
-	cd tests; ${PPATH} python3 ./testsuite.py -j0 --enable-color
-
-# Run all tests with valgrind
-test_with_valgrind:
-	cd tests; ${PPATH} python3 ./testsuite.py -j0 --enable-color --valgrind
-
-# Verify memory leaks in tests
-test_with_leaks:
-	cd tests; ${PPATH} python3 ./testsuite.py -j0 --enable-color --leaks
-
-# Run manual tests
-perfs:
-	${GPRBUILD} -P${GPR_CONTS} -XBUILD=Production
-	cd tests; ${PPATH} python3 ./testsuite.py -j0 --enable-color $@
-spark:
-	${GPRBUILD} -P${GPR_CONTS} -XBUILD=Debug
-	cd tests; ${PPATH} python3 ./testsuite.py -j0 --enable-color $@
-
-# Create all project files, for use with GPS
-projects:
-	cd tests; python3 ./testsuite.py -c
+	@echo "==== Running tests in Debug mode ===="
+	@${GPRBUILD} -q -XBUILD=Debug tests/tests.gpr && \
+		tests/obj/Debug/main
+	@echo "==== Running tests in Production mode ===="
+	@${GPRBUILD} -q -XBUILD=Production tests/tests.gpr && \
+		tests/obj/Production/main
+	@echo "==== Running performance tests ===="
+	@cd tests/perfs; \
+		python3 ./generate_test.py && \
+		${GPRBUILD} -q -XBUILD=Production && \
+		./obj/Production/main
 
 clean:
 	${PPATH} gprclean -P${GPR_ROOT} -XBUILD=Debug -r -q
@@ -78,4 +61,3 @@ clean:
 	-rm -rf tests/*/obj/
 	cd docs_src; ${MAKE} clean
 	-rm -f docs/perfs/data.js
-

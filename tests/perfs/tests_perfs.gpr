@@ -4,7 +4,7 @@ with "gnatcoll";
 
 project Tests_Perfs is
    for Source_Dirs use (".", "generated");
-   for Object_Dir use "obj";
+   for Object_Dir use "obj/" & Containers_Shared.Mode;
    for Languages use ("Ada", "C++", "Python");
    for Main use ("main.adb");
 

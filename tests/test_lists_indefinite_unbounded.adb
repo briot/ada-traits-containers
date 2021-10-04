@@ -23,16 +23,26 @@ pragma Ada_2012;
 with Conts.Lists.Indefinite_Unbounded;
 with Support;
 
-procedure Main is
+package body Test_Lists_Indefinite_Unbounded is
+
+   function Nth (Index : Natural) return Integer is (Index);
+
    package Int_Lists is new Conts.Lists.Indefinite_Unbounded (Integer);
-   function Image (R : Int_Lists.Constant_Returned) return String
-      is (Integer'Image (R));
    package Tests is new Support
-      (Image        => Image,
+      (Test_Name    => "lists-indef-unbounded",
+       Image        => Integer'Image,
        Elements     => Int_Lists.Elements.Traits,
        Storage      => Int_Lists.Storage.Traits,
-       Lists        => Int_Lists.Lists);
-   L1, L2 : Int_Lists.List;
-begin
-   Tests.Test (L1, L2);
-end Main;
+       Lists        => Int_Lists.Lists,
+       Nth          => Nth);
+
+   ----------
+   -- Test --
+   ----------
+
+   procedure Test is
+      L1, L2 : Int_Lists.List;
+   begin
+      Tests.Test (L1, L2);
+   end Test;
+end Test_Lists_Indefinite_Unbounded;

@@ -19,12 +19,14 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with GNATCOLL.Asserts;   use GNATCOLL.Asserts;
 with Conts;              use Conts;
+with GNATCOLL.Asserts;
+with GNAT.Source_Info;
 
 package Asserts is
 
-   type Testsuite_Reporter is new Error_Reporter with null record;
+   type Testsuite_Reporter is
+      new GNATCOLL.Asserts.Error_Reporter with null record;
    overriding procedure On_Assertion_Failed
       (Self     : Testsuite_Reporter;
        Msg      : String;
@@ -34,10 +36,22 @@ package Asserts is
 
    Reporter : Testsuite_Reporter;
 
-   package Testsuite_Asserts is new GNATCOLL.Asserts.Asserts
-      (Reporter, Enabled => True);
-   use Testsuite_Asserts;
-   package Integers is new Compare (Integer, Integer'Image);
-   package Booleans is new Compare (Boolean, Boolean'Image);
-   package Counts   is new Compare (Count_Type, Count_Type'Image);
+   Test_Failed : exception;
+
+   function Image (S : String) return String is (S);
+
+   package Asserts is new GNATCOLL.Asserts.Asserts (Reporter, Enabled => True);
+   package Integers is new Asserts.Compare (Integer,    Integer'Image);
+   package Booleans is new Asserts.Compare (Boolean,    Boolean'Image);
+   package Counts   is new Asserts.Compare (Count_Type, Count_Type'Image);
+   package Strings  is new Asserts.Compare (String,     Image);
+
+   procedure Should_Not_Get_Here
+      (Msg      : String := "should not get here";
+       Location : String := GNAT.Source_Info.Source_Location;
+       Entity   : String := GNAT.Source_Info.Enclosing_Entity)
+      renames Asserts.Assert_Failed;
+   --  If some piece of code should never be executed, put this there to get an
+   --  assert failures if it ends up being executed.
+
 end Asserts;

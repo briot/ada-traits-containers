@@ -1,0 +1,12 @@
+with "gnatcoll.gpr";
+with "../src/containers.gpr";
+with "../src/containers_shared";
+project Tests is
+   for Source_Dirs use (".", "shared");
+   for Main use ("main.adb");
+   for Object_Dir use "obj/" & Containers_Shared.Mode;
+   package Compiler renames Containers_Shared.Compiler;
+   package Builder renames Containers_Shared.Builder;
+   package Binder renames Containers_Shared.Binder;
+   package Linker renames Containers_Shared.Linker;
+end Tests;

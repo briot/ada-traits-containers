@@ -22,6 +22,7 @@
 pragma Ada_2012;
 with Ada.Unchecked_Conversion;
 with System;                 use System;
+with System.Assertions;
 
 package body Conts.Lists.Impl with SPARK_Mode => Off is
 
@@ -261,10 +262,18 @@ package body Conts.Lists.Impl with SPARK_Mode => Off is
      (Self : in out Base_List'Class; Position : Cursor; Element : Element_Type)
    is
       P : constant Node_Access := Position.Current;
-      E : Stored_Type := Get_Element (Self, P);
    begin
-      Storage.Elements.Release (E);
-      Set_Element (Self, P, Storage.Elements.To_Stored (Element));
+      if P = Null_Access then
+         raise System.Assertions.Assert_Failure
+            with "invalid position for replace_element";
+      end if;
+
+      declare
+         E : Stored_Type := Get_Element (Self, P);
+      begin
+         Storage.Elements.Release (E);
+         Set_Element (Self, P, Storage.Elements.To_Stored (Element));
+      end;
    end Replace_Element;
 
    ------------

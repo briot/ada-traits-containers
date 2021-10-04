@@ -4,7 +4,7 @@ library project Containers is
    for Source_Dirs use (".");
 
    for Library_Name use "containers";
-   for Library_Dir use "lib";
+   for Library_Dir use "lib/" & Containers_Shared.Mode;
    for Library_Kind use Containers_Shared.Library_Kind;
 
    package Naming renames Containers_Shared.Naming;

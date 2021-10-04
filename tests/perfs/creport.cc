@@ -45,14 +45,14 @@ void reset_mem() {
    total_allocated = 0;
 }
 
-void* operator new(std::size_t size) throw(std::bad_alloc) {
+void* operator new(std::size_t size) {
    ++number_of_allocs;
    total_allocated += size;
    void *p = malloc(size);
    if(!p) throw std::bad_alloc();
    return p;
 }
-void* operator new  [](std::size_t size) throw(std::bad_alloc) {
+void* operator new  [](std::size_t size) {
    ++number_of_allocs;
    total_allocated += size;
    void *p = malloc(size);

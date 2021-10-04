@@ -36,11 +36,15 @@ package body Asserts is
        Entity   : String)
    is
       pragma Unreferenced (Self);
-   begin
-      Put_Line
+      Full : constant String :=
          ((if Msg = "" then "" else Msg & " ")
           & "(at " & Location & ", in " & Entity & ")"
           & ASCII.LF & "   " & Details);
+   begin
+      --  Print the full error message, because exception messages could get
+      --  truncated.
+      Put_Line (Full);
+      raise Test_Failed;
    end On_Assertion_Failed;
 
 end Asserts;

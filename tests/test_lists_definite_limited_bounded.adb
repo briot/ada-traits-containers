@@ -20,18 +20,34 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Lists.Indefinite_Unbounded_SPARK;
+with Conts.Elements.Definite;
+with Conts.Lists.Generics;
+with Conts.Lists.Storage.Bounded;
 with Support;
 
-procedure Main is
-   package Int_Lists is new Conts.Lists.Indefinite_Unbounded_SPARK
-      (Integer);
+package body Test_Lists_Definite_Limited_Bounded is
+
+   function Nth (Index : Natural) return Integer is (Index);
+
+   package E is new Conts.Elements.Definite (Integer);
+   package S is new Conts.Lists.Storage.Bounded
+      (E.Traits, Conts.Limited_Base);
+   package Int_Lists is new Conts.Lists.Generics (S.Traits);
    package Tests is new Support
-      (Image        => Integer'Image,
-       Elements     => Int_Lists.Elements.Traits,
-       Storage      => Int_Lists.Storage.Traits,
-       Lists        => Int_Lists.Lists);
-   L1, L2 : Int_Lists.List;
-begin
-   Tests.Test (L1, L2);
-end Main;
+      (Test_Name    => "lists-def-limited-bounded",
+       Image        => Integer'Image,
+       Elements     => E.Traits,
+       Storage      => S.Traits,
+       Lists        => Int_Lists,
+       Nth          => Nth);
+
+   ----------
+   -- Test --
+   ----------
+
+   procedure Test is
+      L1, L2 : Int_Lists.List (20);
+   begin
+      Tests.Test (L1, L2);
+   end Test;
+end Test_Lists_Definite_Limited_Bounded;

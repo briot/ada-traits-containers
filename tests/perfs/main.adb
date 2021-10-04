@@ -21,7 +21,6 @@
 
 pragma Ada_2012;
 with Ada.Command_Line;
-with Ada.Text_IO;      use Ada.Text_IO;
 with GNAT.Strings;     use GNAT.Strings;
 with GNATCOLL.Utils;   use GNATCOLL.Utils;
 with Perf_Support;     use Perf_Support;
@@ -53,7 +52,7 @@ procedure Main is
       if Test_Name = null
          or else Starts_With (Name, Test_Name.all)
       then
-         Put_Line ("Run " & Name);
+         --  Put_Line ("Run " & Name);
          Proc (Stdout'Access);
       end if;
    end Run_Test;
@@ -63,7 +62,7 @@ procedure Main is
       if Test_Name = null
          or else Starts_With (Name, Test_Name.all)
       then
-         Put_Line ("Run " & Name);
+         --  Put_Line ("Run " & Name);
          Proc (Stdout'Address);
       end if;
    end Run_Test;

@@ -23,14 +23,27 @@ pragma Ada_2012;
 with Conts.Lists.Definite_Unbounded;
 with Support;
 
-procedure Main is
+package body Test_Lists_Definite_Limited_Unbounded is
+
+   function Nth (Index : Natural) return Integer is (Index);
+
    package Int_Lists is new Conts.Lists.Definite_Unbounded (Integer);
    package Tests is new Support
-      (Image        => Integer'Image,
+      (Test_Name    => "lists-def-limited-unbounded",
+       Image        => Integer'Image,
        Elements     => Int_Lists.Elements.Traits,
        Storage      => Int_Lists.Storage.Traits,
-       Lists        => Int_Lists.Lists);
-   L1, L2 : Int_Lists.List;
-begin
-   Tests.Test (L1, L2);
-end Main;
+       Lists        => Int_Lists.Lists,
+       Nth          => Nth);
+
+   ----------
+   -- Test --
+   ----------
+
+   procedure Test is
+      L1, L2 : Int_Lists.List;
+   begin
+      Tests.Test (L1, L2);
+   end Test;
+
+end Test_Lists_Definite_Limited_Unbounded;

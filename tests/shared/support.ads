@@ -25,15 +25,21 @@ with Conts.Lists.Generics;
 with Conts.Lists.Storage;
 
 generic
+   Test_Name : String;
 
-   with package Elements is new Conts.Elements.Traits
-      (Element_Type => Integer, others => <>);
+   with package Elements is new Conts.Elements.Traits (<>);
    with package Storage is new Conts.Lists.Storage.Traits
       (Elements => Elements, others => <>);
    with package Lists is new Conts.Lists.Generics
       (Storage => Storage);
 
-   with function Image (Self : Elements.Constant_Returned_Type) return String;
+   with function Image (Self : Elements.Element_Type) return String;
+
+   with function Nth (Index : Natural) return Elements.Element_Type;
+   --  So that the testsuite can generate elements to store in the container
+
+   with function "="
+      (Left, Right : Elements.Element_Type) return Boolean is <>;
 
 package Support is
 
