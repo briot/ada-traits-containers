@@ -20,19 +20,37 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Ada.Finalization;
-with Conts.Vectors.Definite_Unbounded;
-with Support;           use Support;
+with Conts.Elements;
+with Conts.Vectors.Generics;
+with Conts.Vectors.Storage;
+with GNAT.Source_Info;
 
-procedure Main is
-   package Int_Vecs is new Conts.Vectors.Definite_Unbounded
-      (Index_Type, Integer, Ada.Finalization.Controlled);
-   procedure T is new Support.Test
-      (Image           => Integer'Image,
-       Elements        => Int_Vecs.Elements.Traits,
-       Storage         => Int_Vecs.Storage.Traits,
-       Vectors         => Int_Vecs.Vectors);
-   V1 : Int_Vecs.Vector;
-begin
-   T (V1);
-end Main;
+generic
+   Test_Name : String;
+
+   with package Elements is new Conts.Elements.Traits (<>);
+   with package Storage is new Conts.Vectors.Storage.Traits
+      (Elements => Elements, others => <>);
+   with package Vectors is new Conts.Vectors.Generics
+      (Storage => Storage, Index_Type => Positive);
+   with function Image (Self : Elements.Element_Type) return String;
+
+   with function Nth (Index : Natural) return Elements.Element_Type;
+   with function "=" (L, R : Elements.Element_Type) return Boolean is <>;
+
+package Support_Vectors is
+
+   procedure Assert_Vector
+      (V        : Vectors.Vector;
+       Expected : String;
+       Msg      : String;
+       Location : String := GNAT.Source_Info.Source_Location;
+       Entity   : String := GNAT.Source_Info.Enclosing_Entity);
+   --  Check the contents of the vector
+
+   procedure Test (V1 : in out Vectors.Vector);
+   --  Perform various tests.
+   --  All vectors should be empty on input. This is used to handle bounded
+   --  vectors.
+
+end Support_Vectors;

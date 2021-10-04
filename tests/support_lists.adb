@@ -25,7 +25,7 @@ with GNAT.Source_Info;
 with GNATCOLL.Strings;     use GNATCOLL.Strings;
 with System.Assertions;    use System.Assertions;
 
-package body Support is
+package body Support_Lists is
 
    use Lists;
    use Asserts.Booleans;
@@ -36,23 +36,15 @@ package body Support is
    function "+" (S : String) return String is (Test_Name & ": " & S);
    --  Create error messages for failed tests
 
-   package Returned_Asserts is new Asserts.Asserts.Equals
+   package Element_Asserts is new Asserts.Asserts.Equals
       (Elements.Element_Type, Image, "=" => "=");
-   use Returned_Asserts;
+   use Element_Asserts;
 
    function Image (C : Lists.Cursor) return String
       is (if C = No_Element then "no element" else "a cursor");
    package Cursor_Asserts is new Asserts.Asserts.Equals
       (Lists.Cursor, Image);
    use Cursor_Asserts;
-
-   procedure Assert_List
-      (L        : Lists.List;
-       Expected : String;
-       Msg      : String;
-       Location : String := GNAT.Source_Info.Source_Location;
-       Entity   : String := GNAT.Source_Info.Enclosing_Entity);
-   --  Check the contents of the list
 
    -----------------
    -- Assert_List --
@@ -206,4 +198,4 @@ package body Support is
       end;
    end Test;
 
-end Support;
+end Support_Lists;

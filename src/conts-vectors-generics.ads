@@ -56,6 +56,8 @@ package Conts.Vectors.Generics with SPARK_Mode is
    No_Element : constant Cursor := Impl.No_Element;
    No_Index   : constant Extended_Index := Impl.No_Index;
 
+   Invalid_Index : exception renames Impl.Invalid_Index;
+
    function To_Count (Idx : Index_Type) return Count_Type
      renames Impl.To_Count;
    --  Converts to or from an index type to an index into the actual underlying

@@ -20,18 +20,26 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Vectors.Definite_Bounded;
-with Support;           use Support;
+with Ada.Finalization;
+with Conts.Vectors.Definite_Unbounded;
+with Support_Vectors;
 
-procedure Main is
-   package Int_Vecs is new Conts.Vectors.Definite_Bounded
-      (Index_Type, Integer);
-   procedure T is new Support.Test
-      (Image           => Integer'Image,
+package body Test_Vectors_Definite_Unbounded is
+
+   function Nth (Index : Natural) return Integer is (Index);
+   package Int_Vecs is new Conts.Vectors.Definite_Unbounded
+      (Positive, Integer, Ada.Finalization.Controlled);
+   package Tests is new Support_Vectors
+      (Test_Name       => "vectors-definite-unbounded",
+       Nth             => Nth,
+       Image           => Integer'Image,
        Elements        => Int_Vecs.Elements.Traits,
        Storage         => Int_Vecs.Storage.Traits,
        Vectors         => Int_Vecs.Vectors);
-   V1 : Int_Vecs.Vector (20);
-begin
-   T (V1);
-end Main;
+
+   procedure Test is
+      V1 : Int_Vecs.Vector;
+   begin
+      Tests.Test (V1);
+   end Test;
+end Test_Vectors_Definite_Unbounded;

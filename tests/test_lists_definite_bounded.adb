@@ -21,14 +21,14 @@
 
 pragma Ada_2012;
 with Conts.Lists.Definite_Bounded;
-with Support;
+with Support_Lists;
 
 package body Test_Lists_Definite_Bounded is
 
    function Nth (Index : Natural) return Integer is (Index);
 
    package Int_Lists is new Conts.Lists.Definite_Bounded (Integer);
-   package Tests is new Support
+   package Tests is new Support_Lists
       (Test_Name    => "lists-def-bounded",
        Image        => Integer'Image,
        Elements     => Int_Lists.Elements.Traits,

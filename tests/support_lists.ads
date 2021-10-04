@@ -20,18 +20,40 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Vectors.Indefinite_Unbounded_SPARK;
-with Support;           use Support;
+with Conts.Elements;
+with Conts.Lists.Generics;
+with Conts.Lists.Storage;
+with GNAT.Source_Info;
 
-procedure Main is
-   package Int_Vecs is new Conts.Vectors.Indefinite_Unbounded_SPARK
-      (Index_Type, Integer);
-   procedure T is new Support.Test
-      (Image           => Integer'Image,
-       Elements        => Int_Vecs.Elements.Traits,
-       Storage         => Int_Vecs.Storage.Traits,
-       Vectors         => Int_Vecs.Vectors);
-   V1 : Int_Vecs.Vector;
-begin
-   T (V1);
-end Main;
+generic
+   Test_Name : String;
+
+   with package Elements is new Conts.Elements.Traits (<>);
+   with package Storage is new Conts.Lists.Storage.Traits
+      (Elements => Elements, others => <>);
+   with package Lists is new Conts.Lists.Generics
+      (Storage => Storage);
+
+   with function Image (Self : Elements.Element_Type) return String;
+
+   with function Nth (Index : Natural) return Elements.Element_Type;
+   --  So that the testsuite can generate elements to store in the container
+
+   with function "=" (L, R : Elements.Element_Type) return Boolean is <>;
+
+package Support_Lists is
+
+   procedure Assert_List
+      (L        : Lists.List;
+       Expected : String;
+       Msg      : String;
+       Location : String := GNAT.Source_Info.Source_Location;
+       Entity   : String := GNAT.Source_Info.Enclosing_Entity);
+   --  Check the contents of the list
+
+   procedure Test (L1, L2 : in out Lists.List);
+   --  Perform various tests.
+   --  All lists should be empty on input. This is used to handle bounded
+   --  lists.
+
+end Support_Lists;

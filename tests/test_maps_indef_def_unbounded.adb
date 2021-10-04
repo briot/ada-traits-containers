@@ -20,13 +20,14 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with System.Assertions;    use System.Assertions;
 with Ada.Finalization;
-with Conts.Maps.Indef_Def_Unbounded;
 with Ada.Strings.Hash;
-with Ada.Text_IO;          use Ada.Text_IO;
+with Asserts;
+with Conts.Maps.Indef_Def_Unbounded;
+with System.Assertions;    use System.Assertions;
 
-procedure Main is
+package body Test_Maps_Indef_Def_Unbounded is
+   use Asserts.Integers;
 
    package Maps is new Conts.Maps.Indef_Def_Unbounded
      (Key_Type            => String,
@@ -34,45 +35,52 @@ procedure Main is
       Container_Base_Type => Ada.Finalization.Controlled,
       Hash                => Ada.Strings.Hash);
 
-   M : Maps.Map;
+   ----------
+   -- Test --
+   ----------
 
-begin
-   --  Check looking for an element in an empty table
+   procedure Test is
+      M : Maps.Map;
+      V : Integer;
    begin
-      Put_Line ("Getting element from empty table " & M.Get ("one")'Img);
-   exception
-      when Constraint_Error | Assert_Failure =>
-         null;
-   end;
+      --  Check looking for an element in an empty table
+      begin
+         V := M.Get ("one");
+         Asserts.Should_Not_Get_Here ("element from empty table");
+      exception
+         when Constraint_Error | Assert_Failure =>
+            null;
+      end;
 
-   M.Set ("one", 1);
-   M.Set ("two", 2);
-   M.Set ("three", 3);
-   M.Set ("four", 4);
-   M.Set ("five", 5);
-   M.Set ("six", 6);
-   M.Set ("seven", 7);
-   M.Set ("height", 8);
-   M.Set ("nine", 9);
-   M.Set ("ten", 10);
+      M.Set ("one", 1);
+      M.Set ("two", 2);
+      M.Set ("three", 3);
+      M.Set ("four", 4);
+      M.Set ("five", 5);
+      M.Set ("six", 6);
+      M.Set ("seven", 7);
+      M.Set ("height", 8);
+      M.Set ("nine", 9);
+      M.Set ("ten", 10);
 
-   Put_Line ("Value for one is " & M.Get ("one")'Img);
-   Put_Line ("Value for four is " & M ("four")'Img);
+      Assert (M.Get ("one"), 1, "value for one");
+      Assert (M ("four"), 4, "value for four");
 
-   M.Delete ("one");
-   M.Delete ("two");
-   M.Delete ("three");
-   M.Delete ("four");
-   M.Delete ("five");
-   M.Delete ("six");
+      M.Delete ("one");
+      M.Delete ("two");
+      M.Delete ("three");
+      M.Delete ("four");
+      M.Delete ("five");
+      M.Delete ("six");
 
-   Put_Line ("Value for seven is " & M ("seven")'Img);
+      Assert (M.Get ("seven"), 7, "value for seven");
 
-   begin
-      Put_Line ("Value for three is " & M ("three")'Img);
-      Put_Line ("Error, three should have been removed");
-   exception
-      when Constraint_Error | Assert_Failure =>
-         null;   --  expected
-   end;
-end Main;
+      begin
+         V := M ("three");
+         Asserts.Should_Not_Get_Here ("three should have been removed");
+      exception
+         when Constraint_Error | Assert_Failure =>
+            null;   --  expected
+      end;
+   end Test;
+end Test_Maps_Indef_Def_Unbounded;

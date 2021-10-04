@@ -20,24 +20,25 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Elements;
-with Conts.Vectors.Generics;
-with Conts.Vectors.Storage;
+with Conts.Vectors.Definite_Bounded;
+with Support_Vectors;
 
-package Support is
-   subtype Index_Type is Positive;
+package body Test_Vectors_Definite_Bounded is
 
-   generic
-      with package Elements is new Conts.Elements.Traits
-         (Element_Type => Integer, others => <>);
-      with package Storage is new Conts.Vectors.Storage.Traits
-         (Elements => Elements, others => <>);
-      with package Vectors is new Conts.Vectors.Generics
-         (Storage => Storage, Index_Type => Index_Type);
-      with function Image (Self : Elements.Constant_Returned) return String;
-   procedure Test (V1 : in out Vectors.Vector);
-   --  Perform various tests.
-   --  All vectors should be empty on input. This is used to handle bounded
-   --  vectors.
+   function Nth (Index : Natural) return Integer is (Index);
+   package Int_Vecs is new Conts.Vectors.Definite_Bounded
+      (Positive, Integer);
+   package Tests is new Support_Vectors
+      (Test_Name       => "vectors-def-bounded",
+       Nth             => Nth,
+       Image           => Integer'Image,
+       Elements        => Int_Vecs.Elements.Traits,
+       Storage         => Int_Vecs.Storage.Traits,
+       Vectors         => Int_Vecs.Vectors);
 
-end Support;
+   procedure Test is
+      V1 : Int_Vecs.Vector (20);
+   begin
+      Tests.Test (V1);
+   end Test;
+end Test_Vectors_Definite_Bounded;

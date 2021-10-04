@@ -19,21 +19,57 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-pragma Ada_2012;
-with Conts.Vectors.Indefinite_Unbounded;
-with Support;           use Support;
+with Asserts;
+with Conts;
 
-procedure Main is
-   package Int_Vecs is new Conts.Vectors.Indefinite_Unbounded
-      (Index_Type, Integer);
-   function Image (R : Int_Vecs.Constant_Returned) return String
-      is (Integer'Image (R));
-   procedure T is new Support.Test
-      (Image           => Image,
-       Elements        => Int_Vecs.Elements.Traits,
-       Storage         => Int_Vecs.Storage.Traits,
-       Vectors         => Int_Vecs.Vectors);
-   V1 : Int_Vecs.Vector;
-begin
-   T (V1);
-end Main;
+package body Test_Algo_Random is
+   use Asserts.Long_Floats;
+
+   type My_Subtype is new Integer range 10 .. 20;
+   package Rand is new Conts.Default_Random (My_Subtype);
+
+   ----------
+   -- Test --
+   ----------
+
+   procedure Test is
+      Gen : Rand.Traits.Generator;
+
+      Total : Long_Float := 0.0;
+      Val  : My_Subtype;
+
+      Items_Count : constant := 200_000;
+      Mean : Long_Float;
+
+   begin
+      Rand.Reset (Gen);
+
+      for Count in 1 .. Items_Count loop
+         Rand.Traits.Rand (Gen, Val);
+         Total := Total + Long_Float (Val);
+      end loop;
+
+      Mean := Total / Long_Float (Items_Count);
+      Assert_Less
+        (abs (Mean - 15.0),
+         0.1,
+         "standard random numbers, unexpected mean");
+
+      declare
+         procedure Ranged is new Conts.Ranged_Random (Rand.Traits, 12, 14);
+      begin
+         Total := 0.0;
+         for Count in 1 .. Items_Count loop
+            Ranged (Gen, Val);
+            Total := Total + Long_Float (Val);
+         end loop;
+
+         Mean := Total / Long_Float (Items_Count);
+         Assert_Less
+            (abs (Mean - 13.0),
+             0.1,
+             "ranged random numbers, unexpected mean");
+      end;
+   end Test;
+
+end Test_Algo_Random;

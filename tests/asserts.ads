@@ -19,33 +19,41 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-pragma Ada_2012;
-with Conts.Elements;
-with Conts.Lists.Generics;
-with Conts.Lists.Storage;
+with Conts;              use Conts;
+with GNATCOLL.Asserts;
+with GNAT.Source_Info;
 
-generic
-   Test_Name : String;
+package Asserts is
 
-   with package Elements is new Conts.Elements.Traits (<>);
-   with package Storage is new Conts.Lists.Storage.Traits
-      (Elements => Elements, others => <>);
-   with package Lists is new Conts.Lists.Generics
-      (Storage => Storage);
+   type Testsuite_Reporter is
+      new GNATCOLL.Asserts.Error_Reporter with null record;
+   overriding procedure On_Assertion_Failed
+      (Self     : Testsuite_Reporter;
+       Msg      : String;
+       Details  : String;
+       Location : String;
+       Entity   : String);
 
-   with function Image (Self : Elements.Element_Type) return String;
+   Reporter : Testsuite_Reporter;
 
-   with function Nth (Index : Natural) return Elements.Element_Type;
-   --  So that the testsuite can generate elements to store in the container
+   Test_Failed : exception;
 
-   with function "="
-      (Left, Right : Elements.Element_Type) return Boolean is <>;
+   function Image (S : String) return String is (S);
 
-package Support is
+   package Asserts is new GNATCOLL.Asserts.Asserts (Reporter, Enabled => True);
+   package Integers    is new Asserts.Compare (Integer,    Integer'Image);
+   package Booleans    is new Asserts.Compare (Boolean,    Boolean'Image);
+   package Floats      is new Asserts.Compare (Float,      Float'Image);
+   package Long_Floats is new Asserts.Compare (Long_Float, Long_Float'Image);
+   package Counts      is new Asserts.Compare (Count_Type, Count_Type'Image);
+   package Strings     is new Asserts.Compare (String,     Image);
 
-   procedure Test (L1, L2 : in out Lists.List);
-   --  Perform various tests.
-   --  All lists should be empty on input. This is used to handle bounded
-   --  lists.
+   procedure Should_Not_Get_Here
+      (Msg      : String := "should not get here";
+       Location : String := GNAT.Source_Info.Source_Location;
+       Entity   : String := GNAT.Source_Info.Enclosing_Entity)
+      renames Asserts.Assert_Failed;
+   --  If some piece of code should never be executed, put this there to get an
+   --  assert failures if it ends up being executed.
 
-end Support;
+end Asserts;

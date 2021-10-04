@@ -1,4 +1,0 @@
-description: 'Basic test for vectors'
-driver: 'build_and_exec'
-srcdirs: ['../vectors_definite_bounded']
-baseline: '../vectors_definite_bounded/test.out'

@@ -21,14 +21,14 @@
 
 pragma Ada_2012;
 with Conts.Lists.Definite_Unbounded;
-with Support;
+with Support_Lists;
 
 package body Test_Lists_Definite_Limited_Unbounded is
 
    function Nth (Index : Natural) return Integer is (Index);
 
    package Int_Lists is new Conts.Lists.Definite_Unbounded (Integer);
-   package Tests is new Support
+   package Tests is new Support_Lists
       (Test_Name    => "lists-def-limited-unbounded",
        Image        => Integer'Image,
        Elements     => Int_Lists.Elements.Traits,

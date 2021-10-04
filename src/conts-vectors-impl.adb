@@ -191,6 +191,10 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
             L : constant Count_Type := Self.Last;
             B : constant Count_Type := To_Count (Before);
          begin
+            if B > Self.Last then
+               raise Invalid_Index with "invalid index in Insert";
+            end if;
+
             if L + Count > Self.Capacity then
                Storage.Resize (Self, L + Count, L, Force => False);
             end if;
@@ -240,6 +244,10 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
       Actual : constant Count_Type :=
         Count_Type'Min (Count, Self.Last - Idx + 1);
    begin
+      if Idx > Self.Last then
+         raise Invalid_Index with "invalid index in Delete";
+      end if;
+
       for C in 0 .. Actual - 1 loop
          Storage.Release_Element (Self, Idx + C);
       end loop;
@@ -270,6 +278,9 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
    function Last_Element
      (Self : Base_Vector'Class) return Constant_Returned_Type is
    begin
+      if Self.Last = No_Last then
+         raise Invalid_Index with "empty vector";
+      end if;
       return Storage.Elements.To_Constant_Returned
         (Storage.Get_Element (Self, Self.Last));
    end Last_Element;
@@ -339,6 +350,9 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
    is
       Pos : constant Count_Type := To_Count (Index);
    begin
+      if Pos > Self.Last then
+         raise Invalid_Index with "Invalid index in Replace_Element";
+      end if;
       Storage.Release_Element (Self, Pos);
       Storage.Set_Element
         (Self, Pos, Storage.Elements.To_Stored (New_Item));
@@ -354,26 +368,33 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
    is
       L     : constant Count_Type := To_Count (Left);
       R     : constant Count_Type := To_Count (Right);
-      L_Tmp : Stored_Type := Storage.Get_Element (Self, L);
-      R_Tmp : Stored_Type := Storage.Get_Element (Self, R);
    begin
-      --  Since we will only keep one copy of the elements in the end, we
-      --  should test Movable here, not Copyable.
-      if Storage.Elements.Movable then
-         Storage.Set_Element (Self, L, R_Tmp);
-         Storage.Set_Element (Self, R, L_Tmp);
-
-      else
-         declare
-            L2 : constant Stored_Type := Storage.Elements.Copy (L_Tmp);
-            R2 : constant Stored_Type := Storage.Elements.Copy (R_Tmp);
-         begin
-            Storage.Release_Element (Self, L);
-            Storage.Set_Element (Self, L, R2);
-            Storage.Release_Element (Self, R);
-            Storage.Set_Element (Self, R, L2);
-         end;
+      if L > Self.Last or R > Self.Last then
+         raise Invalid_Index with "invalid index in Delete";
       end if;
+
+      declare
+         L_Tmp : Stored_Type := Storage.Get_Element (Self, L);
+         R_Tmp : Stored_Type := Storage.Get_Element (Self, R);
+      begin
+         --  Since we will only keep one copy of the elements in the end, we
+         --  should test Movable here, not Copyable.
+         if Storage.Elements.Movable then
+            Storage.Set_Element (Self, L, R_Tmp);
+            Storage.Set_Element (Self, R, L_Tmp);
+
+         else
+            declare
+               L2 : constant Stored_Type := Storage.Elements.Copy (L_Tmp);
+               R2 : constant Stored_Type := Storage.Elements.Copy (R_Tmp);
+            begin
+               Storage.Release_Element (Self, L);
+               Storage.Set_Element (Self, L, R2);
+               Storage.Release_Element (Self, R);
+               Storage.Set_Element (Self, R, L2);
+            end;
+         end if;
+      end;
    end Swap;
 
 end Conts.Vectors.Impl;

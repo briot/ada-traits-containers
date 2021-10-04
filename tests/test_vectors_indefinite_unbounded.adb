@@ -19,39 +19,26 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Conts;              use Conts;
-with GNATCOLL.Asserts;
-with GNAT.Source_Info;
+pragma Ada_2012;
+with Conts.Vectors.Indefinite_Unbounded;
+with Support_Vectors;
 
-package Asserts is
+package body Test_Vectors_Indefinite_Unbounded is
 
-   type Testsuite_Reporter is
-      new GNATCOLL.Asserts.Error_Reporter with null record;
-   overriding procedure On_Assertion_Failed
-      (Self     : Testsuite_Reporter;
-       Msg      : String;
-       Details  : String;
-       Location : String;
-       Entity   : String);
+   function Nth (Index : Natural) return Integer is (Index);
+   package Int_Vecs is new Conts.Vectors.Indefinite_Unbounded
+      (Positive, Integer);
+   package Tests is new Support_Vectors
+      (Test_Name       => "vectors-indef-unbounded",
+       Nth             => Nth,
+       Image           => Integer'Image,
+       Elements        => Int_Vecs.Elements.Traits,
+       Storage         => Int_Vecs.Storage.Traits,
+       Vectors         => Int_Vecs.Vectors);
 
-   Reporter : Testsuite_Reporter;
-
-   Test_Failed : exception;
-
-   function Image (S : String) return String is (S);
-
-   package Asserts is new GNATCOLL.Asserts.Asserts (Reporter, Enabled => True);
-   package Integers is new Asserts.Compare (Integer,    Integer'Image);
-   package Booleans is new Asserts.Compare (Boolean,    Boolean'Image);
-   package Counts   is new Asserts.Compare (Count_Type, Count_Type'Image);
-   package Strings  is new Asserts.Compare (String,     Image);
-
-   procedure Should_Not_Get_Here
-      (Msg      : String := "should not get here";
-       Location : String := GNAT.Source_Info.Source_Location;
-       Entity   : String := GNAT.Source_Info.Enclosing_Entity)
-      renames Asserts.Assert_Failed;
-   --  If some piece of code should never be executed, put this there to get an
-   --  assert failures if it ends up being executed.
-
-end Asserts;
+   procedure Test is
+      V1 : Int_Vecs.Vector;
+   begin
+      Tests.Test (V1);
+   end Test;
+end Test_Vectors_Indefinite_Unbounded;

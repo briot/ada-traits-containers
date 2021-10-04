@@ -23,7 +23,7 @@ pragma Ada_2012;
 with Conts.Elements.Definite;
 with Conts.Lists.Generics;
 with Conts.Lists.Storage.Bounded;
-with Support;
+with Support_Lists;
 
 package body Test_Lists_Definite_Limited_Bounded is
 
@@ -33,7 +33,7 @@ package body Test_Lists_Definite_Limited_Bounded is
    package S is new Conts.Lists.Storage.Bounded
       (E.Traits, Conts.Limited_Base);
    package Int_Lists is new Conts.Lists.Generics (S.Traits);
-   package Tests is new Support
+   package Tests is new Support_Lists
       (Test_Name    => "lists-def-limited-bounded",
        Image        => Integer'Image,
        Elements     => E.Traits,

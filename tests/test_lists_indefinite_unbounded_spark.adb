@@ -21,7 +21,7 @@
 
 pragma Ada_2012;
 with Conts.Lists.Indefinite_Unbounded_SPARK;
-with Support;
+with Support_Lists;
 
 package body Test_Lists_Indefinite_Unbounded_Spark is
 
@@ -29,7 +29,7 @@ package body Test_Lists_Indefinite_Unbounded_Spark is
 
    package Int_Lists is new Conts.Lists.Indefinite_Unbounded_SPARK
       (Integer);
-   package Tests is new Support
+   package Tests is new Support_Lists
       (Test_Name    => "lists-indef-unbounded-spark",
        Image        => Integer'Image,
        Elements     => Int_Lists.Elements.Traits,

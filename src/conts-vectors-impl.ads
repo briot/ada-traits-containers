@@ -58,6 +58,8 @@ package Conts.Vectors.Impl with SPARK_Mode is
    subtype Cursor is Extended_Index;
    No_Element : constant Cursor := No_Index;
 
+   Invalid_Index : exception;
+
    Last_Count : constant Count_Type :=
      (if Index_Type'Pos (Index_Type'Last) < Index_Type'Pos (Index_Type'First)
       then 0

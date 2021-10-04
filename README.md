@@ -47,36 +47,3 @@ Boost Graph Library (http://www.boost.org).
 You must also download and install the
 [GNAT Components Collection](http://libre.adacore.com).
 
-Finally, in order to run the testsuite, you need to install GNATpython and
-PyYAML in your Python2 environment. You can install both with the following
-command:
-
-```sh
-pip install -r REQUIREMENTS.txt
-```
-
-Once this is done, modify the [shared.gpr](src/shared.gpr) file.
-Set the variable ```Boost_Include''' to point to the install prefix
-for Boost:
-
-```
-   Boost_Include := ("-I/usr/include");
-```
-
-Finally, compile and run the test with
-
-```
-make all perfs
-```
-
-and finally open the file [tests/perfs/index.html](index.html)
-in a browser to view the performance comparison.
-
-## Editing with GNAT Programming Studio
-
-To edit with GPS, including the tests, you must first run:
-
-    make projects
-
-Then you can edit by launching GPS from the top directory, which will
-automatically load the aggregate project 'root.gpr'
