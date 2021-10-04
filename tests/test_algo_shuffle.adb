@@ -21,11 +21,13 @@
 
 pragma Ada_2012;
 with Ada.Finalization;
-with Conts.Algorithms;  use Conts.Algorithms;
+with Asserts;
+with Conts.Algorithms;
 with Conts.Vectors.Definite_Unbounded;
-with Ada.Text_IO;       use Ada.Text_IO;
 
-procedure Main is
+package body Test_Algo_Shuffle is
+   use Asserts.Booleans;
+
    subtype Index_Type is Positive;
 
    package Int_Vecs is new Conts.Vectors.Definite_Unbounded
@@ -36,29 +38,34 @@ procedure Main is
       (Cursors => Int_Vecs.Cursors.Random_Access,
        Random  => Rand.Traits);
    function Equals is new Conts.Algorithms.Equals
-      (Cursors => Int_Vecs.Cursors.Random_Access,
+      (Cursors => Int_Vecs.Cursors.Forward,
        Getters => Int_Vecs.Maps.Element_From_Index);
 
-   V, V2 : Vector;
-   G : Rand.Generator;
+   ----------
+   -- Test --
+   ----------
 
-begin
-   for J in 1 .. 40 loop
-      V.Append (J);
-   end loop;
+   procedure Test is
+      V, V2 : Vector;
+      G : Rand.Generator;
+   begin
+      for J in 1 .. 40 loop
+         V.Append (J);
+      end loop;
 
-   Rand.Reset (G);
+      Rand.Reset (G);
 
-   V2 := V;
-   Shuffle (V, G);
-   if Equals (V, V2) then
-      Put_Line ("Shuffle should change the order of elements");
-   end if;
+      V2 := V;
+      Shuffle (V, G);
+      Assert
+         (Equals (V, V2), False,
+          "Shuffle should change the order of elements");
 
-   V2 := V;
-   Shuffle (V, G);
-   if Equals (V, V2) then
-      Put_Line ("Shuffle should change the order of elements");
-   end if;
+      V2 := V;
+      Shuffle (V, G);
+      Assert
+         (Equals (V, V2), False,
+          "Shuffle should change the order of elements");
+   end Test;
 
-end Main;
+end Test_Algo_Shuffle;

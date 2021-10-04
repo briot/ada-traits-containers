@@ -23,6 +23,7 @@ pragma Ada_2012;
 with Ada.Command_Line;
 with GNAT.Strings;     use GNAT.Strings;
 with GNATCOLL.Utils;   use GNATCOLL.Utils;
+with Perf_Sort;
 with Perf_Support;     use Perf_Support;
 with QGen;             use QGen;
 with Report;           use Report;
@@ -92,6 +93,8 @@ begin
    Run_Test ("graph_ada_custom", Custom_Graph.Test_Custom'Access);
    Run_Test ("graph_ada_adjacency_list",
              Custom_Graph.Test_Adjacency_List'Access);
+
+   Run_Test ("sort", Perf_Sort.Test'Access);
 
    Test_QGen;
 

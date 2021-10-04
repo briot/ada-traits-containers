@@ -81,6 +81,11 @@ factory('Reftime', function() {
                      ref_test = test;
                      refs[name] = ref_test;
                   }
+               } else {
+                  ref_test = refs[name] || ref_test;
+                  if (ref_test === undefined) {
+                     window.console.error('Unknown reference test for', name);
+                  }
                }
                test.ref = ref_test;
             });
