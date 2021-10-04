@@ -27,13 +27,13 @@ GPRINSTALL=gprinstall ${RBD} -p -m ${GPRBUILD_OPTIONS} \
 			  --install-name='containers' \
 			  --project-subdir=lib/gnat
 
+.PHONY: docs all install ada_test clean
 
 all:
 	${GPRBUILD} -P${GPR_CONTS} -XBUILD=${BUILD}
 
-.PHONY: doc
-doc:
-	cd doc; ${MAKE} html
+docs:
+	cd docs_src; ${MAKE} html
 
 install:
 	${GPRINSTALL} -P${GPR_CONTS} --prefix=${PREFIX}

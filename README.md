@@ -23,8 +23,8 @@ flexibility it proposes:
 All this flexibility is done via the intensive use of generic
 packages, themselves used to instantiate other generic packages.
 
-Check the [documentation](doc/making_of.rst) for more details on the
-design of the API, and its current usage.
+Check the [documentation](https://briot.github.io/ada-traits-containers/) for
+more details on the design of the API, and its current usage.
 
 ## Compiling
 

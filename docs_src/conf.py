@@ -48,7 +48,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Generic Ada Library for Algorithms and Containers (GALAC)'
+project = u'Generic Ada Library for Algorithms and Containers'
 copyright = u'2016, AdaCore'
 author = u'AdaCore'
 
@@ -116,7 +116,7 @@ html_theme = 'alabaster'
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    #'page_width': '1280px'
+    'page_width': '1440px'
 }
 
 # Add any paths that contain custom themes here, relative to this directory.

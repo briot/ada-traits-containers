@@ -5,21 +5,25 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Graph algorithms &#8212; Generic Ada Library for Algorithms and Containers (GALAC) 0.1 documentation</title>
+    <title>Search &#8212; Generic Ada Library for Algorithms and Containers 0.1 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Design considerations" href="design_considerations.html" />
-    <link rel="prev" title="Graph data type" href="graphs.html" />
+    <link rel="search" title="Search" href="#" />
+  <script src="searchindex.js" defer></script>
+  
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
 
   </head><body>
   
@@ -29,17 +33,34 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="graph-algorithms">
-<h1>Graph algorithms<a class="headerlink" href="#graph-algorithms" title="Permalink to this headline">¶</a></h1>
-</div>
-
+  <h1 id="search-documentation">Search</h1>
+  <div id="fallback" class="admonition warning">
+  <script>$('#fallback').hide();</script>
+  <p>
+    Please activate JavaScript to enable the search
+    functionality.
+  </p>
+  </div>
+  <p>
+    Searching for multiple words only shows matches that contain
+    all words.
+  </p>
+  <form action="" method="get">
+    <input type="text" name="q" aria-labelledby="search-documentation" value="" />
+    <input type="submit" value="search" />
+    <span id="search-progress" style="padding-left: 10px"></span>
+  </form>
+  
+  <div id="search-results">
+  
+  </div>
 
           </div>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">Generic Ada Library for Algorithms and Containers (GALAC)</a></h1>
+<h1 class="logo"><a href="index.html">Generic Ada Library for Algorithms and Containers</a></h1>
 
 
 
@@ -49,7 +70,7 @@
 
 
 <h3>Navigation</h3>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="making_of.html">The “making of” of a generic library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="conventions.html">Naming and Coding Conventions</a></li>
@@ -58,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="lists.html"><cite>List</cite> data type</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maps.html"><cite>Map</cite> data type</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graphs.html"><cite>Graph</cite> data type</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Graph algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_algorithms.html">Graph algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="design_considerations.html">Design considerations</a></li>
 </ul>
 
@@ -66,21 +87,9 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="graphs.html" title="previous chapter"><cite>Graph</cite> data type</a></li>
-      <li>Next: <a href="design_considerations.html" title="next chapter">Design considerations</a></li>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -92,9 +101,6 @@
       Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
       
-      |
-      <a href="_sources/graph_algorithms.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     
