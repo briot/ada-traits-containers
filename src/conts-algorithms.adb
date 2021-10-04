@@ -312,25 +312,21 @@ package body Conts.Algorithms is
    ------------
 
    function Equals (Left, Right  : Cursors.Container) return Boolean is
-      use Cursors;
-      L_First : constant Cursors.Index_Type := Cursors.First (Left);
-      L_Last  : constant Cursors.Index_Type := Cursors.Last (Left);
-      R_First : constant Cursors.Index_Type := Cursors.First (Right);
-      R_Last  : constant Cursors.Index_Type := Cursors.Last (Right);
+      L_C : Cursors.Cursor := Cursors.First (Left);
+      R_C : Cursors.Cursor := Cursors.First (Right);
    begin
-      if Distance (L_Last, L_First) /= Distance (R_Last, R_First) then
-         return False;
-      end if;
-
-      for L in L_First .. L_Last loop
-         if Getters.Get (Left, L) /=
-            Getters.Get (Right, R_First + Distance (L, L_First))
+      while Cursors.Has_Element (Left, L_C) loop
+         if not Cursors.Has_Element (Right, R_C)
+            or else Getters.Get (Left, L_C) /= Getters.Get (Right, R_C)
          then
             return False;
          end if;
+
+         L_C := Cursors.Next (Left, L_C);
+         R_C := Cursors.Next (Right, R_C);
       end loop;
 
-      return True;
+      return not Cursors.Has_Element (Right, R_C);
    end Equals;
 
 end Conts.Algorithms;

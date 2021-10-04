@@ -95,10 +95,10 @@ package Conts.Algorithms.SPARK is
    ------------
 
    generic
-      with package Cursors is new Conts.Cursors.Random_Access_Cursors (<>);
+      with package Cursors is new Conts.Cursors.Forward_Cursors (<>);
       with package Getters is new Conts.Properties.Read_Only_Maps
         (Map_Type => Cursors.Container,
-         Key_Type => Cursors.Index_Type,
+         Key_Type => Cursors.Cursor,
          others   => <>);
       with function "=" (K1, K2 : Getters.Element) return Boolean is <>;
       with package Content is new Conts.Properties.SPARK.Content_Models
