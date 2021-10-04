@@ -40,7 +40,7 @@ install:
 
 # Run Ada tests (not using gnatpython)
 ada_test:
-	cd tests/perfs; python3 ./generate_test.py && gprbuild -XBUILD=${BUILD} && ./obj/main && open index.html
+	cd tests/perfs; python3 ./generate_test.py && ${GPRBUILD} -XBUILD=${BUILD} && ./obj/main && open index.html
 
 # Run all tests, except manual ones
 test:
