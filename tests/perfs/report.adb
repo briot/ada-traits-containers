@@ -217,13 +217,13 @@ package body Report is
    begin
       Self.Global_Result.Set_Field ("tests", Self.All_Tests);
 
-      Create (F, Out_File, "data.js");
+      Create (F, Out_File, "../../docs/perfs/data.js");
       Put (F, "var data = ");
       Put (F, GNATCOLL.JSON.Write (Self.Global_Result, Compact => False));
       Put (F, ";");
       Close (F);
 
-      Put_Line ("Open file://" & Get_Current_Dir & "/index.html");
+      Put_Line ("Open file://" & Get_Current_Dir & "/../../docs/perfs/index.html");
    end Display;
 
    --------------------------

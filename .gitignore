@@ -6,5 +6,4 @@ lib/
 doc/build/
 
 tests/perfs/generated/
-tests/perfs/data.js
 tests/out

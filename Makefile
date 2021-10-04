@@ -27,9 +27,11 @@ GPRINSTALL=gprinstall ${RBD} -p -m ${GPRBUILD_OPTIONS} \
 			  --install-name='containers' \
 			  --project-subdir=lib/gnat
 
-.PHONY: docs all install ada_test clean
+.PHONY: docs all build install ada_test clean
 
-all:
+all:  build docs ada_test
+
+build:
 	${GPRBUILD} -P${GPR_CONTS} -XBUILD=${BUILD}
 
 docs:
@@ -40,7 +42,10 @@ install:
 
 # Run Ada tests (not using gnatpython)
 ada_test:
-	cd tests/perfs; python3 ./generate_test.py && ${GPRBUILD} -XBUILD=${BUILD} && ./obj/main && open index.html
+	cd tests/perfs; \
+		python3 ./generate_test.py && \
+		${GPRBUILD} -XBUILD=Production && \
+		./obj/main
 
 # Run all tests, except manual ones
 test:
@@ -71,4 +76,6 @@ clean:
 	${PPATH} gprclean -P${GPR_ROOT} -XBUILD=Production -r -q
 	-rm -f tests/*/auto_*.gpr
 	-rm -rf tests/*/obj/
+	cd docs_src; ${MAKE} clean
+	-rm -f docs/perfs/data.js
 
