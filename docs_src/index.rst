@@ -9,6 +9,7 @@ Contents:
    intro
    making_of
    conventions
+   cursors
    elements
    vectors
    lists

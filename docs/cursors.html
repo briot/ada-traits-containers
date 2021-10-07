@@ -1,0 +1,248 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vectors and Properties &#8212; Generic Ada Library for Algorithms and Containers 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Element Traits" href="elements.html" />
+    <link rel="prev" title="Naming and Coding Conventions" href="conventions.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vectors-and-properties">
+<h1>Vectors and Properties<a class="headerlink" href="#vectors-and-properties" title="Permalink to this headline">¶</a></h1>
+<p>In a lot of libraries, traversing a container and retrieving elements is
+done via a unique type (named <code class="docutils literal notranslate"><span class="pre">Cursor</span></code> in the standard Ada containers for
+instance).</p>
+<p>Tying those two notions of traversing and retrieving is however somewhat
+limiting, and forces code duplication.</p>
+<div class="section" id="cursors">
+<h2>Cursors<a class="headerlink" href="#cursors" title="Permalink to this headline">¶</a></h2>
+<p>There are multiple ways to access the elements of a containers. Those depend
+on both the type of the container (not all containers can provide all kinds
+of iteration), as well as the need of algorithms.</p>
+<p>All containers provide cursors, which you can use to traverse the container.</p>
+<p>All the containers provided in this library have operations to retrieve the
+element pointed to by a cursor. Those are generally called <code class="docutils literal notranslate"><span class="pre">Element</span></code>.</p>
+<p>Things are a bit more complex in the case of maps, since you might want to
+retrieve either the key pointed to by the cursor, or the actual element. So
+two operations are provided (<code class="docutils literal notranslate"><span class="pre">As_Element</span></code> and <code class="docutils literal notranslate"><span class="pre">As_Key</span></code>).</p>
+</div>
+<div class="section" id="cursor-traits">
+<h2>Cursor traits<a class="headerlink" href="#cursor-traits" title="Permalink to this headline">¶</a></h2>
+<p>The purpose of this library is to write reusable algorithms, which can be
+used with any kind of container, even those not provided in this library.</p>
+<p>For this, the algorithms need general notions like “give me all elements in
+the container”. As you might have guessed, this is provided by the use of
+one of the traits packages defined in <code class="file docutils literal notranslate"><span class="pre">conts-cursors.ads</span></code>:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Forward_Cursors</span></code></p>
+<blockquote>
+<div><blockquote>
+<div><p>are the least capable. They are mostly meant to iterate all elements
+of the container in a container-defined order, from beginning to end,
+with no possibility to move backward. Algorithms should use those if
+all they need it to look at each element of the container at most
+once.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">Bidirectional_Cursors</span></code></p>
+<blockquote>
+<div><p>allow traversing in both directions (forward or backward). They are
+slightly more flexible that forward_cursors. They are often implemented
+by all containers that store their data in memory. But they would not
+be applicable when accessing an element also removes it from the
+container, like reading from a socket for instance.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">Random_Access_Cursors</span></code></p>
+<blockquote>
+<div><p>let users access elements in any direction and at any place within the
+container. Those cursors generally take the form of an index, so are
+easy to manipulate and create by application. They apply to array-like
+containers where the position of an element in memory can easily be
+computed.</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>Note that it would often be possible to emulate a random_access cursor from a
+forward_cursor (you would have to always start from the first element in the
+container, and move forward n times). This is however highly inefficient.</p>
+<p>All containers provide one or more of these traits packages, depending on their
+built-in capabilities and whether they are able to execute the corresponding
+cursor operations in constant time (so a list does not provide a random_access
+cursor for instance).</p>
+</div>
+<div class="section" id="property-maps">
+<h2>Property maps<a class="headerlink" href="#property-maps" title="Permalink to this headline">¶</a></h2>
+<p>The cursor traits packages we described above are only about moving cursors.
+They do not provide any way to retrieve the element associated with the cursor,
+or to modify it.</p>
+<p>This retrieval is left to an orthogonal set of traits packages, named property
+maps.</p>
+<p>Say we were creating an algorithm that executes a callback for each element
+in any container. It would need to iterate, so would receive an instance
+of a <code class="docutils literal notranslate"><span class="pre">Forward_Cursors</span></code> traits package. It then needs to be able to retrieve
+the element before it can execute the callback.</p>
+<p>But what element are we talking about ? Is this the element_type ? or in the
+case of a map is it the key_type ? Or maybe some other value computed
+indirectly from one of those ? Or perhaps by looking into another container
+in parallel ?</p>
+<p>Instead of having a lot of versions of <code class="docutils literal notranslate"><span class="pre">Forward_Cursors</span></code> that return each
+of the possibility we describe, we instead pass a second parameter to our
+algorithm, which receives a cursors and returns the element. The simplest
+approach would be to pass an access-to-subprogram, for instance:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Elements</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Element_Traits</span> <span class="p">(&lt;&gt;);</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Cursors</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Conts</span><span class="p">.</span><span class="n">Cursors</span><span class="p">.</span><span class="n">Forward_Cursors</span> <span class="p">(&lt;&gt;);</span>
+   <span class="kn">with</span> <span class="nn">function</span> <span class="n">Get</span>
+      <span class="p">(</span><span class="n">C</span> <span class="p">:</span> <span class="n">Cursors</span><span class="p">.</span><span class="n">Container</span><span class="p">;</span> <span class="n">C</span> <span class="p">:</span> <span class="n">Cursors</span><span class="p">.</span><span class="n">Cursor_Type</span><span class="p">)</span>
+      <span class="kr">return</span> <span class="n">Element_Type</span><span class="p">;</span>
+<span class="kd">procedure</span> <span class="nf">My_Algorithm</span> <span class="p">(</span><span class="nv">C</span> <span class="p">: </span><span class="nv">Cursors</span><span class="p">.</span><span class="nv">Container</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This is the usual profile we would use when working with standard Ada
+containers. However, this assumes that the container and the cursor are
+enough to retrieve the element we are interested in (likely true in a large
+majority of cases, but not all).</p>
+<p>So we would instead write it as:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Cursors</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Conts</span><span class="p">.</span><span class="n">Cursors</span><span class="p">.</span><span class="n">Forward_Cursors</span> <span class="p">(&lt;&gt;);</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Maps</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Conts</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">Read_Only_Maps</span>
+      <span class="p">(</span><span class="n">Key_Type</span> <span class="p">=&gt;</span> <span class="n">Cursors</span><span class="p">.</span><span class="n">Cursor_Type</span><span class="p">,</span> <span class="kr">others</span> <span class="p">=&gt;</span> <span class="p">&lt;&gt;);</span>
+<span class="kd">procedure</span> <span class="nf">My_Algorithm</span>
+   <span class="p">(</span><span class="nv">C</span>   <span class="p">: </span><span class="nv">Cursors</span><span class="p">.</span><span class="nv">Container</span><span class="p">;</span>
+    <span class="nv">Map</span> <span class="p">: </span><span class="nv">Maps</span><span class="p">.</span><span class="nv">Map_Type</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>So now the algorithm would iterate with cursors, then <code class="docutils literal notranslate"><span class="pre">Get</span></code> from the
+map and the cursor the element to use (which is visible nowhere in the
+spec, so left entirely to the user). The same algorithm can be used to
+retrieve keys from a map, elements from a map, or a record containing
+both for instance. It can also be used to retrieve data not stored in
+the container itself, only stored in a separate map object.</p>
+<p>In a large majority of cases, the container itself acts as the map, so
+the library would also provide a simpler version of the algorithm
+as:</p>
+<div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Cursors</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Conts</span><span class="p">.</span><span class="n">Cursors</span><span class="p">.</span><span class="n">Forward_Cursors</span> <span class="p">(&lt;&gt;);</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Maps</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Conts</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">Read_Only_Maps</span>
+      <span class="p">(</span><span class="n">Key_Type</span> <span class="p">=&gt;</span> <span class="n">Cursors</span><span class="p">.</span><span class="n">Cursor_Type</span><span class="p">,</span>
+       <span class="n">Map_Type</span> <span class="p">=&gt;</span> <span class="n">Cursors</span><span class="p">.</span><span class="n">Container</span><span class="p">,</span>
+       <span class="kr">others</span> <span class="p">=&gt;</span> <span class="p">&lt;&gt;);</span>
+<span class="kd">procedure</span> <span class="nf">My_Algorithm_Internal</span> <span class="p">(</span><span class="nv">C</span> <span class="p">: </span><span class="nv">Cursors</span><span class="p">.</span><span class="nv">Container</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The true power of those properties maps come into play when manipulating
+graphs. Algorithms often need to associate extra temporary data with the
+vertices of the graph (like a color, to know whether a vertex was already
+visited for instance).</p>
+<p>We could of course store that color directly in the vertices. But then,
+what happens if we run the algorithm twice concurrently, they would both
+see the color set by the other instance of the algorithm. Or what happens
+when another algorithm comes along and needs to store a distance. Do we
+have to modify the definition of vertices ?</p>
+<p>Also what happens if the graph is actually some data structure we do not
+control and cannot change because it is defined somewhere in user code,
+and only used via traits packages ?</p>
+<p>In those cases, we use property maps as external objects, which exist
+for instance in each running instance of the algorithm. That way they
+do not interfere with one another. They can store additional data if they
+so wish. This of course comes at a minor extra performance cost since we
+need to look up those properties in a separate container.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Generic Ada Library for Algorithms and Containers</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="making_of.html">The “making of” of a generic library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html">Naming and Coding Conventions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Vectors and Properties</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#cursors">Cursors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cursor-traits">Cursor traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#property-maps">Property maps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="elements.html">Element Traits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vectors.html"><cite>Vector</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lists.html"><cite>List</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maps.html"><cite>Map</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphs.html"><cite>Graph</cite> data type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_algorithms.html">Graph algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_considerations.html">Design considerations</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="conventions.html" title="previous chapter">Naming and Coding Conventions</a></li>
+      <li>Next: <a href="elements.html" title="next chapter">Element Traits</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, AdaCore.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/cursors.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
