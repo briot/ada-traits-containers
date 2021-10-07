@@ -31,15 +31,6 @@ package body Conts.Graphs.DFS is
    package body With_Map is
       use Graphs;
 
-      type Acyclic_Visitor is new Graphs.DFS_Visitor with record
-         Has_Cycle : Boolean := False;
-      end record;
-      overriding procedure Back_Edge
-        (Self : in out Acyclic_Visitor; G : Graph; E : Edge) with Inline;
-      overriding procedure Should_Stop
-        (Self : Acyclic_Visitor; G : Graph; V : Vertex;
-         Stop : in out Boolean) with Inline;
-
       type Vertex_Info is record
          VC : Graphs.Vertices.Stored_Type;
          EC : Graphs.Out_Edges_Cursors.Cursor;  --  next edge to examine
@@ -60,38 +51,13 @@ package body Conts.Graphs.DFS is
          Graphs.Vertices.Release (Self.VC);
       end Free;
 
-      -----------------
-      -- Should_Stop --
-      -----------------
-
-      overriding procedure Should_Stop
-        (Self : Acyclic_Visitor; G : Graph; V : Vertex;
-         Stop : in out Boolean)
-      is
-         pragma Unreferenced (G, V);
-      begin
-         Stop := Self.Has_Cycle;
-      end Should_Stop;
-
-      ---------------
-      -- Back_Edge --
-      ---------------
-
-      overriding procedure Back_Edge
-        (Self : in out Acyclic_Visitor; G : Graph; E : Edge)
-      is
-         pragma Unreferenced (G, E);
-      begin
-         Self.Has_Cycle := True;
-      end Back_Edge;
-
       ------------
       -- Search --
       ------------
 
       procedure Search
         (G      : Graphs.Graph;
-         Visit  : in out Visitor;
+         Visit  : in out Visitors.Visitor_Type;
          Colors : out Color_Maps.Map;
          V      : Graphs.Vertex := Graphs.Null_Vertex)
       is
@@ -107,9 +73,9 @@ package body Conts.Graphs.DFS is
             Info : Vertex_Info;
          begin
             Color_Maps.Set (Colors, Start, Gray);
-            Visit.Discover_Vertex (G, Start);
+            Visitors.Discover_Vertex (Visit, Start);
 
-            Visit.Should_Stop (G, Start, Stop => Terminated);
+            Visitors.Should_Stop (Visit, Start, Stop => Terminated);
             if Terminated then
                return;
             end if;
@@ -132,7 +98,7 @@ package body Conts.Graphs.DFS is
                          (Graphs.Vertices.To_Constant_Returned (Info.VC));
                   begin
                      Color_Maps.Set (Colors, V, Black);
-                     Visit.Finish_Vertex (G, V);
+                     Visitors.Finish_Vertex (Visit, V);
                   end;
 
                else
@@ -153,13 +119,14 @@ package body Conts.Graphs.DFS is
                      --  ??? Might be using secondary stack
                      Target : constant Vertex := Get_Target (G, E);
                   begin
-                     Visit.Examine_Edge (G, E);
+                     Visitors.Examine_Edge (Visit, E);
                      case Color_Maps.Get (Colors, Target) is
                      when White =>
-                        Visit.Tree_Edge (G, E);
+                        Visitors.Tree_Edge (Visit, E);
                         Color_Maps.Set (Colors, Target, Gray);
-                        Visit.Discover_Vertex (G, Target);
-                        Visit.Should_Stop (G, Target, Stop => Terminated);
+                        Visitors.Discover_Vertex (Visit, Target);
+                        Visitors.Should_Stop
+                           (Visit, Target, Stop => Terminated);
                         if Terminated then
                            return;
                         end if;
@@ -168,10 +135,10 @@ package body Conts.Graphs.DFS is
                             EC => Graphs.Out_Edges_Cursors.First (G, Target)));
 
                      when Gray =>
-                        Visit.Back_Edge (G, E);
+                        Visitors.Back_Edge (Visit, E);
 
                      when Black =>
-                        Visit.Forward_Or_Cross_Edge (G, E);
+                        Visitors.Forward_Or_Cross_Edge (Visit, E);
                      end case;
                   end;
                end if;
@@ -189,12 +156,12 @@ package body Conts.Graphs.DFS is
          while Graphs.Vertex_Cursors.Has_Element (G, VC) loop
             Color_Maps.Set
               (Colors, Graphs.Vertex_Maps.Get (G, VC), White);
-            Visit.Initialize_Vertex (G, Graphs.Vertex_Maps.Get (G, VC));
+            Visitors.Initialize_Vertex (Visit, Graphs.Vertex_Maps.Get (G, VC));
             Count := Count + 1;
             VC := Graphs.Vertex_Cursors.Next (G, VC);
          end loop;
 
-         Visit.Vertices_Initialized (G, Count);
+         Visitors.Vertices_Initialized (Visit, Count);
 
          --  Preallocate some space, to improve performance
          --  Unless the graph is a tree with depth n, we do not need as many
@@ -206,7 +173,7 @@ package body Conts.Graphs.DFS is
          --  Search from the start vertex
 
          if V /= Graphs.Null_Vertex then
-            Visit.Start_Vertex (G, V);
+            Visitors.Start_Vertex (Visit, V);
             Impl (V);
          end if;
 
@@ -232,7 +199,7 @@ package body Conts.Graphs.DFS is
 
       procedure Search_Recursive
         (G      : Graphs.Graph;
-         Visit  : in out Visitor;
+         Visit  : in out Visitors.Visitor_Type;
          Colors : out Color_Maps.Map;
          V      : Graphs.Vertex := Graphs.Null_Vertex)
       is
@@ -246,8 +213,8 @@ package body Conts.Graphs.DFS is
             EC   : Out_Edges_Cursors.Cursor;
          begin
             Color_Maps.Set (Colors, Current, Gray);
-            Visit.Discover_Vertex (G, Current);
-            Visit.Should_Stop (G, Current, Terminated);
+            Visitors.Discover_Vertex (Visit, Current);
+            Visitors.Should_Stop (Visit, Current, Terminated);
             if not Terminated then
                EC := Out_Edges_Cursors.First (G, Current);
                while Out_Edges_Cursors.Has_Element (G, EC) loop
@@ -255,17 +222,17 @@ package body Conts.Graphs.DFS is
                      E      : Edge renames Out_Edges_Cursors.Element (G, EC);
                      Target : constant Vertex := Get_Target (G, E);
                   begin
-                     Visit.Examine_Edge (G, E);
+                     Visitors.Examine_Edge (Visit, E);
                      case Color_Maps.Get (Colors, Target) is
                      when White =>
-                        Visit.Tree_Edge (G, E);
+                        Visitors.Tree_Edge (Visit, E);
                         Impl (Target);
 
                      when Gray =>
-                        Visit.Back_Edge (G, E);
+                        Visitors.Back_Edge (Visit, E);
 
                      when Black =>
-                        Visit.Forward_Or_Cross_Edge (G, E);
+                        Visitors.Forward_Or_Cross_Edge (Visit, E);
                      end case;
                   end;
                   EC := Out_Edges_Cursors.Next (G, EC);
@@ -273,7 +240,7 @@ package body Conts.Graphs.DFS is
             end if;
 
             Color_Maps.Set (Colors, Current, Black);
-            Visit.Finish_Vertex (G, Current);
+            Visitors.Finish_Vertex (Visit, Current);
          end Impl;
 
          use type Vertex;
@@ -286,17 +253,17 @@ package body Conts.Graphs.DFS is
          VC := Vertex_Cursors.First (G);
          while Vertex_Cursors.Has_Element (G, VC) loop
             Color_Maps.Set (Colors, Vertex_Maps.Get (G, VC), White);
-            Visit.Initialize_Vertex (G, Vertex_Maps.Get (G, VC));
+            Visitors.Initialize_Vertex (Visit, Vertex_Maps.Get (G, VC));
             Count := Count + 1;
             VC := Vertex_Cursors.Next (G, VC);
          end loop;
 
-         Visit.Vertices_Initialized (G, Count);
+         Visitors.Vertices_Initialized (Visit, Count);
 
          --  Search from the start vertex
 
          if V /= Graphs.Null_Vertex then
-            Visit.Start_Vertex (G, V);
+            Visitors.Start_Vertex (Visit, V);
             Impl (V);
          end if;
 
@@ -321,8 +288,36 @@ package body Conts.Graphs.DFS is
          Colors  : out Color_Maps.Map) return Boolean
       is
          use Graphs;
-         procedure DFS is new Search (Acyclic_Visitor);
-         V   : Acyclic_Visitor;
+         type Visitor_Type is record
+            Has_Cycle : Boolean := False;
+         end record;
+
+         procedure Back_Edge
+           (Self : in out Visitor_Type; Ignored : Edge_Type) with Inline;
+         procedure Should_Stop
+           (Self : Visitor_Type; Ignored : Graphs.Vertices.Element;
+            Stop : in out Boolean) with Inline;
+
+         procedure Should_Stop
+           (Self : Visitor_Type; Ignored : Graphs.Vertices.Element;
+            Stop : in out Boolean) is
+         begin
+            Stop := Self.Has_Cycle;
+         end Should_Stop;
+
+         procedure Back_Edge
+            (Self : in out Visitor_Type; Ignored : Edge_Type) is
+         begin
+            Self.Has_Cycle := True;
+         end Back_Edge;
+
+         package Visitors is new DFS_Visitor_Traits
+            (Graphs       => Graphs,
+             Visitor_Type => Visitor_Type,
+             Back_Edge    => Back_Edge,
+             Should_Stop  => Should_Stop);
+         procedure DFS is new Search (Visitors);
+         V   : Visitor_Type;
       begin
          DFS (G, V, Colors);
          return not V.Has_Cycle;
@@ -336,30 +331,32 @@ package body Conts.Graphs.DFS is
         (G      : Graphs.Graph;
          Colors : out Color_Maps.Map)
       is
-         type TS_Visitor is new Graphs.DFS_Visitor with null record;
-         overriding procedure Back_Edge
-           (Self : in out TS_Visitor; G : Graph; E : Edge) with Inline;
-         overriding procedure Finish_Vertex
-           (Self : in out TS_Visitor; G : Graphs.Graph; V : Graphs.Vertex)
+         type TS_Visitor is null record;
+         procedure Back_Edge
+           (Ignored  : in out TS_Visitor;
+            Ignored2 : Graphs.Edge) with Inline;
+         procedure Finish_Vertex
+           (Ignored : in out TS_Visitor; V : Graphs.Vertex)
            with Inline;
 
-         procedure DFS is new Search (TS_Visitor);
-
-         overriding procedure Back_Edge
-           (Self : in out TS_Visitor; G : Graph; E : Edge)
-         is
-            pragma Unreferenced (Self, G, E);
+         procedure Back_Edge
+           (Ignored : in out TS_Visitor; Ignored2 : Graphs.Edge) is
          begin
-            raise Program_Error with "Graph is not acyclic";
+            raise Conts.Graphs.Graph_Has_Cycles with "Graph is not acyclic";
          end Back_Edge;
 
-         overriding procedure Finish_Vertex
-           (Self : in out TS_Visitor; G : Graph; V : Vertex)
-         is
-            pragma Unreferenced (Self, G);
+         procedure Finish_Vertex
+           (Ignored : in out TS_Visitor; V : Graphs.Vertex) is
          begin
             Callback (V);
          end Finish_Vertex;
+
+         package Visitors is new DFS_Visitor_Traits
+            (Graphs        => Graphs,
+             Visitor_Type  => TS_Visitor,
+             Back_Edge     => Back_Edge,
+             Finish_Vertex => Finish_Vertex);
+         procedure DFS is new Search (Visitors);
 
          V : TS_Visitor;
       begin
@@ -394,10 +391,10 @@ package body Conts.Graphs.DFS is
 
       procedure Search
         (G     : Graphs.Graph;
-         Visit : in out Visitor;
+         Visit : in out Visitors.Visitor_Type;
          V     : Graphs.Vertex := Graphs.Null_Vertex)
       is
-         procedure Internal_Search is new Internal.Search (Visitor);
+         procedure Internal_Search is new Internal.Search (Visitors);
          Colors : Color_Maps.Map := Create_Map (G);   --  uninitialized map
       begin
          Internal_Search (G, Visit, Colors, V);
@@ -441,10 +438,10 @@ package body Conts.Graphs.DFS is
 
       procedure Search
         (G     : in out Graphs.Graph;
-         Visit : in out Visitor;
-         V     : Graphs.Vertex := Graphs.Null_Vertex)
+         Visit : in out Visitors.Visitor_Type;
+         V     : Graphs.Vertex := Graphs.Cst_Null_Vertex)
       is
-         procedure Internal_Search is new Internal.Search (Visitor);
+         procedure Internal_Search is new Internal.Search (Visitors);
       begin
          Internal_Search (G, Visit, G, V);
       end Search;
@@ -455,10 +452,10 @@ package body Conts.Graphs.DFS is
 
       procedure Search_Recursive
         (G     : in out Graphs.Graph;
-         Visit : in out Visitor;
-         V     : Graphs.Vertex := Graphs.Null_Vertex)
+         Visit : in out Visitors.Visitor_Type;
+         V     : Graphs.Vertex := Graphs.Cst_Null_Vertex)
       is
-         procedure Internal_Search is new Internal.Search_Recursive (Visitor);
+         procedure Internal_Search is new Internal.Search_Recursive (Visitors);
       begin
          Internal_Search (G, Visit, G, V);
       end Search_Recursive;

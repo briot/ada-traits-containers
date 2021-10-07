@@ -47,6 +47,9 @@ void test_cpp_graph(void* output) {
      start_test (output, "dfs-recursive, visitor", SAME_GROUP);
      end_test_not_run (output);
 
+     start_test (output, "is_acyclic", SAME_GROUP);
+     end_test_not_run (output);
+
      start_test (output, "scc", START_GROUP);
      std::vector<int> c(num_vertices);
      int num = strong_components(

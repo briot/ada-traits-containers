@@ -29,6 +29,8 @@ package Conts.Graphs is
    type Color is (White, Gray, Black);
    --  Used to mark vertices during several algorithms.
 
+   Graph_Has_Cycles : exception;
+
    -------------------
    -- Edges cursors --
    -------------------
@@ -61,7 +63,7 @@ package Conts.Graphs is
    --  All algorithms need to iterate on all vertices of the graph, and at
    --  least on the out edges of a given vertex, so these two cursors are also
    --  part of these requirements.
-   --  Such a traits package can be instantatied for your own data structures
+   --  Such a traits package can be instantiated for your own data structures
    --  that might have an implicit graph somewhere, even if you do not use an
    --  explicit graph type anywhere.
 
@@ -74,6 +76,7 @@ package Conts.Graphs is
       with function Get_Target
         (G : Graph_Type; E : Edge_Type) return Vertices.Element is <>;
       --  Return the target of the edge.
+      --  ??? What does it mean for an undirected graph
 
       with package Vertex_Cursors is new Conts.Cursors.Forward_Cursors
         (Container_Type => Graph_Type,
@@ -97,76 +100,10 @@ package Conts.Graphs is
       subtype Graph  is Graph_Type;
       subtype Vertex is Vertices.Element;
       subtype Edge   is Edge_Type;
+      Cst_Null_Vertex : constant Vertex := Null_Vertex;
+
       function Get_Edge_Target
         (G : Graph; E : Edge) return Vertices.Element renames Get_Target;
-
-      -----------------
-      -- DFS_Visitor --
-      -----------------
-
-      type DFS_Visitor is interface;
-      --  Used to insert actions at various points in the execution of the
-      --  Depth-First-Search algorithm.
-
-      procedure Should_Stop
-        (Self : DFS_Visitor; G : Graph; V : Vertex;
-         Stop : in out Boolean) is null;
-      --  Whether to stop iterating after discovering vertex V.
-      --  If iteration should stop, this procedure should set Stop to True (its
-      --  initial value is always False).
-
-      procedure Vertices_Initialized
-        (Self  : in out DFS_Visitor;
-         G     : Graph;
-         Count : Count_Type) is null;
-      --  Provide the number of vertices in the graph. This might be used to
-      --  reserve_capacity for some internal data for instance.
-      --  This is called after all vertices have been initialized via
-      --  Initialiez_Vertex.
-
-      procedure Initialize_Vertex
-         (Self : in out DFS_Visitor; G : Graph; V : Vertex) is null;
-      --  Called on every vertex before the start of the search
-
-      procedure Start_Vertex
-         (Self : in out DFS_Visitor; G : Graph; V : Vertex) is null;
-      --  Called on a source vertex once before the start of the search.
-      --  All vertices reachable from the source will not be source vertices
-      --  themselves, so will not be called for Start_Vertex.
-
-      procedure Finish_Vertex
-         (Self : in out DFS_Visitor; G : Graph; V : Vertex) is null;
-      --  Called on every vertex after all its out edges have been added to the
-      --  search tree and its adjacent vertices have been visited.
-
-      procedure Discover_Vertex
-         (Self : in out DFS_Visitor; G : Graph; V : Vertex) is null;
-      --  Called when a vertex is encountered the first time.
-
-      procedure Examine_Edge
-         (Self : in out DFS_Visitor; G : Graph; E : Edge) is null;
-      --  Called for every out edge of every vertex, after it is discovered.
-
-      procedure Tree_Edge
-         (Self : in out DFS_Visitor; G : Graph; E : Edge) is null;
-      --  Called on each edge when it becomes a member of the edges that form
-      --  a spanning tree (i.e. for out edges that do not lead to an already
-      --  visited vertex)
-
-      procedure Back_Edge
-         (Self : in out DFS_Visitor; G : Graph; E : Edge) is null;
-      --  Called on the back edges of the graph.
-      --  These are the edges for which Tree_Edge is not called.
-      --  For an undirected graph, there is an ambiguity between Back_Edge and
-      --  Tree_Edge, so both are called.
-
-      procedure Forward_Or_Cross_Edge
-         (Self : in out DFS_Visitor; G : Graph; E : Edge) is null;
-      --  Called on forward or cross edges, unused for undirected
-
-      procedure Finish_Edge
-         (Self : in out DFS_Visitor; G : Graph; E : Edge) is null;
-      --  Called when the algorithm finishes processing an edge
 
    end Traits;
 

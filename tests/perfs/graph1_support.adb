@@ -36,40 +36,28 @@ package body Graph1_Support is
       return G.Colors (V);
    end Get_Color;
 
-   overriding procedure Initialize_Vertex
-      (Self : in out My_Visitor2; G : Graph; V : Vertex)
-   is
-      pragma Unreferenced (Self, G);
+   procedure Initialize_Vertex (Ignored : in out My_Visitor2; V : Vertex) is
    begin
       if Output then
          Put_Line ("Initialize" & V'Img);
       end if;
    end Initialize_Vertex;
 
-   overriding procedure Start_Vertex
-      (Self : in out My_Visitor2; G : Graph; V : Vertex)
-   is
-      pragma Unreferenced (Self, G);
+   procedure Start_Vertex (Ignored : in out My_Visitor2; V : Vertex) is
    begin
       if Output then
          Put_Line ("Start" & V'Img);
       end if;
    end Start_Vertex;
 
-   overriding procedure Finish_Vertex
-      (Self : in out My_Visitor2; G : Graph; V : Vertex)
-   is
-      pragma Unreferenced (Self, G);
+   procedure Finish_Vertex (Ignored : in out My_Visitor2; V : Vertex) is
    begin
       if Output then
          Put_Line ("Finish" & V'Img);
       end if;
    end Finish_Vertex;
 
-   overriding procedure Discover_Vertex
-      (Self : in out My_Visitor2; G : Graph; V : Vertex)
-   is
-      pragma Unreferenced (Self, G);
+   procedure Discover_Vertex (Ignored : in out My_Visitor2; V : Vertex) is
    begin
       if Output then
          Put_Line ("Discover" & V'Img);

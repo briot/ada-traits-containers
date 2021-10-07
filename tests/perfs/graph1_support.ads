@@ -126,16 +126,22 @@ package Graph1_Support is
    -- Algorithms --
    ----------------
 
-   type My_Visitor is new Custom_Graphs.DFS_Visitor with null record;
+   type My_Visitor is null record;  --  no callback
+   package My_Visitors is new Conts.Graphs.DFS.DFS_Visitor_Traits
+      (Graphs       => Custom_Graphs,
+       Visitor_Type => My_Visitor);
 
-   type My_Visitor2 is new Custom_Graphs.DFS_Visitor with null record;
-   overriding procedure Initialize_Vertex
-      (Self : in out My_Visitor2; G : Graph; V : Vertex);
-   overriding procedure Start_Vertex
-      (Self : in out My_Visitor2; G : Graph; V : Vertex);
-   overriding procedure Finish_Vertex
-      (Self : in out My_Visitor2; G : Graph; V : Vertex);
-   overriding procedure Discover_Vertex
-      (Self : in out My_Visitor2; G : Graph; V : Vertex);
+   type My_Visitor2 is null record;
+   procedure Initialize_Vertex (Ignored : in out My_Visitor2; V : Vertex);
+   procedure Start_Vertex      (Ignored : in out My_Visitor2; V : Vertex);
+   procedure Finish_Vertex     (Ignored : in out My_Visitor2; V : Vertex);
+   procedure Discover_Vertex   (Ignored : in out My_Visitor2; V : Vertex);
+   package My_Visitors2 is new Conts.Graphs.DFS.DFS_Visitor_Traits
+      (Graphs            => Custom_Graphs,
+       Visitor_Type      => My_Visitor2,
+       Initialize_Vertex => Initialize_Vertex,
+       Start_Vertex      => Start_Vertex,
+       Finish_Vertex     => Finish_Vertex,
+       Discover_Vertex   => Discover_Vertex);
 
 end Graph1_Support;

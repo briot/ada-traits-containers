@@ -158,28 +158,24 @@ package body Conts.Graphs.Components is
          Get          => Get);
       package Local_DFS is new Conts.Graphs.DFS.With_Map (Graphs, Color_Maps);
 
-      type SCC_Visitor is new DFS_Visitor with null record;
-      overriding procedure Vertices_Initialized
-        (Self : in out SCC_Visitor;
-         G    : Graphs.Graph; Count : Count_Type);
-      overriding procedure Back_Edge
-        (Self : in out SCC_Visitor; G : Graphs.Graph; E : Graphs.Edge);
+      type SCC_Visitor is null record;
+      procedure Vertices_Initialized
+         (Ignored : in out SCC_Visitor; Count : Count_Type);
+      procedure Back_Edge
+         (Ignored : in out SCC_Visitor; E : Graphs.Edge);
       --  Some of the operations (discover and finish) are handled in the
       --  color map.
 
-      overriding procedure Vertices_Initialized
-        (Self : in out SCC_Visitor; G : Graphs.Graph; Count : Count_Type)
-      is
-         pragma Unreferenced (Self, G);
+      procedure Vertices_Initialized
+        (Ignored : in out SCC_Visitor; Count : Count_Type) is
       begin
          Roots.Reserve_Capacity (Count_Type'Min (300_000, Count));
          Open.Reserve_Capacity (Count_Type'Min (300_000, Count));
       end Vertices_Initialized;
 
-      overriding procedure Back_Edge
-        (Self : in out SCC_Visitor; G : Graphs.Graph; E : Graphs.Edge)
+      procedure Back_Edge
+        (Ignored : in out SCC_Visitor; E : Graphs.Edge)
       is
-         pragma Unreferenced (Self);
          V           : constant Vertex := Graphs.Get_Edge_Target (G, E);
          V_DFS_Index : constant Integer := Component_Maps.Get (Components, V);
       begin
@@ -192,7 +188,12 @@ package body Conts.Graphs.Components is
          end if;
       end Back_Edge;
 
-      procedure DFS is new Local_DFS.Search (SCC_Visitor);
+      package Visitors is new Conts.Graphs.DFS.DFS_Visitor_Traits
+         (Graphs               => Graphs,
+          Visitor_Type         => SCC_Visitor,
+          Vertices_Initialized => Vertices_Initialized,
+          Back_Edge            => Back_Edge);
+      procedure DFS is new Local_DFS.Search (Visitors);
 
       V : SCC_Visitor;
    begin

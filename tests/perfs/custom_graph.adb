@@ -24,7 +24,7 @@ with Ada.Finalization;
 with Graph1_Support;                use Graph1_Support;
 with Conts.Elements.Null_Elements;  use Conts.Elements.Null_Elements;
 with Conts.Graphs.Adjacency_List;
-with Conts.Graphs.Components;       use Conts.Graphs.Components;
+with Conts.Graphs.DFS;
 with Perf_Support;
 with Ada.Text_IO;                   use Ada.Text_IO;
 
@@ -43,33 +43,32 @@ package body Custom_Graph is
          Edge_Properties     => Conts.Elements.Null_Elements.Traits,
          Container_Base_Type => Ada.Finalization.Controlled);
 
-      type My_Visitor is new Graphs.Traits.DFS_Visitor with null record;
-      overriding procedure Finish_Vertex
-        (Self : in out My_Visitor; G : Graphs.Graph; V : Graphs.Vertex);
-
-      overriding procedure Finish_Vertex
-        (Self : in out My_Visitor; G : Graphs.Graph; V : Graphs.Vertex)
-      is
-         pragma Unreferenced (Self, G);
+      type My_Visit is null record;
+      procedure Finish_Vertex (Ignored : in out My_Visit; V : Graphs.Vertex);
+      procedure Finish_Vertex (Ignored : in out My_Visit; V : Graphs.Vertex) is
       begin
          if Debug then
             Put_Line ("Finish vertex " & V'Img);
          end if;
       end Finish_Vertex;
 
-      procedure DFS is new Graphs.DFS.Search (My_Visitor);
-      procedure Strong is new Strongly_Connected_Components
-         (Graphs.Traits, Graphs.Integer_Maps.As_Map);
+      package Visitors is new Conts.Graphs.DFS.DFS_Visitor_Traits
+         (Graphs        => Graphs.Traits,
+          Visitor_Type  => My_Visit,
+          Finish_Vertex => Finish_Vertex);
+      procedure DFS is new Graphs.DFS.Search (Visitors);
 
       subtype Vertex is Graphs.Vertex;
 
    begin
-      Stdout.Start_Container_Test ("adjacency list", Category => "Graph");
+      Stdout.Start_Container_Test
+         ("adjacency list", Category => "Graph", Favorite => True);
 
       for C in 1 .. Perf_Support.Repeat_Count loop
          declare
-            G     : Graphs.Graph;
-            Vis   : My_Visitor;
+            G       : Graphs.Graph;
+            Vis     : My_Visit;
+            Acyclic : Boolean;
          begin
             Stdout.Save_Container_Size (G'Size / 8);
 
@@ -87,6 +86,11 @@ package body Custom_Graph is
             DFS (G, Vis);
             Stdout.End_Test;
 
+            Stdout.Start_Test ("is_acyclic");
+            Acyclic := Graphs.DFS.Is_Acyclic (G);
+            Stdout.End_Test;
+            pragma Assert (Acyclic = False);
+
             declare
                M     : Graphs.Integer_Maps.Map :=
                   Graphs.Integer_Maps.Create_Map (G);
@@ -97,8 +101,8 @@ package body Custom_Graph is
                            Perf_Support.Items_Count, No_Element);
 
                Stdout.Start_Test ("scc", Start_Group => True);
-               --  M.Values.Reserve_Capacity (G.Length);
-               Strong (G, M, Components_Count => Count);
+               Graphs.Strongly_Connected_Components
+                  (G, M, Components_Count => Count);
                Stdout.End_Test;
             end;
 
@@ -114,10 +118,10 @@ package body Custom_Graph is
    -----------------
 
    procedure Test_Custom (Stdout : not null access Output'Class) is
-      procedure Search is new Graph1_Support.DFS.Search (My_Visitor);
-      procedure Search is new Graph1_Support.DFS.Search (My_Visitor2);
+      procedure Search is new Graph1_Support.DFS.Search (My_Visitors);
+      procedure Search is new Graph1_Support.DFS.Search (My_Visitors2);
       procedure Recursive is
-        new Graph1_Support.DFS.Search_Recursive (My_Visitor2);
+        new Graph1_Support.DFS.Search_Recursive (My_Visitors2);
 
    begin
       Stdout.Start_Container_Test ("custom graph", Category => "Graph");

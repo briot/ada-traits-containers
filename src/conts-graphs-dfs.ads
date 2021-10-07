@@ -31,11 +31,105 @@ with Conts.Properties;
 
 package Conts.Graphs.DFS is
 
-   --  Depth-First-Search
+   ------------------------
+   -- DFS_Visitor_Traits --
+   ------------------------
+   --  When we run a depth-first-search, we might want to retrieve various
+   --  details on the running of the algorithm. This is used to implement
+   --  multiple other algorithms on top of this one.
+   --  As always, we use a traits package to specify the various callbacks, so
+   --  that no performance penalty occurs when a subprogram does nothing.
+
+   generic
+      with package Graphs is new Conts.Graphs.Traits (<>);
+
+      type Visitor_Type (<>) is limited private;
+
+      with procedure Should_Stop
+        (Self   : Visitor_Type;
+         Vertex : Graphs.Vertex;
+         Stop   : in out Boolean) is null;
+      --  Whether to stop iterating after discovering Vertex.
+      --  If iteration should stop, this procedure should set Stop to True (its
+      --  initial value is always False).
+      --  This can be used for instance when you are only interested in finding
+      --  whether there exists a path between two specific vertices.
+      --  It should also be used for infinite graphs (those an infinite number
+      --  of vertices that are created on the fly for instance).
+
+      with procedure Vertices_Initialized
+        (Self  : in out Visitor_Type;
+         Count : Count_Type) is null;
+      --  Provide the number of vertices in the graph. This might be used to
+      --  reserve_capacity for some internal data for instance.
+      --  This is called after all vertices have been initialized via
+      --  Initialize_Vertex.
+
+      with procedure Initialize_Vertex
+         (Self   : in out Visitor_Type;
+          Vertex : Graphs.Vertex) is null;
+      --  Called on every vertex before the start of the search
+      --  ??? Not compatible with infinite graphs.
+
+      with procedure Start_Vertex
+         (Self   : in out Visitor_Type;
+          Vertex : Graphs.Vertex) is null;
+      --  Called on a source vertex once before the start of the search.
+      --  All vertices reachable from the source will not be source vertices
+      --  themselves, so will not be called for Start_Vertex.
+
+      with procedure Finish_Vertex
+         (Self   : in out Visitor_Type;
+          Vertex : Graphs.Vertex) is null;
+      --  Called on every vertex after all its out edges have been added to the
+      --  search tree and its adjacent vertices have been visited.
+
+      with procedure Discover_Vertex
+         (Self   : in out Visitor_Type;
+          Vertex : Graphs.Vertex) is null;
+      --  Called when a vertex is encountered the first time.
+
+      with procedure Examine_Edge
+         (Self : in out Visitor_Type;
+          Edge : Graphs.Edge_Type) is null;
+      --  Called for every out edge of every vertex, after it is discovered.
+
+      with procedure Tree_Edge
+         (Self : in out Visitor_Type;
+          Edge : Graphs.Edge_Type) is null;
+      --  Called on each edge when it becomes a member of the edges that form
+      --  a spanning tree (i.e. for out edges that do not lead to an already
+      --  visited vertex)
+
+      with procedure Back_Edge
+         (Self : in out Visitor_Type;
+          Edge : Graphs.Edge_Type) is null;
+      --  Called on the back edges of the graph.
+      --  These are the edges for which Tree_Edge is not called.
+      --  For an undirected graph, there is an ambiguity between Back_Edge and
+      --  Tree_Edge, so both are called.
+
+      with procedure Forward_Or_Cross_Edge
+         (Self : in out Visitor_Type;
+          Edge : Graphs.Edge_Type) is null;
+      --  Called on forward or cross edges, unused for undirected
+
+      with procedure Finish_Edge
+         (Self : in out Visitor_Type;
+          Edge : Graphs.Edge_Type) is null;
+      --  Called when the algorithm finishes processing an edge
+
+   package DFS_Visitor_Traits is
+   end DFS_Visitor_Traits;
+
+   --------------
+   -- With_Map --
+   --------------
    --  The map is given explicitly as a parameter, so that we do not need the
    --  Create_Map function and can use this for both interior and exterior
    --  maps, or with types of maps that cannot easily be returned from a
    --  function.
+   --  This is the most general implementation of the algorithm.
 
    generic
       with package Graphs is new Conts.Graphs.Traits (<>);
@@ -44,10 +138,11 @@ package Conts.Graphs.DFS is
    package With_Map is
 
       generic
-         type Visitor (<>) is new Graphs.DFS_Visitor with private;
+         with package Visitors is new DFS_Visitor_Traits
+            (Graphs => Graphs, others => <>);
       procedure Search
         (G      : Graphs.Graph;
-         Visit  : in out Visitor;
+         Visit  : in out Visitors.Visitor_Type;
          Colors : out Color_Maps.Map;
          V      : Graphs.Vertex := Graphs.Null_Vertex);
       --  A depth first search is a traversal of the graph that always chooses
@@ -78,10 +173,11 @@ package Conts.Graphs.DFS is
       --  can be inlined by the compiler and provide maximum performance.
 
       generic
-         type Visitor (<>) is new Graphs.DFS_Visitor with private;
+         with package Visitors is new DFS_Visitor_Traits
+            (Graphs => Graphs, others => <>);
       procedure Search_Recursive
         (G      : Graphs.Graph;
-         Visit  : in out Visitor;
+         Visit  : in out Visitors.Visitor_Type;
          Colors : out Color_Maps.Map;
          V      : Graphs.Vertex := Graphs.Null_Vertex);
       --  A recursive version of the DFS algorithm.
@@ -96,14 +192,17 @@ package Conts.Graphs.DFS is
       generic
          with procedure Callback (V : Graphs.Vertex);
       procedure Reverse_Topological_Sort
-        (G     : Graphs.Graph;
-         Colors : out Color_Maps.Map)
-        with Pre => Is_Acyclic (G, Colors);
+        (G      : Graphs.Graph;
+         Colors : out Color_Maps.Map);
       --  Return the vertices in reverse topological order.
+      --
+      --  Raises Graph_Has_Cycles if the graph has cycles and cannot be used
+      --  with this algorithm.
       --
       --  Topological order:
       --  If the graph contains an edge (u-->v), then v will always be finished
       --  first, i.e. the visitor's Finish_Vertex operation will be called on v
+      --  before it is called on u. And the Callback will also be called on v
       --  before it is called on u.
 
    end With_Map;
@@ -124,10 +223,11 @@ package Conts.Graphs.DFS is
    package Exterior is
 
       generic
-         type Visitor (<>) is new Graphs.DFS_Visitor with private;
+         with package Visitors is new DFS_Visitor_Traits
+            (Graphs => Graphs, others => <>);
       procedure Search
         (G     : Graphs.Graph;
-         Visit : in out Visitor;
+         Visit : in out Visitors.Visitor_Type;
          V     : Graphs.Vertex := Graphs.Null_Vertex);
 
       function Is_Acyclic (G : Graphs.Graph) return Boolean;
@@ -156,18 +256,20 @@ package Conts.Graphs.DFS is
    package Interior is
 
       generic
-         type Visitor (<>) is new Graphs.DFS_Visitor with private;
+         with package Visitors is new DFS_Visitor_Traits
+            (Graphs => Graphs, others => <>);
       procedure Search
         (G     : in out Graphs.Graph;
-         Visit : in out Visitor;
-         V     : Graphs.Vertex := Graphs.Null_Vertex);
+         Visit : in out Visitors.Visitor_Type;
+         V     : Graphs.Vertex := Graphs.Cst_Null_Vertex);
 
       generic
-         type Visitor (<>) is new Graphs.DFS_Visitor with private;
+         with package Visitors is new DFS_Visitor_Traits
+            (Graphs => Graphs, others => <>);
       procedure Search_Recursive
         (G     : in out Graphs.Graph;
-         Visit : in out Visitor;
-         V     : Graphs.Vertex := Graphs.Null_Vertex);
+         Visit : in out Visitors.Visitor_Type;
+         V     : Graphs.Vertex := Graphs.Cst_Null_Vertex);
 
       function Is_Acyclic (G : in out Graphs.Graph) return Boolean;
 
