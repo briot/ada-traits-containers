@@ -199,7 +199,6 @@ package Conts.Graphs.Adjacency_List is
    package Traits is new Conts.Graphs.Traits
      (Graph_Type        => Impl.Graph,
       Vertices          => Vertices,
-      Edge_Type         => Impl.Edge,
       Null_Vertex       => Impl.Null_Vertex,
       Get_Target        => Impl.Get_Target,
       Vertex_Cursors    => Vertices_Cursors,

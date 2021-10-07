@@ -91,19 +91,19 @@ package Conts.Graphs.DFS is
 
       with procedure Examine_Edge
          (Self : in out Visitor_Type;
-          Edge : Graphs.Edge_Type) is null;
+          Edge : Graphs.Edge) is null;
       --  Called for every out edge of every vertex, after it is discovered.
 
       with procedure Tree_Edge
          (Self : in out Visitor_Type;
-          Edge : Graphs.Edge_Type) is null;
+          Edge : Graphs.Edge) is null;
       --  Called on each edge when it becomes a member of the edges that form
       --  a spanning tree (i.e. for out edges that do not lead to an already
       --  visited vertex)
 
       with procedure Back_Edge
          (Self : in out Visitor_Type;
-          Edge : Graphs.Edge_Type) is null;
+          Edge : Graphs.Edge) is null;
       --  Called on the back edges of the graph.
       --  These are the edges for which Tree_Edge is not called.
       --  For an undirected graph, there is an ambiguity between Back_Edge and
@@ -111,12 +111,12 @@ package Conts.Graphs.DFS is
 
       with procedure Forward_Or_Cross_Edge
          (Self : in out Visitor_Type;
-          Edge : Graphs.Edge_Type) is null;
+          Edge : Graphs.Edge) is null;
       --  Called on forward or cross edges, unused for undirected
 
       with procedure Finish_Edge
          (Self : in out Visitor_Type;
-          Edge : Graphs.Edge_Type) is null;
+          Edge : Graphs.Edge) is null;
       --  Called when the algorithm finishes processing an edge
 
    package DFS_Visitor_Traits is

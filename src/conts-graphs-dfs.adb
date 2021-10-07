@@ -293,7 +293,7 @@ package body Conts.Graphs.DFS is
          end record;
 
          procedure Back_Edge
-           (Self : in out Visitor_Type; Ignored : Edge_Type) with Inline;
+           (Self : in out Visitor_Type; Ignored : Edge) with Inline;
          procedure Should_Stop
            (Self : Visitor_Type; Ignored : Graphs.Vertices.Element;
             Stop : in out Boolean) with Inline;
@@ -306,7 +306,7 @@ package body Conts.Graphs.DFS is
          end Should_Stop;
 
          procedure Back_Edge
-            (Self : in out Visitor_Type; Ignored : Edge_Type) is
+            (Self : in out Visitor_Type; Ignored : Edge) is
          begin
             Self.Has_Cycle := True;
          end Back_Edge;

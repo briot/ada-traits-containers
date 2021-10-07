@@ -100,7 +100,6 @@ package Graph1_Support is
       (Graph_Type        => Graph,
        Vertices          => Vertices.Traits,
        Null_Vertex       => -1,
-       Edge_Type         => Edge,
        Vertex_Cursors    => Custom_Vertices,
        Vertex_Maps       => Vertices_Maps,
        Out_Edges_Cursors => Custom_Edges);

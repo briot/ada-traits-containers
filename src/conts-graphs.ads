@@ -70,11 +70,17 @@ package Conts.Graphs is
    generic
       type Graph_Type (<>) is limited private;
       with package Vertices is new Conts.Elements.Traits (<>);
-      type Edge_Type (<>) is private;
       Null_Vertex : Vertices.Element;
 
+      with package Out_Edges_Cursors is new Edge_Cursors
+        (Container_Type => Graph_Type,
+         Vertices       => Vertices,
+         others         => <>);
+      --  Iterate on all out-edges of a given vertex.
+
       with function Get_Target
-        (G : Graph_Type; E : Edge_Type) return Vertices.Element is <>;
+        (G : Graph_Type; E : Out_Edges_Cursors.Edge)
+        return Vertices.Element is <>;
       --  Return the target of the edge.
       --  ??? What does it mean for an undirected graph
 
@@ -88,18 +94,11 @@ package Conts.Graphs is
          others       => <>);
       --  Iterate on all vertices of the graph
 
-      with package Out_Edges_Cursors is new Edge_Cursors
-        (Container_Type => Graph_Type,
-         Vertices       => Vertices,
-         Edge_Type      => Edge_Type,
-         others         => <>);
-      --  Iterate on all out-edges of a given vertex.
-
    package Traits is
 
       subtype Graph  is Graph_Type;
       subtype Vertex is Vertices.Element;
-      subtype Edge   is Edge_Type;
+      subtype Edge   is Out_Edges_Cursors.Edge_Type;
       Cst_Null_Vertex : constant Vertex := Null_Vertex;
 
       function Get_Edge_Target
