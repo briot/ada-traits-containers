@@ -59,5 +59,4 @@ clean:
 	${PPATH} gprclean -P${GPR_ROOT} -XBUILD=Production -r -q
 	-rm -f tests/*/auto_*.gpr
 	-rm -rf tests/*/obj/
-	cd docs_src; ${MAKE} clean
 	-rm -f docs/perfs/data.js

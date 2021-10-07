@@ -30,6 +30,7 @@ with Conts.Elements.Indefinite;
 with Conts.Vectors.Generics;
 with Conts.Vectors.Storage.Unbounded;
 with Conts.Vectors.Definite_Unbounded;
+with Conts.Graphs.Components;
 with Conts.Graphs.DFS;
 
 generic
@@ -226,7 +227,7 @@ package Conts.Graphs.Adjacency_List is
    package Integer_Maps is new Conts.Properties.Indexed
      (Container_Type      => Graph,
       Key_Type            => Vertex,
-      Element_Type          => Integer,
+      Element_Type        => Integer,
       Default_Value       => -1,
       Index_Type          => Vertex,
       Container_Base_Type => Container_Base_Type,
@@ -235,4 +236,8 @@ package Conts.Graphs.Adjacency_List is
 
    package DFS is new Conts.Graphs.DFS.Exterior
      (Traits, Color_Maps.As_Map, Create_Map => Color_Maps.Create_Map);
+   procedure Strongly_Connected_Components is
+      new Conts.Graphs.Components.Strongly_Connected_Components
+         (Graphs         => Traits,
+          Component_Maps => Integer_Maps.As_Map);
 end Conts.Graphs.Adjacency_List;

@@ -53,13 +53,15 @@ package Conts.Graphs.DFS is
       --  A depth first search is a traversal of the graph that always chooses
       --  to go deeper in the graph when possible, by looking at the next
       --  adjacent undiscovered vertex until reaching a vertex that has no
-      --  undiscovered adjacent vertice. It then backtracks to the previous
+      --  undiscovered adjacent vertex. It then backtracks to the previous
       --  vertex.
       --
       --  All vertices and edges are visited exactly once.
       --
       --  Searching starts at V, if specified, but all vertices are eventually
-      --  visited, unless Visit.Should_Stop returns True before then.
+      --  visited, unless Visit.Should_Stop returns True before then. In the
+      --  case of an infinite graph, the caller must make sure that Should_Stop
+      --  eventually returns True.
       --
       --  Depth First Search is a basic block for a lot of other algorithms.
       --  However, it is also useful on its own:
@@ -115,7 +117,9 @@ package Conts.Graphs.DFS is
    generic
       with package Graphs is new Conts.Graphs.Traits (<>);
       with package Color_Maps is new Conts.Properties.Maps
-        (Key_Type => Graphs.Vertex, Element_Type => Color, others => <>);
+        (Key_Type     => Graphs.Vertex,
+         Element_Type => Color,
+         others       => <>);
       with function Create_Map (G : Graphs.Graph) return Color_Maps.Map;
    package Exterior is
 
@@ -140,13 +144,15 @@ package Conts.Graphs.DFS is
    --  Depth-First-Search
    --  This version stores the vertices colors in the graph itself.
    --  This version will not, in general, support simultaneous runs of the
-   --  algorithms, since they would interfer in the color map.
+   --  algorithms, since they would interfere in the color map.
 
    generic
       with package Graphs is new Conts.Graphs.Traits (<>);
       with package Color_Maps is new Conts.Properties.Maps
-        (Map_Type => Graphs.Graph, Key_Type => Graphs.Vertex,
-         Element_Type => Color, others => <>);
+        (Map_Type     => Graphs.Graph,
+         Key_Type     => Graphs.Vertex,
+         Element_Type => Color,
+         others       => <>);
    package Interior is
 
       generic

@@ -32,19 +32,6 @@ package Conts.Algorithms is
    generic
       with package Cursors is new Conts.Cursors.Forward_Cursors (<>);
       with package Getters is new Conts.Properties.Read_Only_Maps
-        (Key_Type => Cursors.Cursor, others => <>);
-   function Count_If_With_External_Get
-     (Self      : Cursors.Container;
-      Map       : Getters.Map;
-      Predicate : not null access
-        function (E : Getters.Element) return Boolean)
-     return Natural
-     with Global => null;
-   --  Count the number of elements in the container that match the predicate
-
-   generic
-      with package Cursors is new Conts.Cursors.Forward_Cursors (<>);
-      with package Getters is new Conts.Properties.Read_Only_Maps
         (Map_Type => Cursors.Container,
          Key_Type => Cursors.Cursor,
          others   => <>);
@@ -54,8 +41,22 @@ package Conts.Algorithms is
         function (E : Getters.Element) return Boolean)
      return Natural
      with Global => null;
-   --  Same as above, but the container itself is the property map to
-   --  retrieve the element
+   --  Count the number of elements in the container that match the predicate
+
+   generic
+      with package Cursors is new Conts.Cursors.Forward_Cursors (<>);
+      with package Getters is new Conts.Properties.Read_Only_Maps
+        (Key_Type => Cursors.Cursor, others => <>);
+   function Count_If_With_External_Get
+     (Self      : Cursors.Container;
+      Map       : Getters.Map;
+      Predicate : not null access
+        function (E : Getters.Element) return Boolean)
+     return Natural
+     with Global => null;
+   --  Same as above, but the value to be returned is read from an external
+   --  property map (so from Self we get a cursor, and from that cursor and
+   --  the map we get the value to work with).
 
    -------------
    -- Shuffle --

@@ -25,7 +25,6 @@ with Asserts;
 with Conts;                         use Conts;
 with Conts.Elements.Null_Elements;  use Conts.Elements.Null_Elements;
 with Conts.Graphs.Adjacency_List;
-with Conts.Graphs.Components; use Conts.Graphs.Components;
 
 package body Test_Graph_Adjlist is
    use Asserts.Integers;
@@ -39,9 +38,6 @@ package body Test_Graph_Adjlist is
       Vertex_Properties   => Conts.Elements.Null_Elements.Traits,
       Edge_Properties     => Conts.Elements.Null_Elements.Traits,
       Container_Base_Type => Ada.Finalization.Controlled);
-
-   procedure Strong is new Strongly_Connected_Components
-      (Graphs.Traits, Graphs.Integer_Maps.As_Map);
 
    ----------
    -- Test --
@@ -71,7 +67,8 @@ package body Test_Graph_Adjlist is
       Gr.Add_Edge (H, F, No_Element);
       Gr.Add_Edge (H, H, No_Element);
 
-      Strong (Gr, Map, Components_Count => Count);
+      Graphs.Strongly_Connected_Components
+         (Gr, Map, Components_Count => Count);
       Assert (Count, 4, "number of strongly connected components");
       Assert (Graphs.Integer_Maps.Get (Map, A), 1);
       Assert (Graphs.Integer_Maps.Get (Map, B), 1);
