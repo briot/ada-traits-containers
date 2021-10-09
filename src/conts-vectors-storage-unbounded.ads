@@ -41,9 +41,12 @@ package Conts.Vectors.Storage.Unbounded with SPARK_Mode is
          with Inline;
       procedure Release_Element
         (Self : in out Container'Class; Index : Count_Type) with Inline;
-      function Get_Element
+      function Get_Stored
         (Self  : Container'Class;
          Index : Count_Type) return Elements.Stored_Type with Inline;
+      function Get_Returned
+        (Self  : in out Container'Class;
+         Index : Count_Type) return Elements.Returned_Type with Inline;
       procedure Set_Element
         (Self    : in out Container'Class;
          Index   : Count_Type;
@@ -68,7 +71,7 @@ package Conts.Vectors.Storage.Unbounded with SPARK_Mode is
    private
       pragma SPARK_Mode (Off);
       type Big_Nodes_Array is
-        array (Min_Index .. Count_Type'Last) of Elements.Stored_Type;
+        array (Min_Index .. Count_Type'Last) of aliased Elements.Stored_Type;
       type Nodes_Array_Access is access Big_Nodes_Array;
       for Nodes_Array_Access'Storage_Size use 0;
       --  The nodes is a C-compatible pointer so that we can use realloc
@@ -83,23 +86,28 @@ package Conts.Vectors.Storage.Unbounded with SPARK_Mode is
 
       function Capacity (Self : Container'Class) return Count_Type
         is (Self.Capacity);
-      function Get_Element
+      function Get_Stored
         (Self  : Container'Class;
          Index : Count_Type) return Elements.Stored_Type
         is (Self.Nodes (Index));
+      function Get_Returned
+        (Self  : in out Container'Class;
+         Index : Count_Type) return Elements.Returned_Type
+        is (Elements.To_Returned (Self.Nodes (Index)'Access));
    end Impl;
 
    package Traits is new Conts.Vectors.Storage.Traits
-     (Elements         => Elements,
-      Container        => Impl.Container,
-      Max_Capacity     => Impl.Max_Capacity,
-      Capacity         => Impl.Capacity,
-      Resize           => Impl.Resize,
-      Release_Element  => Impl.Release_Element,
-      Release          => Impl.Release,
-      Set_Element      => Impl.Set_Element,
-      Get_Element      => Impl.Get_Element,
-      Assign           => Impl.Assign,
-      Copy             => Impl.Copy);
+     (Elements        => Elements,
+      Container       => Impl.Container,
+      Max_Capacity    => Impl.Max_Capacity,
+      Capacity        => Impl.Capacity,
+      Resize          => Impl.Resize,
+      Release_Element => Impl.Release_Element,
+      Release         => Impl.Release,
+      Set_Element     => Impl.Set_Element,
+      Get_Returned    => Impl.Get_Returned,
+      Get_Stored      => Impl.Get_Stored,
+      Assign          => Impl.Assign,
+      Copy            => Impl.Copy);
 
 end Conts.Vectors.Storage.Unbounded;

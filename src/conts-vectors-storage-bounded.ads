@@ -48,7 +48,10 @@ package Conts.Vectors.Storage.Bounded with SPARK_Mode is
         (Self    : in out Container'Class;
          Index   : Count_Type;
          Element : Elements.Stored_Type) with Inline;
-      function Get_Element
+      function Get_Returned
+        (Self  : in out Container'Class;
+         Index : Count_Type) return Elements.Returned_Type with Inline;
+      function Get_Stored
         (Self  : Container'Class;
          Index : Count_Type) return Elements.Stored_Type with Inline;
       procedure Assign
@@ -63,7 +66,8 @@ package Conts.Vectors.Storage.Bounded with SPARK_Mode is
 
    private
       pragma SPARK_Mode (Off);
-      type Elem_Array is array (Count_Type range <>) of Elements.Stored_Type;
+      type Elem_Array is array (Count_Type range <>)
+         of aliased Elements.Stored_Type;
 
       type Container (Capacity : Count_Type) is
          abstract new Container_Base_Type
@@ -71,21 +75,26 @@ package Conts.Vectors.Storage.Bounded with SPARK_Mode is
          Nodes : Elem_Array (Min_Index .. Capacity);
       end record;
 
-      function Get_Element
+      function Get_Stored
         (Self  : Container'Class;
          Index : Count_Type) return Elements.Stored_Type
          is (Self.Nodes (Index));
+      function Get_Returned
+        (Self  : in out Container'Class;
+         Index : Count_Type) return Elements.Returned_Type
+         is (Elements.To_Returned (Self.Nodes (Index)'Access));
    end Impl;
 
    package Traits is new Conts.Vectors.Storage.Traits
-     (Elements         => Elements,
-      Container        => Impl.Container,
-      Max_Capacity     => Impl.Max_Capacity,
-      Capacity         => Impl.Capacity,
-      Release_Element  => Impl.Release_Element,
-      Set_Element      => Impl.Set_Element,
-      Get_Element      => Impl.Get_Element,
-      Assign           => Impl.Assign,
-      Copy             => Impl.Copy);
+     (Elements        => Elements,
+      Container       => Impl.Container,
+      Max_Capacity    => Impl.Max_Capacity,
+      Capacity        => Impl.Capacity,
+      Release_Element => Impl.Release_Element,
+      Set_Element     => Impl.Set_Element,
+      Get_Returned    => Impl.Get_Returned,
+      Get_Stored      => Impl.Get_Stored,
+      Assign          => Impl.Assign,
+      Copy            => Impl.Copy);
 
 end Conts.Vectors.Storage.Bounded;

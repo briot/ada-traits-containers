@@ -78,7 +78,12 @@ package Conts.Elements.Arrays with SPARK_Mode => Off is
    package Impl is
       type Stored_Array is private;
       function To_Stored (A : Array_Type) return Stored_Array with Inline;
-      function To_Ref (S : Stored_Array) return Constant_Ref_Type with Inline;
+      function To_Ref (S : Stored_Array) return Constant_Ref_Type
+         with Inline;
+      function To_Ref
+         (S : not null access Stored_Array) return Constant_Ref_Type
+         is (To_Ref (S.all))
+         with Inline;
       function To_Element (R : Constant_Ref_Type) return Array_Type
          is (R.Element.all) with Inline;
       function Copy (S : Stored_Array) return Stored_Array with Inline;

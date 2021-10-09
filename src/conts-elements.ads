@@ -37,21 +37,21 @@ package Conts.Elements with SPARK_Mode is
       --  The type of elements stored internally. This must be unconstrained.
 
       type Returned_Type (<>) is private;
-      --  The type of elements returned by getters. Various possibilities exit:
-      --  you could return an Element_Type (which might be big and thus slow),
-      --  a Stored_Type (which might be an access type, and thus unsafe), or a
-      --  Reference type as introduced by Ada 2012. Other variations are of
-      --  course possible.
+      --  The type of elements returned by getters.
+      --  The intent is that elements could potentially be modified in place
+      --  via such a type. It will often be implemented as a direct access
+      --  type, or possibly a reference type.
 
       type Constant_Returned_Type (<>) is private;
       --  The type of elements returned by getters. As opposed to
       --  Returned_Type, this one guarantees that the type cannot be modified
-      --  via this value (so it can't be a direct pointer, not a reference_type
+      --  via this value (so it can't be a direct pointer, nor a reference_type
       --  for which the discriminant is not "constant"). This is used in
       --  particular for the Constant_Indexing aspect.
 
       with function To_Stored (E : Element_Type) return Stored_Type;
-      with function To_Returned (E : Stored_Type) return Returned_Type;
+      with function To_Returned
+         (E : not null access Stored_Type) return Returned_Type;
       with function To_Constant_Returned
         (E : Stored_Type) return Constant_Returned_Type;
       with function To_Element

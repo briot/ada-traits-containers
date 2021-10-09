@@ -40,7 +40,7 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
                (R,
                 Storage.Elements.To_Element
                    (Storage.Elements.To_Constant_Returned
-                      (Storage.Get_Element (Self, Idx))));
+                      (Storage.Get_Stored (Self, Idx))));
          end loop;
       end if;
       return R;
@@ -282,7 +282,7 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
          raise Invalid_Index with "empty vector";
       end if;
       return Storage.Elements.To_Constant_Returned
-        (Storage.Get_Element (Self, Self.Last));
+         (Storage.Get_Stored (Self, Self.Last));
    end Last_Element;
 
    ------------
@@ -320,11 +320,10 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
 
    function Element
      (Self : Base_Vector'Class; Position : Index_Type)
-         return Constant_Returned_Type
-   is
+         return Constant_Returned_Type is
    begin
       return Storage.Elements.To_Constant_Returned
-        (Storage.Get_Element (Self, To_Count (Position)));
+         (Storage.Get_Stored (Self, To_Count (Position)));
    end Element;
 
    ---------------
@@ -332,11 +331,10 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
    ---------------
 
    function Reference
-     (Self : Base_Vector'Class; Position : Index_Type)
+     (Self : in out Base_Vector'Class; Position : Index_Type)
          return Returned_Type is
    begin
-      return Storage.Elements.To_Returned
-        (Storage.Get_Element (Self, To_Count (Position)));
+      return Storage.Get_Returned (Self, To_Count (Position));
    end Reference;
 
    ---------------------
@@ -374,8 +372,8 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
       end if;
 
       declare
-         L_Tmp : Stored_Type := Storage.Get_Element (Self, L);
-         R_Tmp : Stored_Type := Storage.Get_Element (Self, R);
+         L_Tmp : constant Stored_Type := Storage.Get_Stored (Self, L);
+         R_Tmp : constant Stored_Type := Storage.Get_Stored (Self, R);
       begin
          --  Since we will only keep one copy of the elements in the end, we
          --  should test Movable here, not Copyable.

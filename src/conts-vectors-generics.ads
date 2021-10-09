@@ -205,7 +205,7 @@ package Conts.Vectors.Generics with SPARK_Mode is
    --  Modifies Position in place.
 
    function Reference
-     (Self : Base_Vector'Class; Position : Index_Type)
+     (Self : in out Base_Vector'Class; Position : Index_Type)
      return Returned_Type
      renames Impl.Reference;
    --  Return a reference to the element at the given position. The notion

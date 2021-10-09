@@ -43,18 +43,23 @@ generic
 
 package Conts.Elements.Definite with SPARK_Mode is
 
+   type Reference_Type (Element : not null access Element_Type)
+      is null record with Implicit_Dereference => Element;
+
    function Identity (E : Element_Type) return Element_Type is (E) with Inline;
+   function To_Ref (E : not null access Element_Type) return Reference_Type
+      is (Reference_Type'(Element => E)) with Inline;
 
    package Traits is new Conts.Elements.Traits
      (Element_Type           => Element_Type,
       Stored_Type            => Element_Type,
-      Returned_Type          => Element_Type,
+      Returned_Type          => Reference_Type,
       Constant_Returned_Type => Element_Type,
       Copyable               => True,
       Movable                => Movable,
       Release                => Free,
       To_Stored              => Identity,
-      To_Returned            => Identity,
+      To_Returned            => To_Ref,
       To_Constant_Returned   => Identity,
       To_Element             => Identity,
       Copy                   => Identity);

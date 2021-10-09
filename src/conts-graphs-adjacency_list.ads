@@ -26,7 +26,7 @@ pragma Ada_2012;
 
 with Conts.Cursors;
 with Conts.Properties.Indexed;
-with Conts.Elements.Indefinite;
+with Conts.Elements.Definite;
 with Conts.Vectors.Generics;
 with Conts.Vectors.Storage.Unbounded;
 with Conts.Vectors.Definite_Unbounded;
@@ -39,7 +39,8 @@ generic
    --  vector of vertices, but could be any integer type, ...
    --  Just like for vectors's index_type, this package expects that
    --    (Vertex_Type'First - 1) is valid in Vertex_Type'Base.
-   --  This prevents Integer or enumeration types from being used.
+   --  This prevents Integer or enumeration types from being used (though
+   --  subtypes of those are acceptable).
 
    with package Vertex_Properties is new Conts.Elements.Traits (<>);
    with package Edge_Properties is new Conts.Elements.Traits (<>);
@@ -127,9 +128,8 @@ package Conts.Graphs.Adjacency_List is
       end record;
       procedure Release (V : in out Vertex_Record);
 
-      --  Indefinite so that we can edit in place
-      package Vertex_Elements is new Conts.Elements.Indefinite
-        (Vertex_Record, Free => Release, Pool => Conts.Global_Pool);
+      package Vertex_Elements is new Conts.Elements.Definite
+        (Vertex_Record, Free => Release);
       package Vertex_Storage is new Conts.Vectors.Storage.Unbounded
         (Vertex_Elements.Traits,
          Container_Base_Type => Dummy_Record,
@@ -158,6 +158,8 @@ package Conts.Graphs.Adjacency_List is
    subtype Edge is Impl.Edge;
 
    function Identity (V : Vertex) return Vertex is (V) with Inline;
+   function Identity (V : not null access Vertex) return Vertex
+      is (V.all) with Inline;
 
    package Vertices is new Conts.Elements.Traits
      (Element_Type           => Vertex,

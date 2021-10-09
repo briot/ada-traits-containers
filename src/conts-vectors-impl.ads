@@ -154,7 +154,7 @@ package Conts.Vectors.Impl with SPARK_Mode is
           Element (Model (Self), Position);
 
    function Reference
-     (Self : Base_Vector'Class; Position : Index_Type)
+     (Self : in out Base_Vector'Class; Position : Index_Type)
      return Returned_Type
    --  See documentation in conts-vectors-generics.ads
      with

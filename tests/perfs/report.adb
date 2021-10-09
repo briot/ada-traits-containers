@@ -223,7 +223,8 @@ package body Report is
       Put (F, ";");
       Close (F);
 
-      Put_Line ("Open file://" & Get_Current_Dir & "/../../docs/perfs/index.html");
+      Put_Line
+         ("Open file://" & Get_Current_Dir & "/../../docs/perfs/index.html");
    end Display;
 
    --------------------------

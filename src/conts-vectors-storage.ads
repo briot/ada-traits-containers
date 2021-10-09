@@ -94,7 +94,10 @@ package Conts.Vectors.Storage with SPARK_Mode is
         (Self    : in out Container'Class;
          Pos     : Count_Type;
          Element : Elements.Stored_Type) is <>;
-      with function Get_Element
+      with function Get_Returned
+         (Self : in out Container'Class;
+          Pos  : Count_Type) return Elements.Returned_Type is <>;
+      with function Get_Stored
          (Self : Container'Class;
           Pos  : Count_Type) return Elements.Stored_Type is <>;
       --  Return the element stored at the given position.

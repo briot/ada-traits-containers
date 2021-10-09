@@ -58,8 +58,8 @@ package Conts.Elements.Indefinite is
       is (Constant_Reference_Type'(Element => E)) with Inline;
    function To_Element (E : Constant_Reference_Type) return Element_Type
       is (E.Element.all) with Inline;
-   function To_Ref (E : Element_Access) return Reference_Type
-      is (Reference_Type'(Element => E)) with Inline;
+   function To_Ref (E : not null access Element_Access) return Reference_Type
+      is (Reference_Type'(Element => E.all)) with Inline;
    function To_Element (E : Reference_Type) return Element_Type
       is (E.Element.all) with Inline;
    function Copy (E : Element_Access) return Element_Access

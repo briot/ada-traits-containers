@@ -51,6 +51,11 @@ package Conts.Elements.Indefinite_SPARK with SPARK_Mode => On is
       with Inline,
         Global => null;
 
+      function To_Reference_Type
+        (E : not null access Element_Access) return Constant_Reference_Type
+      with Inline,
+        Global => null;
+
       function To_Element (E : Constant_Reference_Type) return Element_Type is
         (E)
       with Inline,
@@ -81,6 +86,9 @@ package Conts.Elements.Indefinite_SPARK with SPARK_Mode => On is
       function To_Constant_Reference_Type
         (E : Element_Access) return Constant_Reference_Type
         is (E.all);
+      function To_Reference_Type
+        (E : not null access Element_Access) return Constant_Reference_Type
+        is (E.all.all);
    end Impl;
 
    package Traits is new Conts.Elements.Traits
@@ -89,7 +97,7 @@ package Conts.Elements.Indefinite_SPARK with SPARK_Mode => On is
       Returned_Type          => Impl.Constant_Reference_Type,
       Constant_Returned_Type => Impl.Constant_Reference_Type,
       To_Stored              => Impl.To_Element_Access,
-      To_Returned            => Impl.To_Constant_Reference_Type,
+      To_Returned            => Impl.To_Reference_Type,
       To_Constant_Returned   => Impl.To_Constant_Reference_Type,
       To_Element             => Impl.To_Element,
       Copy                   => Impl.Copy,
