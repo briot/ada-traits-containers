@@ -1,4 +1,4 @@
-Vectors and Properties
+Cursors and Properties
 ======================
 
 .. highlight:: ada

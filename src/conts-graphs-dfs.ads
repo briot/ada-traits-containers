@@ -99,13 +99,15 @@ package Conts.Graphs.DFS is
           Edge : Graphs.Edge) is null;
       --  Called on each edge when it becomes a member of the edges that form
       --  a spanning tree (i.e. for out edges that do not lead to an already
-      --  visited vertex)
+      --  visited vertex).
+      --  Those are edges that lead to unvisited vertices.
 
       with procedure Back_Edge
          (Self : in out Visitor_Type;
           Edge : Graphs.Edge) is null;
       --  Called on the back edges of the graph.
-      --  These are the edges for which Tree_Edge is not called.
+      --  Those are edges that lead back to a visited ancestors vertex in the
+      --  tree.
       --  For an undirected graph, there is an ambiguity between Back_Edge and
       --  Tree_Edge, so both are called.
 
@@ -113,6 +115,9 @@ package Conts.Graphs.DFS is
          (Self : in out Visitor_Type;
           Edge : Graphs.Edge) is null;
       --  Called on forward or cross edges, unused for undirected
+      --  Forward edges lead to a visited descendant vertex in the tree.
+      --  Cross edges lead to a visited vertex which is neither ancestor nor
+      --  descendant in the tree.
 
       with procedure Finish_Edge
          (Self : in out Visitor_Type;
