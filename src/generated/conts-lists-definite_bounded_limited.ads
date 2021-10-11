@@ -22,50 +22,46 @@
 
 pragma Ada_2012;
 with Conts.Properties.SPARK;
-with Conts.Vectors.Generics;
-with Conts.Elements.Arrays;
-with Conts.Vectors.Storage.Unbounded;
+with Conts.Lists.Generics;
+with Conts.Elements.Definite;
+with Conts.Lists.Storage.Bounded;
+
 generic
-   type Index_Type is (<>);
-
-
-package Conts.Vectors.Strings with SPARK_Mode is
+   type Element_Type is private;
+   with procedure Free (E : in out Element_Type) is null;
+package Conts.Lists.Definite_Bounded_Limited with SPARK_Mode is
 
    pragma Assertion_Policy
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
-   package Elements is new Conts.Elements.Arrays
-     (Positive, Character, String, Conts.Global_Pool);
-   package Storage is new Conts.Vectors.Storage.Unbounded
+   package Elements is new Conts.Elements.Definite
+      (Element_Type, Free => Free);
+   package Storage is new Conts.Lists.Storage.Bounded
       (Elements            => Elements.Traits,
-       Resize_Policy       => Conts.Vectors.Resize_1_5,
-       Container_Base_Type => Conts.Controlled_Base);
-   package Vectors is new Conts.Vectors.Generics (Index_Type, Storage.Traits);
-   package Cursors renames Vectors.Cursors;  --  Forward, Bidirectional, Random
-   package Maps renames Vectors.Maps;
+       Container_Base_Type => Conts.Limited_Base);
+   package Lists is new Conts.Lists.Generics (Storage.Traits);
+   package Cursors renames Lists.Cursors;  --  Forward, Bidirectional
+   package Maps renames Lists.Maps;
 
-   subtype Vector is Vectors.Vector;
-   subtype Cursor is Vectors.Cursor;
-   subtype Extended_Index is Vectors.Extended_Index;
+   subtype List is Lists.List;
+   subtype Cursor is Lists.Cursor;
    subtype Constant_Returned is Elements.Traits.Constant_Returned;
 
-   No_Element : Cursor renames Vectors.No_Element;
-   No_Index   : Index_Type renames Vectors.No_Index;
+   No_Element : Cursor renames Lists.No_Element;
 
-   procedure Swap
-      (Self : in out Cursors.Forward.Container;
-       Left, Right : Index_Type)
-      renames Vectors.Swap;
+   function Copy (Self : List'Class) return List'Class;
+   --  Return a deep copy of Self
 
-   subtype Element_Sequence is Vectors.Impl.M.Sequence with Ghost;
+   subtype Element_Sequence is Lists.Impl.M.Sequence with Ghost;
+   subtype Cursor_Position_Map is Lists.Impl.P_Map with Ghost;
    package Content_Models is new Conts.Properties.SPARK.Content_Models
-        (Map_Type     => Vectors.Base_Vector'Class,
+        (Map_Type     => Lists.Base_List'Class,
          Element_Type => Elements.Traits.Element,
          Model_Type   => Element_Sequence,
-         Index_Type   => Vectors.Impl.M.Extended_Index,
-         Model        => Vectors.Impl.Model,
-         Get          => Vectors.Impl.M.Get,
-         First        => Vectors.Impl.M.First,
-         Last         => Vectors.Impl.M.Last);
+         Index_Type   => Lists.Impl.M.Extended_Index,
+         Model        => Lists.Impl.Model,
+         Get          => Lists.Impl.M.Get,
+         First        => Lists.Impl.M.First,
+         Last         => Lists.Impl.M.Last);
    --  For SPARK proofs
-end Conts.Vectors.Strings;
+end Conts.Lists.Definite_Bounded_Limited;

@@ -70,8 +70,8 @@ package Conts.Elements.Arrays with SPARK_Mode => Off is
          First, Last : Integer;
       end record;
       type Fat_Pointer is record
-         Bounds : Both_Bounds;
-         Data   : Array_Type (1 .. Index_Type (Short_Size));
+         Bounds : aliased Both_Bounds;
+         Data   : aliased Array_Type (1 .. Index_Type (Short_Size));
       end record;
    end Fat_Pointers;
 

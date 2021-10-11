@@ -199,8 +199,10 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
                Storage.Resize (Self, L + Count, L, Force => False);
             end if;
 
+            --  ??? Should move elements, not copy them
             Storage.Copy
-              (Self, Source => Self,
+              (Self,
+               Source       => Self,
                Source_From  => B,
                Source_To    => L,
                Self_From    => B + Count);

@@ -1,5 +1,6 @@
 ------------------------------------------------------------------------------
---                     Copyright (C) 2016, AdaCore                          --
+--                     Copyright (C) 2015-2021, AdaCore                     --
+--                     Copyright (C) 2021-2021, Emmanuel Briot              --
 --                                                                          --
 -- This library is free software;  you can redistribute it and/or modify it --
 -- under terms of the  GNU General Public License  as published by the Free --
@@ -20,31 +21,15 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Lists.Definite_Unbounded;
-with Support_Lists;
+package body Conts.Lists.Definite_Unbounded_Limited with SPARK_Mode => Off is
+   pragma Assertion_Policy
+      (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
-package body Test_Lists_Definite_Limited_Unbounded is
-
-   function Nth (Index : Natural) return Integer is (Index);
-
-   package Int_Lists is new Conts.Lists.Definite_Unbounded
-      (Integer, Container_Base_Type => Conts.Limited_Base);
-   package Tests is new Support_Lists
-      (Test_Name    => "lists-def-limited-unbounded",
-       Image        => Integer'Image,
-       Elements     => Int_Lists.Elements.Traits,
-       Storage      => Int_Lists.Storage.Traits,
-       Lists        => Int_Lists.Lists,
-       Nth          => Nth);
-
-   ----------
-   -- Test --
-   ----------
-
-   procedure Test is
-      L1, L2 : Int_Lists.List;
+   function Copy (Self : List'Class) return List'Class is
    begin
-      Tests.Test (L1, L2);
-   end Test;
+      return Result : List do
+         Result.Assign (Self);
+      end return;
+   end Copy;
 
-end Test_Lists_Definite_Limited_Unbounded;
+end Conts.Lists.Definite_Unbounded_Limited;

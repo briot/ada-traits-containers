@@ -23,21 +23,23 @@
 pragma Ada_2012;
 with Conts.Properties.SPARK;
 with Conts.Lists.Generics;
-with Conts.Elements.Arrays;
+with Conts.Elements.Definite;
 with Conts.Lists.Storage.Unbounded;
 
 generic
-package Conts.Lists.Strings with SPARK_Mode is
+   type Element_Type is private;
+   with procedure Free (E : in out Element_Type) is null;
+package Conts.Lists.Definite_Unbounded_Limited with SPARK_Mode is
 
    pragma Assertion_Policy
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
-   package Elements is new Conts.Elements.Arrays
-     (Positive, Character, String, Conts.Global_Pool);
+   package Elements is new Conts.Elements.Definite
+      (Element_Type, Free => Free);
    package Storage is new Conts.Lists.Storage.Unbounded
       (Elements            => Elements.Traits,
        Pool                => Conts.Global_Pool,
-       Container_Base_Type => Conts.Controlled_Base);
+       Container_Base_Type => Conts.Limited_Base);
    package Lists is new Conts.Lists.Generics (Storage.Traits);
    package Cursors renames Lists.Cursors;  --  Forward, Bidirectional
    package Maps renames Lists.Maps;
@@ -47,6 +49,9 @@ package Conts.Lists.Strings with SPARK_Mode is
    subtype Constant_Returned is Elements.Traits.Constant_Returned;
 
    No_Element : Cursor renames Lists.No_Element;
+
+   function Copy (Self : List'Class) return List'Class;
+   --  Return a deep copy of Self
 
    subtype Element_Sequence is Lists.Impl.M.Sequence with Ghost;
    subtype Cursor_Position_Map is Lists.Impl.P_Map with Ghost;
@@ -60,4 +65,4 @@ package Conts.Lists.Strings with SPARK_Mode is
          First        => Lists.Impl.M.First,
          Last         => Lists.Impl.M.Last);
    --  For SPARK proofs
-end Conts.Lists.Strings;
+end Conts.Lists.Definite_Unbounded_Limited;

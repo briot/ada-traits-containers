@@ -1,0 +1,3 @@
+package Tests_Lists_Definite_Bounded_Limited is
+   procedure Test0;
+end Tests_Lists_Definite_Bounded_Limited;

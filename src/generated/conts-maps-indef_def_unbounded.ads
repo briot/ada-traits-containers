@@ -22,8 +22,8 @@
 
 pragma Ada_2012;
 with Conts.Maps.Generics;
-with Conts.Elements.Definite;
 with Conts.Elements.Indefinite;
+with Conts.Elements.Definite;
 
 generic
    type Key_Type (<>) is private;

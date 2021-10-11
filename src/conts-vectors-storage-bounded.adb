@@ -76,8 +76,13 @@ package body Conts.Vectors.Storage.Bounded with SPARK_Mode => Off is
          if Elements.Copyable then
             Self.Nodes (Self_From .. Self_From + Source_To - Source_From) :=
               Source.Nodes (Source_From .. Source_To);
-         else
+         elsif Source_From >= Self_From then
             for J in Source_From .. Source_To loop
+               Self.Nodes (Self_From + J - Source_From) :=
+                 Elements.Copy (Source.Nodes (J));
+            end loop;
+         else
+            for J in reverse Source_From .. Source_To loop
                Self.Nodes (Self_From + J - Source_From) :=
                  Elements.Copy (Source.Nodes (J));
             end loop;
