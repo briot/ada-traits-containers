@@ -22,6 +22,7 @@
 pragma Ada_2012;
 with Ada.Containers;
 with Ada.Numerics.Discrete_Random;
+with Ada.Finalization;
 with System.Storage_Pools;  use System.Storage_Pools;
 with System.Pool_Global;
 
@@ -41,8 +42,8 @@ package Conts with SPARK_Mode is
    --  since we often cast from the latter to the former to get a greater
    --  range.
 
-   type Copyable_Base is abstract tagged null record;
-
+   type Controlled_Base is abstract
+      new Ada.Finalization.Controlled with null record;
    type Limited_Base is abstract tagged limited null record;
    --  A type that can be used as the root of a container hierarchy when a
    --  container should be limited (and thus prevent its copying).

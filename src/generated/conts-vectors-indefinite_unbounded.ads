@@ -1,5 +1,6 @@
 ------------------------------------------------------------------------------
---                     Copyright (C) 2016, AdaCore                          --
+--                     Copyright (C) 2015-2021, AdaCore                     --
+--                     Copyright (C) 2021-2021, Emmanuel Briot              --
 --                                                                          --
 -- This library is free software;  you can redistribute it and/or modify it --
 -- under terms of the  GNU General Public License  as published by the Free --
@@ -19,51 +20,55 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  Maps indexed by indefinite elements (strings for instance), containing
---  indefinite elements (class-wide for instance).
-
 pragma Ada_2012;
+with Conts.Properties.SPARK;
+with Conts.Vectors.Generics;
 with Conts.Elements.Indefinite;
-with Conts.Maps.Generics;
-
+with Conts.Vectors.Storage.Unbounded;
 generic
-   type Key_Type (<>) is private;
+   type Index_Type is (<>);
    type Element_Type (<>) is private;
+
    type Container_Base_Type is abstract tagged limited private;
-   with function Hash (Key : Key_Type) return Hash_Type;
-   with function "=" (Left, Right : Key_Type) return Boolean is <>;
-   with procedure Free (E : in out Key_Type) is null;
+
    with procedure Free (E : in out Element_Type) is null;
-package Conts.Maps.Indef_Indef_Unbounded is
+package Conts.Vectors.Indefinite_Unbounded with SPARK_Mode is
 
    pragma Assertion_Policy
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
-   package Keys is new Conts.Elements.Indefinite
-     (Key_Type, Pool => Conts.Global_Pool, Free => Free);
    package Elements is new Conts.Elements.Indefinite
-     (Element_Type, Pool => Conts.Global_Pool, Free => Free);
+      (Element_Type, Free => Free, Pool => Conts.Global_Pool);
+   package Storage is new Conts.Vectors.Storage.Unbounded
+      (Elements            => Elements.Traits,
+       Resize_Policy       => Conts.Vectors.Resize_1_5,
+       Container_Base_Type => Container_Base_Type);
+   package Vectors is new Conts.Vectors.Generics (Index_Type, Storage.Traits);
+   package Cursors renames Vectors.Cursors;  --  Forward, Bidirectional, Random
+   package Maps renames Vectors.Maps;
 
-   function "=" (Left : Key_Type; Right : Keys.Traits.Stored) return Boolean
-     is (Left = Right.all) with Inline;
+   subtype Vector is Vectors.Vector;
+   subtype Cursor is Vectors.Cursor;
+   subtype Extended_Index is Vectors.Extended_Index;
+   subtype Constant_Returned is Elements.Traits.Constant_Returned;
 
-   package Impl is new Conts.Maps.Generics
-     (Keys                => Keys.Traits,
-      Elements            => Elements.Traits,
-      Hash                => Hash,
-      "="                 => "=",
-      Probing             => Conts.Maps.Perturbation_Probing,
-      Pool                => Conts.Global_Pool,
-      Container_Base_Type => Container_Base_Type);
+   No_Element : Cursor renames Vectors.No_Element;
+   No_Index   : Index_Type renames Vectors.No_Index;
 
-   subtype Constant_Returned_Type is Impl.Constant_Returned_Type;
-   subtype Constant_Returned_Key_Type is Impl.Constant_Returned_Key_Type;
+   procedure Swap
+      (Self : in out Cursors.Forward.Container;
+       Left, Right : Index_Type)
+      renames Vectors.Swap;
 
-   subtype Cursor is Impl.Cursor;
-   subtype Map is Impl.Map;
-   subtype Returned is Impl.Returned_Type;
-
-   package Cursors renames Impl.Cursors;
-   package Maps renames Impl.Maps;
-
-end Conts.Maps.Indef_Indef_Unbounded;
+   subtype Element_Sequence is Vectors.Impl.M.Sequence with Ghost;
+   package Content_Models is new Conts.Properties.SPARK.Content_Models
+        (Map_Type     => Vectors.Base_Vector'Class,
+         Element_Type => Elements.Traits.Element,
+         Model_Type   => Element_Sequence,
+         Index_Type   => Vectors.Impl.M.Extended_Index,
+         Model        => Vectors.Impl.Model,
+         Get          => Vectors.Impl.M.Get,
+         First        => Vectors.Impl.M.First,
+         Last         => Vectors.Impl.M.Last);
+   --  For SPARK proofs
+end Conts.Vectors.Indefinite_Unbounded;

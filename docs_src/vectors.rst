@@ -63,7 +63,7 @@ generic:
      A vector is always implemented as a :ref:`tagged type
      <tagged_and_controlled_types>`. But sometimes applications will want them
      as controlled types with automatic memory deallocation (set the
-     ``Container_Base_Type`` to ``Ada.Finalization.Controlled``), whereas in
+     ``Container_Base_Type`` to ``Conts.Controlled_Base``), whereas in
      other cases we want the container to simply be a limited type (set the
      ``Container_Base_Type`` to ``Conts.Limited_Base``).
 

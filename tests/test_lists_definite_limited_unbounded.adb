@@ -27,7 +27,8 @@ package body Test_Lists_Definite_Limited_Unbounded is
 
    function Nth (Index : Natural) return Integer is (Index);
 
-   package Int_Lists is new Conts.Lists.Definite_Unbounded (Integer);
+   package Int_Lists is new Conts.Lists.Definite_Unbounded
+      (Integer, Container_Base_Type => Conts.Limited_Base);
    package Tests is new Support_Lists
       (Test_Name    => "lists-def-limited-unbounded",
        Image        => Integer'Image,

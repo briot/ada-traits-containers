@@ -1,5 +1,6 @@
 ------------------------------------------------------------------------------
---                     Copyright (C) 2016, AdaCore                          --
+--                     Copyright (C) 2015-2021, AdaCore                     --
+--                     Copyright (C) 2021-2021, Emmanuel Briot              --
 --                                                                          --
 -- This library is free software;  you can redistribute it and/or modify it --
 -- under terms of the  GNU General Public License  as published by the Free --
@@ -19,46 +20,45 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  Maps indexed by definite elements (integers for instance), containing
---  definite elements (records for instance).
-
 pragma Ada_2012;
-with Conts.Elements.Definite;
-with Conts.Maps.Generics;
+with Conts.Properties.SPARK;
+with Conts.Lists.Generics;
+with Conts.Elements.Indefinite;
+with Conts.Lists.Storage.Bounded;
 
 generic
-   type Key_Type is private;
-   type Element_Type is private;
-   type Container_Base_Type is abstract tagged limited private;
-   with function Hash (Key : Key_Type) return Hash_Type;
-   with function "=" (Left, Right : Key_Type) return Boolean is <>;
-   with procedure Free (E : in out Key_Type) is null;
+   type Element_Type (<>) is private;
    with procedure Free (E : in out Element_Type) is null;
-package Conts.Maps.Def_Def_Unbounded is
+package Conts.Lists.Indefinite_Bounded with SPARK_Mode is
 
    pragma Assertion_Policy
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
-   package Keys is new Conts.Elements.Definite
-     (Key_Type, Free => Free);
-   package Elements is new Conts.Elements.Definite
-     (Element_Type, Free => Free);
-   package Impl is new Conts.Maps.Generics
-     (Keys                => Keys.Traits,
-      Elements            => Elements.Traits,
-      Hash                => Hash,
-      "="                 => "=",
-      Probing             => Conts.Maps.Perturbation_Probing,
-      Pool                => Conts.Global_Pool,
-      Container_Base_Type => Container_Base_Type);
+   package Elements is new Conts.Elements.Indefinite
+      (Element_Type, Free => Free, Pool => Conts.Global_Pool);
+   package Storage is new Conts.Lists.Storage.Bounded
+      (Elements            => Elements.Traits,
+       Container_Base_Type => Conts.Controlled_Base);
+   package Lists is new Conts.Lists.Generics (Storage.Traits);
+   package Cursors renames Lists.Cursors;  --  Forward, Bidirectional
+   package Maps renames Lists.Maps;
 
-   subtype Constant_Returned_Type is Impl.Constant_Returned_Type;
-   subtype Constant_Returned_Key_Type is Impl.Constant_Returned_Key_Type;
+   subtype List is Lists.List;
+   subtype Cursor is Lists.Cursor;
+   subtype Constant_Returned is Elements.Traits.Constant_Returned;
 
-   subtype Cursor is Impl.Cursor;
-   subtype Map is Impl.Map;
+   No_Element : Cursor renames Lists.No_Element;
 
-   package Cursors renames Impl.Cursors;
-   package Maps renames Impl.Maps;
-
-end Conts.Maps.Def_Def_Unbounded;
+   subtype Element_Sequence is Lists.Impl.M.Sequence with Ghost;
+   subtype Cursor_Position_Map is Lists.Impl.P_Map with Ghost;
+   package Content_Models is new Conts.Properties.SPARK.Content_Models
+        (Map_Type     => Lists.Base_List'Class,
+         Element_Type => Elements.Traits.Element,
+         Model_Type   => Element_Sequence,
+         Index_Type   => Lists.Impl.M.Extended_Index,
+         Model        => Lists.Impl.Model,
+         Get          => Lists.Impl.M.Get,
+         First        => Lists.Impl.M.First,
+         Last         => Lists.Impl.M.Last);
+   --  For SPARK proofs
+end Conts.Lists.Indefinite_Bounded;

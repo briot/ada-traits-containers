@@ -65,7 +65,6 @@ procedure {test_name} (Stdout : not null access Output'Class);"""
 pragma Style_Checks (Off);
 pragma Warnings (Off, "unit * is not referenced");
 with Perf_Support;  use Perf_Support;
-with Ada.Finalization;
 with Conts.Algorithms;
 with Conts.Adaptors;
 pragma Warnings (On, "unit * is not referenced");
@@ -555,9 +554,11 @@ all_tests = []
 # Integer lists
 
 i = " (Integer);"
-ci = " (Integer);"
+ci = " (Integer, Conts.Controlled_Base);"
+ci_bounded = " (Integer);"
 s = " (String);"
-cs = " (String);"
+cs = " (String, Conts.Controlled_Base);"
+cs_spark = " (String);"
 
 List("Integer",
      "package Container is new Ada.Containers.Bounded_Doubly_Linked_Lists" + i,
@@ -604,7 +605,7 @@ List("Integer",
           "Because of dynamic dispatching -- When avoided, we gain 40%")
     ).gen(adaptor="Constant_Returned")
 List("Integer",
-     "package Container is new Conts.Lists.Definite_Bounded" + ci,
+     "package Container is new Conts.Lists.Definite_Bounded" + ci_bounded,
      "with Conts.Lists.Definite_Bounded;",
      unbounded=False,
      name="Def Bounded", filename="def_bounded"
@@ -653,7 +654,7 @@ List("String",
          adaptor="Constant_Returned")
 List("Unbounded_String",
      "package Container is new Conts.Lists.Definite_Unbounded"
-     + "(Unbounded_String);",
+     + " (Unbounded_String, Conts.Controlled_Base);",
      "with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;\n" +
      "with Conts.Lists.Definite_Unbounded;",
      unbounded=True,
@@ -663,7 +664,7 @@ List("Unbounded_String",
          cursorloop="Maybe because of the atomic counters or controlled elements")
     ).gen(adaptor="Constant_Returned")
 List("String",
-     "package Container is new Conts.Lists.Indefinite_Unbounded_SPARK" + cs
+     "package Container is new Conts.Lists.Indefinite_Unbounded_SPARK" + cs_spark
      + '\n   function Predicate (P : Container.Constant_Returned) return Boolean\n'
      + '      is (Perf_Support.Predicate (P)) with Inline;',
      "with Conts.Lists.Indefinite_Unbounded_SPARK;",
@@ -688,8 +689,8 @@ List("String",
 # Integer vectors
 
 p = " (Positive, Integer);"
-cp = " (Positive, Integer);"
-cpc = " (Positive, Integer, Ada.Finalization.Controlled);"
+cp = " (Positive, Integer, Conts.Controlled_Base);"
+cpc = " (Positive, Integer, Conts.Controlled_Base);"
 lp = " (Positive, Integer);"
 
 Vector("Integer",
@@ -756,7 +757,7 @@ Vector("Integer",
 # String vectors
 
 p = " (Positive, String);"
-cp = " (Positive, String);"
+cp = " (Positive, String, Conts.Controlled_Base);"
 lp = " (Positive, String);"
 
 Vector("String",
@@ -842,7 +843,7 @@ Map("IntInt",
     'function Hash (K : Integer) return Conts.Hash_Type is\n'
     + '      (Conts.Hash_Type (K)) with Inline;\n'
     + '   package Container is new Conts.Maps.Def_Def_Unbounded\n'
-    + '      (Integer, Integer, Ada.Finalization.Controlled, Hash);\n',
+    + '      (Integer, Integer, Conts.Controlled_Base, Hash);\n',
     'with Conts.Maps.Def_Def_Unbounded;',
     unbounded=True,
     name="Hashed Def Def Unbounded",
@@ -852,7 +853,7 @@ Map("IntInt",
     'function Hash (K : Integer) return Conts.Hash_Type is\n'
     + '      (Conts.Hash_Type (K)) with Inline;\n'
     + '   package Container is new Conts.Maps.Def_Def_Unbounded\n'
-    + '      (Integer, Integer, Ada.Finalization.Controlled, Hash);\n',
+    + '      (Integer, Integer, Conts.Controlled_Base, Hash);\n',
     'with Conts.Maps.Def_Def_Unbounded;',
     unbounded=True,
     name="Hashed Linear Probing Def Def Unbounded",
@@ -884,10 +885,10 @@ Map("StrStr",
          adaptors="Indefinite_Hashed_Maps_Adaptors")
 Map("StrStr",
     'package Container is new Conts.Maps.Indef_Indef_Unbounded\n'
-    + '      (String, String, Ada.Finalization.Controlled, Ada.Strings.Hash);\n'
-    + '   function Predicate (P : Container.Constant_Returned_Type) return Boolean\n'
+    + '      (String, String, Conts.Controlled_Base, Ada.Strings.Hash);\n'
+    + '   function Predicate (P : Container.Constant_Returned) return Boolean\n'
     + '      is (Perf_Support.Predicate (P)) with Inline;\n'
-    + '   function Ref_Predicate (P : Container.Constant_Returned_Type) return Boolean\n'
+    + '   function Ref_Predicate (P : Container.Constant_Returned) return Boolean\n'
     + '      renames Predicate;',
     'with Conts.Maps.Indef_Indef_Unbounded, Ada.Strings.Hash;',
     unbounded=True,
@@ -899,10 +900,10 @@ Map("StrStr",
         find_predicate='Ref_Predicate')
 Map("StrStr",
     'package Container is new Conts.Maps.Indef_Indef_Unbounded\n'
-    + '      (String, String, Ada.Finalization.Controlled, Ada.Strings.Hash);\n'
-    + '   function Predicate (P : Container.Constant_Returned_Type) return Boolean\n'
+    + '      (String, String, Conts.Controlled_Base, Ada.Strings.Hash);\n'
+    + '   function Predicate (P : Container.Constant_Returned) return Boolean\n'
     + '      is (Perf_Support.Predicate (P)) with Inline;'
-    + '   function Ref_Predicate (P : Container.Constant_Returned_Type) return Boolean\n'
+    + '   function Ref_Predicate (P : Container.Constant_Returned) return Boolean\n'
     + '      renames Predicate;',
         'with Conts.Maps.Indef_Indef_Unbounded, Ada.Strings.Hash;',
     unbounded=True,
@@ -915,7 +916,7 @@ Map("StrStr",
 Map("StrStr",
     'package Container is new Conts.Maps.Indef_Indef_Unbounded_SPARK\n'
     + '      (String, String, Ada.Strings.Hash);\n'
-    + '   function Predicate (P : Container.Constant_Returned_Type) return Boolean\n'
+    + '   function Predicate (P : Container.Constant_Returned) return Boolean\n'
     + '      is (Perf_Support.Predicate (P)) with Inline;',
     'with Conts.Maps.Indef_Indef_Unbounded_SPARK, Ada.Strings.Hash;',
     unbounded=True, limited=True,

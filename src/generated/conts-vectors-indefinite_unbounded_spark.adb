@@ -1,5 +1,6 @@
 ------------------------------------------------------------------------------
---                     Copyright (C) 2015-2016, AdaCore                     --
+--                     Copyright (C) 2015-2021, AdaCore                     --
+--                     Copyright (C) 2021-2021, Emmanuel Briot              --
 --                                                                          --
 -- This library is free software;  you can redistribute it and/or modify it --
 -- under terms of the  GNU General Public License  as published by the Free --
@@ -19,47 +20,16 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  Bounded controlled lists of constrained elements
---  This package is compatible with SPARK.
-
 pragma Ada_2012;
-with Conts.Elements.Definite;
-with Conts.Lists.Generics;
-with Conts.Lists.Storage.Bounded;
-with Conts.Properties.SPARK;
-
-generic
-   type Element_Type is private;
-   with procedure Free (E : in out Element_Type) is null;
-package Conts.Lists.Definite_Bounded with SPARK_Mode is
-
+package body Conts.Vectors.Indefinite_Unbounded_SPARK with SPARK_Mode => Off is
    pragma Assertion_Policy
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
-   package Elements is new Conts.Elements.Definite
-     (Element_Type, Free => Free);
-   package Storage is new Conts.Lists.Storage.Bounded
-      (Elements            => Elements.Traits,
-       Container_Base_Type => Conts.Copyable_Base);
-   package Lists is new Conts.Lists.Generics (Storage.Traits);
+   function Copy (Self : Vector'Class) return Vector'Class is
+   begin
+      return Result : Vector do
+         Result.Assign (Self);
+      end return;
+   end Copy;
 
-   subtype Cursor is Lists.Cursor;
-   subtype List is Lists.List;
-
-   subtype Element_Sequence is Lists.Impl.M.Sequence with Ghost;
-   subtype Cursor_Position_Map is Lists.Impl.P_Map with Ghost;
-
-   package Cursors renames Lists.Cursors;
-   package Maps renames Lists.Maps;
-
-   package Content_Models is new Conts.Properties.SPARK.Content_Models
-        (Map_Type     => Lists.Base_List'Class,
-         Element_Type => Element_Type,
-         Model_Type   => Element_Sequence,
-         Index_Type   => Lists.Impl.M.Extended_Index,
-         Model        => Lists.Impl.Model,
-         Get          => Lists.Impl.M.Get,
-         First        => Lists.Impl.M.First,
-         Last         => Lists.Impl.M.Last);
-
-end Conts.Lists.Definite_Bounded;
+end Conts.Vectors.Indefinite_Unbounded_SPARK;

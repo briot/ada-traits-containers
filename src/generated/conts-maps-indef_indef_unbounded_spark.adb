@@ -1,5 +1,6 @@
 ------------------------------------------------------------------------------
---                     Copyright (C) 2015-2016, AdaCore                     --
+--                     Copyright (C) 2015-2021, AdaCore                     --
+--                     Copyright (C) 2021-2021, Emmanuel Briot              --
 --                                                                          --
 -- This library is free software;  you can redistribute it and/or modify it --
 -- under terms of the  GNU General Public License  as published by the Free --
@@ -19,34 +20,16 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  Unbounded controlled lists of constrained elements.
---  Compared with standard Ada containers, this is saving half of the memory
---  allocations, so much more efficient in general.
-
 pragma Ada_2012;
-with Ada.Finalization;
-with Conts.Elements.Definite;
-with Conts.Lists.Generics;
-with Conts.Lists.Storage.Unbounded;
-
-generic
-   type Element_Type is private;
-package Conts.Lists.Definite_Unbounded is
-
+package body Conts.Maps.Indef_Indef_Unbounded_SPARK with SPARK_Mode => Off is
    pragma Assertion_Policy
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
-   package Elements is new Conts.Elements.Definite (Element_Type);
-   package Storage is new Conts.Lists.Storage.Unbounded
-      (Elements            => Elements.Traits,
-       Container_Base_Type => Ada.Finalization.Controlled,
-       Pool                => Conts.Global_Pool);
-   package Lists is new Conts.Lists.Generics (Storage.Traits);
+   function Copy (Self : Map'Class) return Map'Class is
+   begin
+      return Result : Map do
+         Result.Assign (Self);
+      end return;
+   end Copy;
 
-   subtype Cursor is Lists.Cursor;
-   subtype List is Lists.List;
-
-   package Cursors renames Lists.Cursors;
-   package Maps renames Lists.Maps;
-
-end Conts.Lists.Definite_Unbounded;
+end Conts.Maps.Indef_Indef_Unbounded_SPARK;

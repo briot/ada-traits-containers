@@ -86,7 +86,7 @@ which describes which elements are stored in the vector, and how to do so.</p>
 <blockquote>
 <div><p>A vector is always implemented as a <a class="reference internal" href="conventions.html#tagged-and-controlled-types"><span class="std std-ref">tagged type</span></a>. But sometimes applications will want them
 as controlled types with automatic memory deallocation (set the
-<code class="docutils literal notranslate"><span class="pre">Container_Base_Type</span></code> to <code class="docutils literal notranslate"><span class="pre">Ada.Finalization.Controlled</span></code>), whereas in
+<code class="docutils literal notranslate"><span class="pre">Container_Base_Type</span></code> to <code class="docutils literal notranslate"><span class="pre">Conts.Controlled_Base</span></code>), whereas in
 other cases we want the container to simply be a limited type (set the
 <code class="docutils literal notranslate"><span class="pre">Container_Base_Type</span></code> to <code class="docutils literal notranslate"><span class="pre">Conts.Limited_Base</span></code>).</p>
 <p>Other combinations are of course possible. You could chose to have all
@@ -229,6 +229,7 @@ in the algorithms.</p>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="making_of.html">The “making of” of a generic library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="conventions.html">Naming and Coding Conventions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cursors.html">Cursors and Properties</a></li>
 <li class="toctree-l1"><a class="reference internal" href="elements.html">Element Traits</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><cite>Vector</cite> data type</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#vector-nodes">Vector nodes</a></li>

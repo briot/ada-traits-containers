@@ -20,7 +20,6 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Ada.Finalization;
 with Graph1_Support;                use Graph1_Support;
 with Conts.Elements.Null_Elements;  use Conts.Elements.Null_Elements;
 with Conts.Graphs.Adjacency_List;
@@ -41,7 +40,7 @@ package body Custom_Graph is
         (Vertex_Type         => Positive,
          Vertex_Properties   => Conts.Elements.Null_Elements.Traits,
          Edge_Properties     => Conts.Elements.Null_Elements.Traits,
-         Container_Base_Type => Ada.Finalization.Controlled);
+         Container_Base_Type => Conts.Controlled_Base);
 
       type My_Visit is null record;
       procedure Finish_Vertex (Ignored : in out My_Visit; V : Graphs.Vertex);

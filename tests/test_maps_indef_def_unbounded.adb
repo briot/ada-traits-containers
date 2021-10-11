@@ -20,7 +20,6 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Ada.Finalization;
 with Ada.Strings.Hash;
 with Asserts;
 with Conts.Maps.Indef_Def_Unbounded;
@@ -32,7 +31,7 @@ package body Test_Maps_Indef_Def_Unbounded is
    package Maps is new Conts.Maps.Indef_Def_Unbounded
      (Key_Type            => String,
       Element_Type        => Integer,
-      Container_Base_Type => Ada.Finalization.Controlled,
+      Container_Base_Type => Conts.Controlled_Base,
       Hash                => Ada.Strings.Hash);
 
    ----------

@@ -20,7 +20,6 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Ada.Finalization;
 with Conts.Elements.Indefinite;
 with Conts.Lists.Storage.Unbounded;
 with Conts.Lists.Generics;
@@ -48,7 +47,7 @@ package QGen is
       (EObject'Class, Pool => Conts.Global_Pool);
    package Storage is new Conts.Lists.Storage.Unbounded
       (Elements.Traits,
-       Container_Base_Type => Ada.Finalization.Controlled,
+       Container_Base_Type => Conts.Controlled_Base,
        Pool                => Conts.Global_Pool);
    package Lists is new Conts.Lists.Generics (Storage.Traits);
 

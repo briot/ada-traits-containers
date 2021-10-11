@@ -1,5 +1,6 @@
 ------------------------------------------------------------------------------
---                     Copyright (C) 2015-2016, AdaCore                     --
+--                     Copyright (C) 2015-2021, AdaCore                     --
+--                     Copyright (C) 2021-2021, Emmanuel Briot              --
 --                                                                          --
 -- This library is free software;  you can redistribute it and/or modify it --
 -- under terms of the  GNU General Public License  as published by the Free --
@@ -19,35 +20,49 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  Unbounded controlled lists of unconstrained elements
-
 pragma Ada_2012;
-with Ada.Finalization;
+with Conts.Maps.Generics;
+with Conts.Elements.Definite;
 with Conts.Elements.Indefinite;
-with Conts.Lists.Generics;
-with Conts.Lists.Storage.Unbounded;
 
 generic
-   type Element_Type (<>) is private;
+   type Key_Type (<>) is private;
+   type Element_Type is private;
+   type Container_Base_Type is abstract tagged limited private;
+   with function Hash (Key : Key_Type) return Hash_Type;
+   with function "=" (Left, Right : Key_Type) return Boolean is <>;
+   with procedure Free (E : in out Key_Type) is null;
    with procedure Free (E : in out Element_Type) is null;
-package Conts.Lists.Indefinite_Unbounded is
+package Conts.Maps.Indef_Def_Unbounded with SPARK_Mode is
 
    pragma Assertion_Policy
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
-   package Elements is new Conts.Elements.Indefinite
-      (Element_Type, Free => Free, Pool => Conts.Global_Pool);
-   package Storage is new Conts.Lists.Storage.Unbounded
-      (Elements            => Elements.Traits,
-       Container_Base_Type => Ada.Finalization.Controlled,
-       Pool                => Conts.Global_Pool);
-   package Lists is new Conts.Lists.Generics (Storage.Traits);
+   package Keys is new Conts.Elements.Indefinite
+      (Key_Type, Free => Free, Pool => Conts.Global_Pool);
+   package Elements is new Conts.Elements.Definite
+      (Element_Type, Free => Free);
 
-   subtype Cursor is Lists.Cursor;
-   subtype List is Lists.List;
+   function "=" (Left : Key_Type; Right : Keys.Traits.Stored) return Boolean
+        is (Left = Right.all) with Inline;
+
+   package Impl is new Conts.Maps.Generics
+     (Keys                => Keys.Traits,
+      Elements            => Elements.Traits,
+      Hash                => Hash,
+      "="                 => "=",
+      Probing             => Conts.Maps.Perturbation_Probing,
+      Pool                => Conts.Global_Pool,
+      Container_Base_Type => Container_Base_Type);
+
+   subtype Map is Impl.Map;
+   subtype Cursor is Impl.Cursor;
    subtype Constant_Returned is Elements.Traits.Constant_Returned;
+   subtype Returned is Impl.Returned_Type;
+   No_Element : Cursor renames Impl.No_Element;
 
-   package Cursors renames Lists.Cursors;
-   package Maps renames Lists.Maps;
+   package Cursors renames Impl.Cursors;
+   package Maps renames Impl.Maps;
 
-end Conts.Lists.Indefinite_Unbounded;
+
+end Conts.Maps.Indef_Def_Unbounded;

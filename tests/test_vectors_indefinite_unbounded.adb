@@ -27,7 +27,7 @@ package body Test_Vectors_Indefinite_Unbounded is
 
    function Nth (Index : Natural) return Integer is (Index);
    package Int_Vecs is new Conts.Vectors.Indefinite_Unbounded
-      (Positive, Integer);
+      (Positive, Integer, Container_Base_Type => Conts.Controlled_Base);
    package Tests is new Support_Vectors
       (Test_Name       => "vectors-indef-unbounded",
        Nth             => Nth,

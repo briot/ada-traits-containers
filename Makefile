@@ -29,9 +29,13 @@ GPRINSTALL=gprinstall ${RBD} -p -m ${GPRBUILD_OPTIONS} \
 
 .PHONY: docs all build install ada_test clean
 
-all:  build docs ada_test
+all:  build generate docs ada_test
 
-build:
+
+generate:
+	-python3 ./generate.py
+
+build: generate
 	${GPRBUILD} -P${GPR_CONTS} -XBUILD=${BUILD}
 
 docs:
@@ -41,7 +45,7 @@ install:
 	${GPRINSTALL} -P${GPR_CONTS} --prefix=${PREFIX}
 
 # Run Ada tests (not using gnatpython)
-test:
+test: build
 	@echo "==== Running tests in Debug mode ===="
 	@${GPRBUILD} -q -XBUILD=Debug tests/tests.gpr && \
 		tests/obj/Debug/main

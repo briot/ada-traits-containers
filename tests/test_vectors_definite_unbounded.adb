@@ -20,7 +20,6 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Ada.Finalization;
 with Conts.Vectors.Definite_Unbounded;
 with Support_Vectors;
 
@@ -28,7 +27,7 @@ package body Test_Vectors_Definite_Unbounded is
 
    function Nth (Index : Natural) return Integer is (Index);
    package Int_Vecs is new Conts.Vectors.Definite_Unbounded
-      (Positive, Integer, Ada.Finalization.Controlled);
+      (Positive, Integer, Conts.Controlled_Base);
    package Tests is new Support_Vectors
       (Test_Name       => "vectors-definite-unbounded",
        Nth             => Nth,

@@ -1,5 +1,6 @@
 ------------------------------------------------------------------------------
---                     Copyright (C) 2016, AdaCore                          --
+--                     Copyright (C) 2015-2021, AdaCore                     --
+--                     Copyright (C) 2021-2021, Emmanuel Briot              --
 --                                                                          --
 -- This library is free software;  you can redistribute it and/or modify it --
 -- under terms of the  GNU General Public License  as published by the Free --
@@ -19,13 +20,10 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  Maps indexed by indefinite elements (strings for instance), containing
---  indefinite elements (class-wide for instance).
-
 pragma Ada_2012;
-with Conts.Elements.Indefinite_SPARK;
 with Conts.Maps.Generics;
 with Conts.Properties.SPARK;
+with Conts.Elements.Indefinite_SPARK;
 
 generic
    type Key_Type (<>) is private;
@@ -38,14 +36,13 @@ package Conts.Maps.Indef_Indef_Unbounded_SPARK with SPARK_Mode is
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
    package Keys is new Conts.Elements.Indefinite_SPARK
-     (Key_Type, Pool => Conts.Global_Pool);
+      (Key_Type, Pool => Conts.Global_Pool);
    package Elements is new Conts.Elements.Indefinite_SPARK
-     (Element_Type, Pool => Conts.Global_Pool);
+      (Element_Type, Pool => Conts.Global_Pool);
 
-   function "=" (Left : Key_Type; Right : Keys.Traits.Stored) return Boolean is
-     (Left = Keys.Impl.To_Element
-       (Keys.Impl.To_Constant_Reference_Type (Right)))
-   with Inline;
+   function "=" (Left : Key_Type; Right : Keys.Traits.Stored) return Boolean
+        is (Left = Keys.Impl.To_Element
+           (Keys.Impl.To_Constant_Reference_Type (Right))) with Inline;
 
    package Impl is new Conts.Maps.Generics
      (Keys                => Keys.Traits,
@@ -54,26 +51,23 @@ package Conts.Maps.Indef_Indef_Unbounded_SPARK with SPARK_Mode is
       "="                 => "=",
       Probing             => Conts.Maps.Perturbation_Probing,
       Pool                => Conts.Global_Pool,
-      Container_Base_Type => Limited_Base,
-      Resize_Strategy     => Resize_2_3);
+      Container_Base_Type => Conts.Limited_Base);
 
-   subtype Constant_Returned_Type is Impl.Constant_Returned_Type;
-   subtype Constant_Returned_Key_Type is Impl.Constant_Returned_Key_Type;
-
-   subtype Cursor is Impl.Cursor;
    subtype Map is Impl.Map;
+   subtype Cursor is Impl.Cursor;
+   subtype Constant_Returned is Elements.Traits.Constant_Returned;
    subtype Returned is Impl.Returned_Type;
-
-   subtype Model_Map is Impl.Impl.M.Map with Ghost;
-   subtype Key_Sequence is Impl.Impl.K.Sequence with Ghost;
-   subtype Cursor_Position_Map is Impl.Impl.P_Map with Ghost;
-
-   function Copy (Self : Map'Class) return Map'Class;
-   --  Return a deep copy of Self
+   No_Element : Cursor renames Impl.No_Element;
 
    package Cursors renames Impl.Cursors;
    package Maps renames Impl.Maps;
 
+   function Copy (Self : Map'Class) return Map'Class;
+   --  Return a deep copy of Self
+
+   subtype Model_Map is Impl.Impl.M.Map with Ghost;
+   subtype Key_Sequence is Impl.Impl.K.Sequence with Ghost;
+   subtype Cursor_Position_Map is Impl.Impl.P_Map with Ghost;
    package Content_Models is new Conts.Properties.SPARK.Content_Models
         (Map_Type     => Impl.Base_Map'Class,
          Element_Type => Key_Type,
@@ -83,5 +77,6 @@ package Conts.Maps.Indef_Indef_Unbounded_SPARK with SPARK_Mode is
          Get          => Impl.Impl.K.Get,
          First        => Impl.Impl.K.First,
          Last         => Impl.Impl.K.Last);
+   --  for SPARK proofs
 
 end Conts.Maps.Indef_Indef_Unbounded_SPARK;

@@ -20,7 +20,6 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Ada.Finalization;
 with Asserts;
 with Conts;                         use Conts;
 with Conts.Elements.Null_Elements;  use Conts.Elements.Null_Elements;
@@ -37,7 +36,7 @@ package body Test_Graph_Adjlist is
      (Vertex_Type         => Vertex,
       Vertex_Properties   => Conts.Elements.Null_Elements.Traits,
       Edge_Properties     => Conts.Elements.Null_Elements.Traits,
-      Container_Base_Type => Ada.Finalization.Controlled);
+      Container_Base_Type => Conts.Controlled_Base);
 
    ----------
    -- Test --

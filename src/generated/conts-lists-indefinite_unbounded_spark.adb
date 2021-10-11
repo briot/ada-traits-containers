@@ -1,5 +1,6 @@
 ------------------------------------------------------------------------------
---                     Copyright (C) 2015-2016, AdaCore                     --
+--                     Copyright (C) 2015-2021, AdaCore                     --
+--                     Copyright (C) 2021-2021, Emmanuel Briot              --
 --                                                                          --
 -- This library is free software;  you can redistribute it and/or modify it --
 -- under terms of the  GNU General Public License  as published by the Free --
@@ -20,12 +21,9 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-
 package body Conts.Lists.Indefinite_Unbounded_SPARK with SPARK_Mode => Off is
-
-   ----------
-   -- Copy --
-   ----------
+   pragma Assertion_Policy
+      (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
    function Copy (Self : List'Class) return List'Class is
    begin

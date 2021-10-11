@@ -20,7 +20,6 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Ada.Finalization;
 with Asserts;           use Asserts;
 with Conts.Algorithms;  use Conts.Algorithms;
 with Conts.Vectors.Definite_Unbounded;
@@ -33,7 +32,7 @@ package body Test_Algo_Sort is
    subtype Index_Type is Positive;
 
    package Int_Vecs is new Conts.Vectors.Definite_Unbounded
-      (Index_Type, Integer, Ada.Finalization.Controlled);
+      (Index_Type, Integer, Conts.Controlled_Base);
    use Int_Vecs;
 
    package Rand is new Conts.Default_Random (Extended_Index);

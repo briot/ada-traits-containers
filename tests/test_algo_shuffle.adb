@@ -20,7 +20,6 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Ada.Finalization;
 with Asserts;
 with Conts.Algorithms;
 with Conts.Vectors.Definite_Unbounded;
@@ -31,7 +30,7 @@ package body Test_Algo_Shuffle is
    subtype Index_Type is Positive;
 
    package Int_Vecs is new Conts.Vectors.Definite_Unbounded
-      (Index_Type, Integer, Ada.Finalization.Controlled);
+      (Index_Type, Integer, Conts.Controlled_Base);
    use Int_Vecs;
    package Rand is new Conts.Default_Random (Extended_Index);
    procedure Shuffle is new Conts.Algorithms.Shuffle

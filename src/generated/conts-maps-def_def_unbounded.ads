@@ -1,5 +1,6 @@
 ------------------------------------------------------------------------------
---                     Copyright (C) 2016, AdaCore                          --
+--                     Copyright (C) 2015-2021, AdaCore                     --
+--                     Copyright (C) 2021-2021, Emmanuel Briot              --
 --                                                                          --
 -- This library is free software;  you can redistribute it and/or modify it --
 -- under terms of the  GNU General Public License  as published by the Free --
@@ -20,21 +21,45 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
+with Conts.Maps.Generics;
+with Conts.Elements.Definite;
 
-package body Conts.Maps.Indef_Indef_Unbounded_SPARK with SPARK_Mode => Off is
+generic
+   type Key_Type is private;
+   type Element_Type is private;
+   type Container_Base_Type is abstract tagged limited private;
+   with function Hash (Key : Key_Type) return Hash_Type;
+   with function "=" (Left, Right : Key_Type) return Boolean is <>;
+   with procedure Free (E : in out Key_Type) is null;
+   with procedure Free (E : in out Element_Type) is null;
+package Conts.Maps.Def_Def_Unbounded with SPARK_Mode is
 
    pragma Assertion_Policy
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
-   ----------
-   -- Copy --
-   ----------
+   package Keys is new Conts.Elements.Definite
+      (Key_Type, Free => Free);
+   package Elements is new Conts.Elements.Definite
+      (Element_Type, Free => Free);
 
-   function Copy (Self : Map'Class) return Map'Class is
-   begin
-      return Result : Map do
-         Result.Assign (Self);
-      end return;
-   end Copy;
 
-end Conts.Maps.Indef_Indef_Unbounded_SPARK;
+   package Impl is new Conts.Maps.Generics
+     (Keys                => Keys.Traits,
+      Elements            => Elements.Traits,
+      Hash                => Hash,
+      "="                 => "=",
+      Probing             => Conts.Maps.Perturbation_Probing,
+      Pool                => Conts.Global_Pool,
+      Container_Base_Type => Container_Base_Type);
+
+   subtype Map is Impl.Map;
+   subtype Cursor is Impl.Cursor;
+   subtype Constant_Returned is Elements.Traits.Constant_Returned;
+   subtype Returned is Impl.Returned_Type;
+   No_Element : Cursor renames Impl.No_Element;
+
+   package Cursors renames Impl.Cursors;
+   package Maps renames Impl.Maps;
+
+
+end Conts.Maps.Def_Def_Unbounded;

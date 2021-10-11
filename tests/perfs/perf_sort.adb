@@ -22,7 +22,6 @@
 
 pragma Ada_2012;
 with Ada.Containers.Vectors;
-with Ada.Finalization;
 with Conts.Algorithms;  use Conts.Algorithms;
 with Conts.Vectors.Definite_Unbounded;
 
@@ -37,7 +36,7 @@ package body Perf_Sort is
    package Ada_Sort is new Int_Ada_Vecs.Generic_Sorting ("<");
 
    package Int_Vecs is new Conts.Vectors.Definite_Unbounded
-      (Index_Type, Integer, Ada.Finalization.Controlled);
+      (Index_Type, Integer, Conts.Controlled_Base);
    use Int_Vecs;
 
    package Rand is new Conts.Default_Random (Extended_Index);

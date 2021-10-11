@@ -1,5 +1,6 @@
 ------------------------------------------------------------------------------
---                     Copyright (C) 2015-2016, AdaCore                     --
+--                     Copyright (C) 2015-2021, AdaCore                     --
+--                     Copyright (C) 2021-2021, Emmanuel Briot              --
 --                                                                          --
 -- This library is free software;  you can redistribute it and/or modify it --
 -- under terms of the  GNU General Public License  as published by the Free --
@@ -19,42 +20,53 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
---  Unbounded vectors of constrained elements.
---  Compared with standard Ada containers, this is saving half of the memory
---  allocations, so much more efficient in general.
-
 pragma Ada_2012;
-with Conts.Elements.Definite;
+with Conts.Properties.SPARK;
 with Conts.Vectors.Generics;
-with Conts.Vectors.Storage.Unbounded;
-
+with Conts.Elements.Indefinite;
+with Conts.Vectors.Storage.Bounded;
 generic
    type Index_Type is (<>);
-   type Element_Type is private;
-   type Container_Base_Type is abstract tagged limited private;
+   type Element_Type (<>) is private;
+
+
    with procedure Free (E : in out Element_Type) is null;
-package Conts.Vectors.Definite_Unbounded is
+package Conts.Vectors.Indefinite_Bounded with SPARK_Mode is
 
    pragma Assertion_Policy
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
-   package Elements is new Conts.Elements.Definite
-     (Element_Type, Free => Free);
-   package Storage is new Conts.Vectors.Storage.Unbounded
+   package Elements is new Conts.Elements.Indefinite
+      (Element_Type, Free => Free, Pool => Conts.Global_Pool);
+   package Storage is new Conts.Vectors.Storage.Bounded
       (Elements            => Elements.Traits,
-       Container_Base_Type => Container_Base_Type,
-       Resize_Policy       => Conts.Vectors.Resize_1_5);
+       Container_Base_Type => Conts.Controlled_Base);
    package Vectors is new Conts.Vectors.Generics (Index_Type, Storage.Traits);
+   package Cursors renames Vectors.Cursors;  --  Forward, Bidirectional, Random
+   package Maps renames Vectors.Maps;
 
    subtype Vector is Vectors.Vector;
    subtype Cursor is Vectors.Cursor;
    subtype Extended_Index is Vectors.Extended_Index;
+   subtype Constant_Returned is Elements.Traits.Constant_Returned;
 
-   package Cursors renames Vectors.Cursors;
-   package Maps renames Vectors.Maps;
+   No_Element : Cursor renames Vectors.No_Element;
+   No_Index   : Index_Type renames Vectors.No_Index;
 
    procedure Swap
-      (Self : in out Cursors.Forward.Container; Left, Right : Index_Type)
+      (Self : in out Cursors.Forward.Container;
+       Left, Right : Index_Type)
       renames Vectors.Swap;
 
-end Conts.Vectors.Definite_Unbounded;
+   subtype Element_Sequence is Vectors.Impl.M.Sequence with Ghost;
+   package Content_Models is new Conts.Properties.SPARK.Content_Models
+        (Map_Type     => Vectors.Base_Vector'Class,
+         Element_Type => Elements.Traits.Element,
+         Model_Type   => Element_Sequence,
+         Index_Type   => Vectors.Impl.M.Extended_Index,
+         Model        => Vectors.Impl.Model,
+         Get          => Vectors.Impl.M.Get,
+         First        => Vectors.Impl.M.First,
+         Last         => Vectors.Impl.M.Last);
+   --  For SPARK proofs
+end Conts.Vectors.Indefinite_Bounded;
