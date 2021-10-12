@@ -18,4 +18,9 @@ package body Tests_Vectors_Definite_Unbounded is
    begin
       Tests0.Test (V);
    end Test0;
+
+   procedure Test_Perf0 (Result : in out Report.Output'Class) is
+   begin
+      null;
+   end Test_Perf0;
 end Tests_Vectors_Definite_Unbounded;

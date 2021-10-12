@@ -1,5 +1,19 @@
 package body Test_Support is
 
+   -------------------
+   -- Check_Element --
+   -------------------
+
+   function Check_Element (Value : Integer) return Boolean is
+   begin
+      return Value > 0;
+   end Check_Element;
+
+   function Check_Element (Value : String) return Boolean is
+   begin
+      return Value'Length > 0;
+   end Check_Element;
+
    -----------
    -- Setup --
    -----------

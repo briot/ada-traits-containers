@@ -20,16 +20,26 @@
  ****************************************************************************/
 
 #include <iostream>
+#include "creport.h"
 
 #define START_GROUP 1
 #define SAME_GROUP 0
 
 extern "C" {
-   extern void end_container_test
-      (void* output, int allocated, int allocs_count, int frees_count);
+   extern void start_test
+      (void* output,
+       const char* category,
+       const char* column,
+       const char* row,
+       const int start_group);
    extern void end_test
-      (void* output, int allocated, int allocs_count, int frees_count);
+      (void* output,
+       int allocated,
+       int allocs_count,
+       int frees_count);
 }
+
+
 
 /**
  * Counting the number of allocations and frees.
@@ -52,19 +62,19 @@ void* operator new(std::size_t size) {
    if(!p) throw std::bad_alloc();
    return p;
 }
-void* operator new  [](std::size_t size) {
+void* operator new [](std::size_t size) {
    ++number_of_allocs;
    total_allocated += size;
    void *p = malloc(size);
    if(!p) throw std::bad_alloc();
    return p;
 }
-void* operator new  [](std::size_t size, const std::nothrow_t&) throw() {
+void* operator new [](std::size_t size, const std::nothrow_t&) throw() {
    ++number_of_allocs;
    total_allocated += size;
    return malloc(size);
 }
-void* operator new   (std::size_t size, const std::nothrow_t&) throw() {
+void* operator new (std::size_t size, const std::nothrow_t&) throw() {
    ++number_of_allocs;
    total_allocated += size;
    return malloc(size);
@@ -86,11 +96,17 @@ void operator delete[](void* ptr, const std::nothrow_t&) throw() {
    free(ptr);
 }
 
-void mem_end_test(void* output) {
-   end_test (output, total_allocated, number_of_allocs, number_of_frees);
+void mem_start_test
+   (void* output,
+    const char* category,
+    const char* column,
+    const char* row,
+    const int start_group
+) {
+   reset_mem();
+   start_test (output, category, column, row, start_group);
 }
 
-void mem_end_container_test(void* output) {
-   end_container_test
-      (output, total_allocated, number_of_allocs, number_of_frees);
+void mem_end_test(void* output) {
+   end_test (output, total_allocated, number_of_allocs, number_of_frees);
 }

@@ -106,13 +106,7 @@ package Perf_Support is
    -- Tests --
    -----------
 
-   Items_Count : constant := 200_000;  -- untyped, for standard containers
-   Integer_Items_Count : constant Integer := Items_Count;
-   pragma Export (C, Integer_Items_Count, "items_count");
-   --  For some reason, using 600_000 results in a storage error when
-   --  allocating the bounded limited containers (but not the Ada arrays)
-
-   Repeat_Count : constant Natural := 5;
+   Repeat_Count : constant Natural := 1;
    pragma Export (C, Repeat_Count, "repeat_count");
    --  Number of times that tests should be repeated
 
@@ -148,7 +142,7 @@ package Perf_Support is
           External_Name => "test_cpp_int_int_unordered_map";
    --  Perform C++ testing
 
-   procedure Test_Arrays_Int (Stdout : not null access Output'Class);
+   procedure Test_Arrays_Int (Stdout : in out Output'Class);
    --  Test standard Ada arrays
 
 end Perf_Support;

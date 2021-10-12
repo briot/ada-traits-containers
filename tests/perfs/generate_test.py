@@ -27,16 +27,16 @@ class Comments(object):
 # Templates #
 #############
 
-def wrap(name, text, group=True, expected=True):
+def wrap(test_name, text, group=True, expected=True):
     repl = dict(
-      name=name,
+      test_name=test_name,
       group="True" if group else "False",
       text=text)
 
     r = """
 
       Co := 0;
-      Stdout.Start_Test ("%(name)s", "{comments.%(name)s}", Start_Group => %(group)s);""" % repl
+      Stdout.Start_Test ("%(category)s", "{name}", "%(test_name)s", "{comments.%(name)s}", Start_Group => %(group)s);""" % repl
 
     r += text
     r += "\n      Stdout.End_Test;" % repl
@@ -356,7 +356,7 @@ class List(Tests):
         instance,  # instantiation for the container "package Container is ..."
         withs,       # extra withs for the body
         unbounded,
-        name,        # test name
+        name,        # test name, aka container name
         filename,    # suffix for filename
         limited=False,  # Whether we need explicit Copy and Clear
         comments=None,  # instance of Comments
@@ -924,11 +924,11 @@ Map("StrStr",
     filename="hashed_indef_indef_unbounded_spark",
     favorite=True).gen(adaptor="Constant_Returned")
 
-run_all = open(os.path.join(output_dir, "main-run_all.adb"), "w")
+run_all = open(os.path.join(output_dir, "main_perf-run_all.adb"), "w")
 run_all.write("\n".join(all_tests_withs))
 run_all.write("""
 pragma Style_Checks (Off);
-separate (Main)
+separate (Main_Perf)
 procedure Run_All is
 begin\n""")
 run_all.write("\n".join(all_tests))

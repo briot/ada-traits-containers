@@ -20,28 +20,28 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Elements;
 with Conts.Lists.Generics;
-with Conts.Lists.Storage;
 with GNAT.Source_Info;
+with Report;
 
 generic
-   Test_Name : String;
+   Category       : String;  --  which table we want to show results in
+   Container_Name : String;  --  which column
+   with package Lists is new Conts.Lists.Generics (<>);
+   with function Image
+      (Self : Lists.Storage.Elements.Element_Type) return String;
+   with function Nth
+      (Index : Natural) return Lists.Storage.Elements.Element_Type;
 
-   with package Elements is new Conts.Elements.Traits (<>);
-   with package Storage is new Conts.Lists.Storage.Traits
-      (Elements => Elements, others => <>);
-   with package Lists is new Conts.Lists.Generics
-      (Storage => Storage);
+   with function Check_Element
+      (E : Lists.Storage.Elements.Element_Type) return Boolean;
+   --  Should be True for all elements returned by Nth
 
-   with function Image (Self : Elements.Element_Type) return String;
-
-   with function Nth (Index : Natural) return Elements.Element_Type;
-   --  So that the testsuite can generate elements to store in the container
-
-   with function "=" (L, R : Elements.Element_Type) return Boolean is <>;
-
+   with function "="
+      (L, R : Lists.Storage.Elements.Element_Type) return Boolean is <>;
 package Support_Lists is
+
+   package Elements renames Lists.Storage.Elements;
 
    procedure Assert_List
       (L        : Lists.List;
@@ -51,9 +51,14 @@ package Support_Lists is
        Entity   : String := GNAT.Source_Info.Enclosing_Entity);
    --  Check the contents of the list
 
-   procedure Test (L1, L2 : in out Lists.List);
+   procedure Test_Correctness (L1, L2 : in out Lists.List);
    --  Perform various tests.
    --  All lists should be empty on input. This is used to handle bounded
    --  lists.
+
+   procedure Test_Perf
+      (Results : in out Report.Output'Class;
+       L1, L2  : in out Lists.List);
+   --  Run performance tests
 
 end Support_Lists;

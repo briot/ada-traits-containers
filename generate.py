@@ -35,6 +35,14 @@ Base = Literal[
 Pkg = Literal['Unbounded', 'Bounded', 'Unbounded_SPARK']
 
 
+def base_to_str(base: Optional[Base]) -> str:
+    if base is None or base == 'Conts.Controlled_Base':
+        return ''
+    elif base == 'Conts.Limited_Base':
+        return ' limited'
+    raise Exception("unknown base %s" % base)
+
+
 class Test:
     withs: str
     def code(self, idx: int) -> str: ...
@@ -42,6 +50,7 @@ class Test:
 
 
 class Elements:
+    descr: str
     withs: str
     formals: str
     formals_with_default: str
@@ -51,6 +60,7 @@ class Elements:
 
 class Definite_Elements(Elements):
     def __init__(self, name="Element"):
+        self.descr = "Def"
         self.withs = "with Conts.Elements.Definite;"
         self.formals = f"   type {name}_Type is private;\n"
         self.formals_with_default = (
@@ -67,6 +77,7 @@ class Definite_Elements(Elements):
 
 class Indefinite_Elements(Elements):
     def __init__(self, name="Element"):
+        self.descr = "Indef"
         self.name = name
         self.withs = "with Conts.Elements.Indefinite;"
         self.formals = f"   type {name}_Type (<>) is private;\n"
@@ -88,6 +99,7 @@ class Indefinite_Elements(Elements):
 
 class Indefinite_Elements_SPARK(Elements):
     def __init__(self, name="Element"):
+        self.descr = "Indef_SPARK"
         self.name = name
         self.withs = "with Conts.Elements.Indefinite_SPARK;"
         self.formals = f"   type {name}_Type (<>) is private;\n"
@@ -108,6 +120,7 @@ class Indefinite_Elements_SPARK(Elements):
 
 class Array_Elements(Elements):
     def __init__(self, index: str, element: str, array: str):
+        self.descr = "Array"
         self.withs = "with Conts.Elements.Arrays;"
         self.array = array
         self.formals = ""
@@ -162,6 +175,11 @@ class Storage:
         )
         self.bounds_for_test = (
             " (20)"
+            if pkg == 'Bounded'
+            else ""
+        )
+        self.bounds_for_perf_test = (
+            " (Test_Support.Items_Count)"
             if pkg == 'Bounded'
             else ""
         )
@@ -236,9 +254,16 @@ class Container:
 
         if self.tests:
             with open("%s/%s.ads" % (test_generated, testname), "w") as f:
-                f.write(f"package {self.test_pkg} is\n")
+                f.write(
+                    f"with Report;\n"
+                    f"package {self.test_pkg} is\n"
+                )
                 for idx, t in enumerate(self.tests):
                     f.write(f"   procedure Test{idx};\n")
+                    f.write(
+                        f"   procedure Test_Perf{idx}"
+                        f"      (Result : in out Report.Output'Class);\n"
+                    )
                 f.write(f"end {self.test_pkg};")
 
             adb_withs = set([
@@ -271,6 +296,31 @@ class Container:
                         f"   end if;\n"
                     )
             f.write("""end Main_Driver;""")
+
+        try:
+            os.mkdir("tests/perfs/generated")
+        except OSError:
+            pass
+
+        with open("tests/perfs/generated/run_all.adb", "w") as f:
+            for cont in cls.all_tests:
+                if cont.tests:
+                    f.write(f"with {cont.test_pkg};\n")
+            f.write("with Test_Support;\n")
+            f.write("with Report;\n")
+            f.write("procedure Run_All\n"
+                    "   (Result : in out Report.Output'Class;\n"
+                    "    Filter : Test_Support.Test_Filter)\n"
+                    "is\n"
+                    "begin\n")
+            for cont in cls.all_tests:
+                for idx, t in enumerate(cont.tests):
+                    f.write(
+                        f'   if Filter.Active ("{t.test_name()}") then\n'
+                        f"      {cont.test_pkg}.Test_Perf{idx} (Result);\n"
+                        f"   end if;\n"
+                    )
+            f.write("""end Run_All;""")
 
     def ads(self) -> str:
         return ""
@@ -326,6 +376,11 @@ class Vector_Test(Test):
    begin
       Tests{idx}.Test (V);
    end Test{idx};
+
+   procedure Test_Perf{idx} (Result : in out Report.Output'Class) is
+   begin
+      null;
+   end Test_Perf{idx};
 """
 
 
@@ -423,6 +478,16 @@ class List_Test(Test):
         self.base = data[1]
         self.withs = "with Support_Lists;"
 
+    def category(self) -> str:
+        return f"{self.element} List"
+
+    def container_name(self) -> str:
+        return (
+            f"{self.container.elements.descr}"
+            f" {self.container.storage.pkg}"
+            f"{base_to_str(self.base)}"
+        )
+
     def test_name(self) -> str:
         return self.container.pkg_name.lower(
             ).replace('conts.', ''
@@ -439,18 +504,24 @@ class List_Test(Test):
    package Lists{idx} is new {self.container.pkg_name}
       {actual_str};
    package Tests{idx} is new Support_Lists
-      (Test_Name    => "{self.test_name()}",
-       Image        => Test_Support.Image,
-       Elements     => Lists{idx}.Elements.Traits,
-       Storage      => Lists{idx}.Storage.Traits,
-       Lists        => Lists{idx}.Lists,
-       Nth          => Test_Support.Nth);
+      (Category       => "{self.category()}",
+       Container_Name => "{self.container_name()}",
+       Image          => Test_Support.Image,
+       Lists          => Lists{idx}.Lists,
+       Nth            => Test_Support.Nth,
+       Check_Element  => Test_Support.Check_Element);
 
    procedure Test{idx} is
       L1, L2 : Lists{idx}.List{self.container.storage.bounds_for_test};
    begin
-      Tests{idx}.Test (L1, L2);
+      Tests{idx}.Test_Correctness (L1, L2);
    end Test{idx};
+
+   procedure Test_Perf{idx} (Result : in out Report.Output'Class) is
+      L1, L2 : Lists{idx}.List{self.container.storage.bounds_for_perf_test};
+   begin
+      Tests{idx}.Test_Perf (Result, L1, L2);
+   end Test_Perf{idx};
 """
 
 
@@ -578,8 +649,12 @@ class Map_Test(Test):
    begin
       Tests{idx}.Test (M);
    end Test{idx};
-"""
 
+   procedure Test_Perf{idx} (Result : in out Report.Output'Class) is
+   begin
+      null;
+   end Test_Perf{idx};
+"""
 
 
 class Map_Container(Container):

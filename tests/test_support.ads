@@ -4,6 +4,11 @@ with GNATCOLL.Strings;
 
 package Test_Support is
 
+   Items_Count : constant := 200_000;  --  untyped, for standard containers
+   Integer_Items_Count : constant Integer := Items_Count;
+   pragma Export (C, Integer_Items_Count, "items_count");
+   --  Number of items we copy into containers, for performance tests
+
    function Nth (Index : Natural) return Integer is (Index);
    function Nth (Index : Natural) return String is (Index'Image);
 
@@ -14,6 +19,14 @@ package Test_Support is
       is (Conts.Hash_Type (Value));
    function Hash (Value : String) return Conts.Hash_Type
       is (Ada.Strings.Hash (Value));
+
+   function Check_Element (Value : Integer) return Boolean;
+   function Check_Element (Value : String) return Boolean;
+   --  Perform trivial check on Value
+
+   -----------------
+   -- Test_Filter --
+   -----------------
 
    type Test_Filter is tagged private;
 

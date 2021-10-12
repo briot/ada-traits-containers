@@ -19,6 +19,11 @@ package body Tests_Vectors_Indefinite_Bounded is
       Tests0.Test (V);
    end Test0;
 
+   procedure Test_Perf0 (Result : in out Report.Output'Class) is
+   begin
+      null;
+   end Test_Perf0;
+
    package Vecs1 is new Conts.Vectors.Indefinite_Bounded
       (Positive, String);
    package Tests1 is new Support_Vectors
@@ -34,4 +39,9 @@ package body Tests_Vectors_Indefinite_Bounded is
    begin
       Tests1.Test (V);
    end Test1;
+
+   procedure Test_Perf1 (Result : in out Report.Output'Class) is
+   begin
+      null;
+   end Test_Perf1;
 end Tests_Vectors_Indefinite_Bounded;

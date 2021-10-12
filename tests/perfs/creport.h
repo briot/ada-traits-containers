@@ -22,26 +22,38 @@
 #define START_GROUP 1
 #define SAME_GROUP 0
 
+#define FAVORITE 1
+#define NOT_FAVORITE 0
+
 extern "C" {
    extern const int items_count;
    extern const int repeat_count;
-   extern void start_container_test
-      (void* output, const char *name, const char* category, int favorite);
-   extern void save_container_size (void* output, long int size);
-   extern void start_test
-      (void* output, const char* name, const int start_group);
+   extern void set_column
+      (void* output,
+       const char* category,
+       const char* column,
+       const long int size, const int favorite);
    extern void end_test_not_run (void* output);
+   extern void stop_time(void* output);  // stop measuring time
+
+   extern void do_nothing(const void* v);
 }
 
 void reset_mem();
 void* operator new(std::size_t size);
-void* operator new  [](std::size_t size);
-void* operator new  [](std::size_t size, const std::nothrow_t&) throw();
-void* operator new   (std::size_t size, const std::nothrow_t&) throw();
+void* operator new [](std::size_t size);
+void* operator new [](std::size_t size, const std::nothrow_t&) throw();
+void* operator new (std::size_t size, const std::nothrow_t&) throw();
 void operator delete(void* ptr) throw();
 void operator delete (void* ptr, const std::nothrow_t&) throw();
 void operator delete[](void* ptr) throw();
 void operator delete[](void* ptr, const std::nothrow_t&) throw();
 
-void mem_end_test(void* output);
+void mem_start_test
+   (void* output,
+    const char* category,
+    const char* column,
+    const char* row,
+    const int start_group);
+void mem_end_test(void* output);   // stop measuring memory, and save
 void mem_end_container_test(void* output);

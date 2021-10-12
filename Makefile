@@ -32,7 +32,7 @@ GPRINSTALL=gprinstall ${RBD} -p -m ${GPRBUILD_OPTIONS} \
 all:  build generate docs ada_test
 
 
-generate:
+generate: ./generate.py
 	-python3 ./generate.py
 
 build: generate
@@ -54,9 +54,8 @@ test: build
 		tests/obj/Production/main
 	@echo "==== Running performance tests ===="
 	@cd tests/perfs; \
-		python3 ./generate_test.py && \
 		${GPRBUILD} -q -XBUILD=Production && \
-		./obj/Production/main
+		./obj/Production/main_perf
 
 clean:
 	${PPATH} gprclean -P${GPR_ROOT} -XBUILD=Debug -r -q

@@ -20,4 +20,9 @@ package body Tests_Maps_Def_Def_Unbounded is
    begin
       Tests0.Test (M);
    end Test0;
+
+   procedure Test_Perf0 (Result : in out Report.Output'Class) is
+   begin
+      null;
+   end Test_Perf0;
 end Tests_Maps_Def_Def_Unbounded;

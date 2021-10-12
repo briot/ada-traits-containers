@@ -6,16 +6,9 @@ var Display_Type = {
    MS: 1
 };
 
-// What info to display
-var Display_Info = {
-   MEAN: 0,
-   MIN: 1
-};
-
 app.
 run(function($rootScope) {
    $rootScope.display = Display_Type.PERCENT;
-   $rootScope.info = Display_Info.MIN;
 }).
 
 factory('Reftime', function() {
@@ -53,13 +46,17 @@ factory('Reftime', function() {
 
          cat.containers.push(container);
 
+         container.allocated = 0;
+         container.allocs = 0;
+         container.frees = 0;
+         container.reallocs = 0;
+
          // Compute mean execution time for each tests
          angular.forEach(container.tests, function(test) {
-            var g = 0.0;
-            angular.forEach(test.duration, function(d) {
-               g += d;
-            });
-            test.cumulated = g;
+            container.allocated += test.allocated;
+            container.allocs += test.allocs;
+            container.frees += test.frees;
+            container.reallocs += test.reallocs;
          });
       });
 
@@ -149,28 +146,13 @@ directive('ctDuration', function($rootScope) {
          //  ??? We do this for every test that share the same ref
          compute_test_data(ref);
       }
-      switch (Number($rootScope.info)) {
-         case Display_Info.MEAN:
-            test._duration = test.cumulated / test.duration.length;
-            break;
-         case Display_Info.MIN:
-            var m = test.duration[0];
-            angular.forEach(test.duration, function(d) {
-               m = Math.min(m, d);
-            });
-            test._duration = m;
-            break;
-         default:
-            test._duration = '-';
-      }
-
-      test.slow = test._duration > ref._duration * 1.05;
+      test.slow = test.duration > ref.duration * 1.05;
 
       switch (Number($rootScope.display)) {
          case Display_Type.PERCENT:
-            return (test._duration / ref._duration * 100).toFixed(0) + '%';
+            return (test.duration / ref.duration * 100).toFixed(0) + '%';
          case Display_Type.MS:
-            return (test._duration * 1000).toFixed(2);
+            return (test.duration * 1000).toFixed(2);
          default:
             return '-';
       }
@@ -185,7 +167,7 @@ directive('ctDuration', function($rootScope) {
          $scope.test = $scope.container.tests[$scope.testname];
          $scope.display;  // what to display
 
-         if ($scope.test && $scope.test.duration.length) {
+         if ($scope.test && $scope.test.duration) {
             $rootScope.$watch('[info,display]', function() {
                $scope.display = compute_test_data($scope.test);
             }, true);
@@ -194,7 +176,7 @@ directive('ctDuration', function($rootScope) {
       template: '<span ng-if="test"' +
            ' ng-class="{worse:test.slow, comment:test.comment}"' +
            ' title="{{test.comment}}">' +
-           '<span ng-if="test.duration.length">{{display}}</span>' +
+           '<span>{{display}}</span>' +
          '</span>'
    };
 }).

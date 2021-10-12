@@ -94,15 +94,12 @@ body {
       <input type='radio' name='display' ng-model='$root.display' value=0>Percent</input>
       <input type='radio' name='display' ng-model='$root.display' value=1>Milliseconds</input>
       <span style='margin-left: 30px'></span>
-      <input type='radio' name='info' ng-model='$root.info' value=0>Mean duration</input>
-      <input type='radio' name='info' ng-model='$root.info' value=1>Min duration</input>
-      <span style='margin-left: 30px'></span>
 
       <input type='checkbox' ng-model='$root.show_test_allocs'>
       allocs/free for each test
 
       <span style='margin-left: 30px'></span>
-      <span>{{data.items_count}} items, tests are repeated {{data.repeat_count}} times.</span>
+      <span>{{data.items_count}} items</span>
    </div>
 
    <div ng-controller='ResultsCtrl' class='results'>
@@ -136,20 +133,20 @@ body {
                </tr>
                <tr>
                   <th class='row-header'>Allocated</th>
-                  <td ng-repeat='c in cat.containers'>{{c.allocated / data.repeat_count | kb}}</td>
+                  <td ng-repeat='c in cat.containers'>{{c.allocated | kb}}</td>
                </tr>
                <tr>
                   <th class='row-header'>Allocs</th>
-                  <td ng-repeat='c in cat.containers'>{{c.allocs / data.repeat_count}}</td>
+                  <td ng-repeat='c in cat.containers'>{{c.allocs}}</td>
                </tr>
                <tr>
                   <th class='row-header'>Reallocs</th>
-                  <td ng-repeat='c in cat.containers'>{{c.reallocs / data.repeat_count}}</td>
+                  <td ng-repeat='c in cat.containers'>{{c.reallocs}}</td>
                </tr>
                <tr>
                   <th class='row-header'>Frees</th>
                   <td ng-repeat='c in cat.containers'
-                      ng-class="{worse:c.frees!=c.allocs}">{{c.frees / data.repeat_count}}</td>
+                      ng-class="{worse:c.frees!=c.allocs}">{{c.frees}}</td>
                </tr>
             </tbody>
          </table>
