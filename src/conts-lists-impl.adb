@@ -188,6 +188,10 @@ package body Conts.Lists.Impl with SPARK_Mode => Off is
             Storage.Elements.To_Stored (Element),
             New_Node => N);
 
+         if N = Null_Access then
+            raise Constraint_Error with "failed to allocate node";
+         end if;
+
          if Self.Tail = Null_Access then
             Self.Tail := N;
             Self.Head := Self.Tail;

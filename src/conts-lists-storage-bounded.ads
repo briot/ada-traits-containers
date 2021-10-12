@@ -53,6 +53,7 @@ package Conts.Lists.Storage.Bounded with SPARK_Mode => Off is
          (Self    : in out Impl.Container'Class;
           Element : Stored_Type;
           N       : out Impl.Node_Access);
+      procedure Release (Self : in out Impl.Container'Class) with Inline;
       function Get_Element
          (Self : Impl.Container'Class;
           N    : Impl.Node_Access) return Stored_Type with Inline;
@@ -109,5 +110,6 @@ package Conts.Lists.Storage.Bounded with SPARK_Mode => Off is
        Container    => Impl.Container,
        Node_Access  => Impl.Node_Access,
        Null_Access  => Impl.Null_Node_Access,
-       Allocate     => Allocate);
+       Allocate     => Allocate,
+       Release      => Release);
 end Conts.Lists.Storage.Bounded;

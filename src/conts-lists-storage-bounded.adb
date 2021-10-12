@@ -52,6 +52,15 @@ package body Conts.Lists.Storage.Bounded with SPARK_Mode => Off is
          end if;
       end Allocate;
 
+      -------------
+      -- Release --
+      -------------
+
+      procedure Release (Self : in out Impl.Container'Class) is
+      begin
+         Self.Free := 0;
+      end Release;
+
       -----------------
       -- Get_Element --
       -----------------
@@ -152,6 +161,7 @@ package body Conts.Lists.Storage.Bounded with SPARK_Mode => Off is
             end loop;
 
          else
+            --  ??? Can we copy only a subset
             Nodes.Nodes := Source.Nodes;
          end if;
       end Assign;
