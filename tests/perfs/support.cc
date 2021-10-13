@@ -28,16 +28,35 @@
 #include <unordered_map>
 #include "creport.h"
 
-bool IsLessEqual2 (int i) { return i <= 2; }
-bool valueIsLessEqual2 (const std::pair<int, int> val) { return val.second <= 2;}
-bool IsEqualItemsCount (int i) { return i == items_count; }
-bool startsWithB (const std::string& s) { return s[0] == 'b'; };
-bool startsWithStr (const std::string& s) { return s[0] == 'f'; }
-bool valueStartsWithStr (const std::pair<std::string, std::string> s) {
-   return s.second[0] == 'f';
+bool check_element_int(int value) {
+   return value > 0;
 }
-bool valueStartsWithF (const std::pair<std::string, std::string> s) {
-   return s.second[0] == 'f';
+bool check_element_str(std::string s) {
+   return s.size() > 0;
+}
+bool check_element_value_str(std::pair<std::string, std::string> s) {
+   return s.second.size() > 0;
+}
+bool check_element_value_int_int(std::pair<int, int> s) {
+   return s.second > 0;
+}
+bool check_element_value_str_int(std::pair<std::string, int> s) {
+   return s.second > 0;
+}
+
+int nth_int(int index) {
+   return index;
+}
+
+std::string nth_str_key(int index) {
+   return ' ' + std::to_string(index);
+}
+std::string nth_str_value(int index) {
+   if (index % 2 == 0) {
+      return "foo";
+   } else {
+      return "foofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoo";
+   }
 }
 
 #define START_GROUP 1
@@ -47,6 +66,12 @@ bool valueStartsWithF (const std::pair<std::string, std::string> s) {
  * test_cpp_int_list
  */
 
+void fill(std::list<int> &v) {
+   for (int c = 1; c <= items_count; c++) {
+      v.push_back(nth_int(c));
+   }
+}
+
 extern "C"
 void test_cpp_int_list (void * output) {
    const char* category = "Integer List";
@@ -54,66 +79,63 @@ void test_cpp_int_list (void * output) {
 
    set_column (output, category, container, sizeof(std::list<int>), FAVORITE);
 
-   for (int r = 0; r < repeat_count; r++) {
-      {
-         std::list<int>  v;
+   {
+      std::list<int>  v;
 
-         mem_start_test (output, category, container, "fill", START_GROUP);
-         for (int c = 1; c <= items_count; c++) {
-            v.push_back(c);
-         }
+      mem_start_test (output, category, container, "fill", START_GROUP);
+      fill(v);
+      stop_time (output);
+   }
+   mem_end_test (output);
+
+   {
+      //  Initialize V
+      std::list<int>  v;
+      fill (v);
+
+      mem_start_test (output, category, container, "copy", SAME_GROUP);
+      {
+         std::list<int> v_copy (v);
          stop_time (output);
-         v.clear();
-         mem_end_test (output);
+         v_copy.clear();
       }
+      mem_end_test (output);
 
       {
-         //  Initialize V
-         std::list<int>  v;
-         for (int c = 1; c <= items_count; c++) {
-            v.push_back(c);
-         }
-
-         mem_start_test (output, category, container, "copy", SAME_GROUP);
-         {
-            std::list<int> v_copy (v);
-            stop_time (output);
-            v_copy.clear();
-            mem_end_test (output);
-         }
-
-         {
-            int count = 0;
-            mem_start_test
-               (output, category, container, "cursor loop", START_GROUP);
-            for (auto it = v.begin(), __end=v.end(); it != __end; ++it) {
-               count += (*it > 0);
-            }
-            mem_end_test (output);
-            if (count != items_count) {
-               std::cout << "error in cursor loop" << std::endl;
-            }
-         }
-
          int count = 0;
          mem_start_test
-            (output, category, container, "for-of loop", SAME_GROUP);
-         for (auto e : v) {
-            if (e <= 2) {
-               count ++;
+            (output, category, container, "cursor loop", START_GROUP);
+         for (auto it = v.begin(), __end=v.end(); it != __end; ++it) {
+            if (check_element_int(*it)) {
+               count++;
             }
          }
          mem_end_test (output);
-         if (count != 2) {
-            std::cout << "C++ error while counting" << std::endl;
+         if (count != items_count) {
+            std::cout << "error in cursor loop" << std::endl;
          }
+      }
 
-         mem_start_test (output, category, container, "count_if", SAME_GROUP);
-         count = std::count_if (v.begin(), v.end(), IsLessEqual2);
-         mem_end_test (output);
-         if (count != 2) {
-             std::cout << "C++ error while counting" << std::endl;
+      int count = 0;
+      mem_start_test
+         (output, category, container, "for-of loop", SAME_GROUP);
+      for (auto e : v) {
+         if (check_element_int(e)) {
+            count ++;
          }
+      }
+      mem_end_test (output);
+      if (count != items_count) {
+         std::cout << "C++ error while counting for-of "
+            << category << container << std::endl;
+      }
+
+      mem_start_test (output, category, container, "count_if", SAME_GROUP);
+      count = std::count_if (v.begin(), v.end(), check_element_int);
+      mem_end_test (output);
+      if (count != items_count) {
+          std::cout << "C++ error while counting count_if "
+             << category << container << std::endl;
       }
    }
 }
@@ -124,11 +146,7 @@ void test_cpp_int_list (void * output) {
 
 void fill(std::list<std::string> &v) {
    for (int c = 1; c <= items_count; c++) {
-      if (c % 2 == 0) {
-         v.push_back("foo");
-      } else {
-         v.push_back("foofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoo");
-      }
+      v.push_back(nth_str_value(c));
    }
 }
 
@@ -141,61 +159,60 @@ void test_cpp_str_list (void * output) {
 
    set_column (output, category, container, sizeof(std::list<int>), FAVORITE);
 
-   for (int r = 0; r < repeat_count; r++) {
+   {
+      std::list<std::string> v;
+      mem_start_test (output, category, container, "fill", START_GROUP);
+      fill (v);
+      stop_time (output);
+   }
+   mem_end_test (output);
 
+   {
+      std::list<std::string> v;
+      fill (v);
+
+      mem_start_test (output, category, container, "copy", SAME_GROUP);
       {
-         std::list<std::string> v;
-         mem_start_test (output, category, container, "fill", START_GROUP);
-         fill (v);
+         std::list<std::string> v_copy (v);
          stop_time (output);
-         v.clear();
-         mem_end_test (output);
       }
+      mem_end_test (output);
 
       {
-         std::list<std::string> v;
-         fill (v);
-
-         mem_start_test (output, category, container, "copy", SAME_GROUP);
-         {
-            std::list<std::string> v_copy (v);
-            stop_time (output);
-            v_copy.clear();
-            mem_end_test (output);
-         }
-
-         {
-            int count = 0;
-            mem_start_test
-               (output, category, container, "cursor loop", START_GROUP);
-            for (auto it = v.begin(), __end=v.end(); it != __end; ++it) {
-               count += ((*it).size() > 0);
-            }
-            mem_end_test (output);
-            if (count != items_count) {
-               std::cout << "error in cursor loop" << std::endl;
-            }
-         }
-
          int count = 0;
          mem_start_test
-            (output, category, container, "for-of loop", SAME_GROUP);
-         for (std::string& e : v) {
-            if (startsWithStr(e)) {
+            (output, category, container, "cursor loop", START_GROUP);
+         for (auto it = v.begin(), __end=v.end(); it != __end; ++it) {
+            if (check_element_str(*it)) {
                count ++;
             }
          }
          mem_end_test (output);
          if (count != items_count) {
-            std::cout << "C++ error while counting" << std::endl;
+            std::cout << "error in cursor loop" << std::endl;
          }
+      }
+
+      int count = 0;
+      mem_start_test
+         (output, category, container, "for-of loop", SAME_GROUP);
+      for (std::string& e : v) {
+         if (check_element_str(e)) {
+            count ++;
+         }
+      }
+      mem_end_test (output);
+      if (count != items_count) {
+         std::cout << "C++ error while counting for-of "
+            << category << ' ' << container << ' ' << count << std::endl;
+      }
    
-         mem_start_test (output, category, container, "count_if", SAME_GROUP);
-         count = std::count_if (v.begin(), v.end(), startsWithStr);
-         mem_end_test (output);
-         if (count != items_count) {
-            std::cout << "C++ error while counting" << std::endl;
-         }
+      mem_start_test (output, category, container, "count_if", SAME_GROUP);
+      count = std::count_if (v.begin(), v.end(), check_element_str);
+      mem_end_test (output);
+      if (count != items_count) {
+         std::cout << "C++ error while counting count_if "
+            << category << container << ' ' << count << std::endl;
       }
    }
 }
@@ -204,6 +221,12 @@ void test_cpp_str_list (void * output) {
  * test_cpp_int_vector
  */
 
+void fill(std::vector<int> &v) {
+   for (int c = 1; c <= items_count; c++) {
+      v.push_back(nth_int(c));
+   }
+}
+
 extern "C"
 void test_cpp_int_vector (void * output) {
    const char* category = "Integer Vector";
@@ -211,61 +234,69 @@ void test_cpp_int_vector (void * output) {
 
    set_column (output, category, container, sizeof(std::vector<int>), FAVORITE);
 
-   for (int r = 0; r < repeat_count; r++) {
-      std::vector<int>  v;
-
+   {
       mem_start_test (output, category, container, "fill", START_GROUP);
-      for (int c = 1; c <= items_count; c++) {
-         v.push_back(c);
-      }
-      mem_end_test (output);
+      std::vector<int>  v;
+      fill(v);
+      stop_time(output);
+   }
+   mem_end_test (output);
+
+   {
+      std::vector<int>  v;
+      fill(v);
 
       mem_start_test (output, category, container, "copy", SAME_GROUP);
       {
          std::vector<int> v_copy (v);
-         mem_end_test (output);
+         stop_time(output);
       }
+      mem_end_test (output);
 
       int count = 0;
       mem_start_test (output, category, container, "cursor loop", START_GROUP);
       for (auto it = v.begin(), __end=v.end(); it != __end; ++it) {
-         if (*it <= 2) {
+         if (check_element_int(*it)) {
             count ++;
          }
       }
       mem_end_test (output);
-      if (count != 2) {
-         std::cout << "C++ error while counting" << std::endl;
+      if (count != items_count) {
+         std::cout << "C++ error while counting cursor "
+            << category << container << std::endl;
       }
 
       count = 0;
       mem_start_test (output, category, container, "for-of loop", SAME_GROUP);
       for (auto e : v) {
-         if (e <= 2) {
+         if (check_element_int(e)) {
             count ++;
          }
       }
       mem_end_test (output);
-      if (count != 2) {
-         std::cout << "C++ error while counting" << count << std::endl;
+      if (count != items_count) {
+         std::cout << "C++ error while counting for-of "
+            << category << container << count << std::endl;
       }
-
+   
       mem_start_test (output, category, container, "count_if", SAME_GROUP);
-      count = std::count_if (v.begin(), v.end(), IsLessEqual2);
+      count = std::count_if (v.begin(), v.end(), check_element_int);
       mem_end_test (output);
-      if (count != 2) {
-         std::cout << "C++ error while counting" << count << std::endl;
+      if (count != items_count) {
+         std::cout << "C++ error while counting count_if "
+            << category << container << count << std::endl;
       }
-
+   
       count = 0;
       mem_start_test (output, category, container, "indexed", SAME_GROUP);
       for (auto idx = 0; idx < v.size(); idx++) {
-         if (v[idx] <= 2) {
+         if (check_element_int(v[idx])) {
             count ++;
          }
       }
-      if (count != 2) {
-         std::cout << "C++ error while counting" << count << std::endl;
+      if (count != items_count) {
+         std::cout << "C++ error while counting indexed "
+            << category << container << count << std::endl;
       }
    }
 }
@@ -274,6 +305,11 @@ void test_cpp_int_vector (void * output) {
  * test_cpp_str_vector
  */
 
+void fill(std::vector<std::string> &v) {
+   for (int c = 1; c <= items_count; c++) {
+      v.push_back(nth_str_value(c));
+   }
+}
 
 extern "C"
 void test_cpp_str_vector (void * output) {
@@ -282,65 +318,69 @@ void test_cpp_str_vector (void * output) {
 
    set_column (output, category, container, sizeof(std::vector<int>), FAVORITE);
 
-   for (int r = 0; r < repeat_count; r++) {
-      std::vector<std::string>  v;
-
+   {
       mem_start_test (output, category, container, "fill", START_GROUP);
-      for (int c = 1; c <= items_count; c++) {
-         if (c % 2 == 0) {
-            v.push_back("foo");
-         } else {
-            v.push_back("foofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoo");
-         }
-      }
-      mem_end_test (output);
+      std::vector<std::string>  v;
+      fill (v);
+      stop_time(output);
+   }
+   mem_end_test (output);
+
+   {
+      std::vector<std::string>  v;
+      fill (v);
 
       mem_start_test (output, category, container, "copy", SAME_GROUP);
       {
          std::vector<std::string> v_copy (v);
-         mem_end_test (output);
+         stop_time(output);
       }
+      mem_end_test (output);
 
       int count = 0;
       mem_start_test (output, category, container, "cursor loop", START_GROUP);
       for (auto it = v.begin(), __end=v.end(); it != __end; ++it) {
-         if (startsWithStr(*it)) {
+         if (check_element_str(*it)) {
             count ++;
          }
       }
       mem_end_test (output);
       if (count != items_count) {
-         std::cout << "C++ error while counting" << std::endl;
+         std::cout << "C++ error while counting cursor "
+            << category << container << std::endl;
       }
 
       count = 0;
       mem_start_test (output, category, container, "for-of loop", SAME_GROUP);
       for (std::string& e : v) {
-         if (startsWithStr(e)) {
+         if (check_element_str(e)) {
             count ++;
          }
       }
       mem_end_test (output);
       if (count != items_count) {
-         std::cout << "C++ error while counting" << std::endl;
+         std::cout << "C++ error while counting for-of "
+            << category << container << std::endl;
       }
 
       mem_start_test (output, category, container, "count_if", SAME_GROUP);
-      count = std::count_if (v.begin(), v.end(), startsWithStr);
+      count = std::count_if (v.begin(), v.end(), check_element_str);
       mem_end_test (output);
       if (count != items_count) {
-         std::cout << "C++ error while counting" << std::endl;
+         std::cout << "C++ error while counting count_if "
+            << category << container << std::endl;
       }
 
       count = 0;
       mem_start_test (output, category, container, "indexed", SAME_GROUP);
       for (auto idx = 0; idx < v.size(); idx++) {
-         if (startsWithStr(v[idx])) {
+         if (check_element_str(v[idx])) {
             count ++;
          }
       }
       if (count != items_count) {
-         std::cout << "C++ error while counting" << count << std::endl;
+         std::cout << "C++ error while counting indexed "
+            << category << container << count << std::endl;
       }
    }
 }
@@ -349,79 +389,86 @@ void test_cpp_str_vector (void * output) {
  * test_cpp_int_int_map
  */
 
+typedef std::map<int, int> int_int_map;
+
+void fill(int_int_map &v) {
+   for (int c = 1; c <= items_count; c++) {
+      v[nth_int(c)] = nth_int(c);
+   }
+}
+
 extern "C"
 void test_cpp_int_int_map (void * output) {
-   typedef std::map<int, int> int_int_map;
-
-   const char* category = "IntInt Map";
+   const char* category = "Integer-Integer Map";
    const char* container = "C++ ordered";
 
    set_column (output, category, container, sizeof(int_int_map), FAVORITE);
 
-   for (int r = 0; r < repeat_count; r++) {
-      int_int_map v;
-
+   {
       mem_start_test (output, category, container, "fill", START_GROUP);
-      for (int c = 1; c <= items_count; c++) {
-         v[c] = c;
-      }
-      mem_end_test (output);
+      int_int_map v;
+      fill(v);
+      stop_time(output);
+   }
+   mem_end_test (output);
+
+   {
+      int_int_map v;
+      fill(v);
 
       mem_start_test (output, category, container, "copy", SAME_GROUP);
       {
          int_int_map v_copy (v);
-         mem_end_test (output);
+         stop_time(output);
       }
+      mem_end_test (output);
 
       int count = 0;
       mem_start_test (output, category, container, "cursor loop", START_GROUP);
       for (auto it = v.begin(), __end=v.end(); it != __end; ++it) {
-         if (it->second <= 2) {
+         if (check_element_int(it->second)) {
             count ++;
          }
       }
       mem_end_test (output);
-      if (count != 2) {
-        std::cout << "C++ error while counting" << count << std::endl;
+      if (count != items_count) {
+        std::cout << "C++ error while counting cursor "
+           << category << container << count << std::endl;
       }
 
+      mem_start_test (output, category, container, "for-of loop", SAME_GROUP);
       count = 0;
-      mem_start_test (output, category, container, "for-in/of loop", SAME_GROUP);
       for (auto& e : v) {
-         if (e.second <= 2) {
+         if (check_element_int(e.second)) {
             count ++;
          }
       }
       mem_end_test (output);
-      if (count != 2) {
-         std::cout << "C++ error while counting" << count << std::endl;
+      if (count != items_count) {
+         std::cout << "C++ error while counting for-in "
+            << category << container << count << std::endl;
       }
 
       mem_start_test (output, category, container, "count_if", SAME_GROUP);
-      count = std::count_if (v.begin(), v.end(), valueIsLessEqual2);
+      count = std::count_if (v.begin(), v.end(), check_element_value_int_int);
       mem_end_test (output);
-      if (count != 2) {
-         std::cout << "C++ error while counting" << std::endl;
-      }
-
-      count = 0;
-      mem_start_test (output, category, container, "indexed", SAME_GROUP);
-      for (int r = 1; r <= items_count; r++) {
-         if (v[r] <= 2) {
-            count ++;
-         }
-      }
-      if (count != 2) {
-         std::cout << "C++ error while counting" << std::endl;
+      if (count != items_count) {
+         std::cout << "C++ error while counting count_if "
+            << category << container << std::endl;
       }
 
       mem_start_test (output, category, container, "find", START_GROUP);
+      count = 0;
       for (int c = 1; c <= items_count; c++) {
-         if (IsLessEqual2(v[c])) {
+         if (check_element_int(v[c])) {
             count++;
          }
       }
       mem_end_test (output);
+      if (count != items_count) {
+         std::cout << "C++ error while counting find "
+            << category << container << std::endl;
+      }
    }
 }
 
@@ -429,160 +476,264 @@ void test_cpp_int_int_map (void * output) {
  * test_cpp_int_int_unordered_map
  */
 
+typedef std::unordered_map<int, int> int_int_unordered_map;
+
+void fill(int_int_unordered_map &v) {
+   for (int c = 1; c <= items_count; c++) {
+      v[nth_int(c)] = nth_int(c);
+   }
+}
+
 extern "C"
 void test_cpp_int_int_unordered_map (void * output) {
-   typedef std::unordered_map<int, int> int_int_unordered_map;
 
-   const char* category = "IntInt Map";
+   const char* category = "Integer-Integer Map";
    const char* container = "C++ unordered";
 
    set_column (output, category, container, sizeof(int_int_unordered_map), FAVORITE);
 
-   for (int r = 0; r < repeat_count; r++) {
-      int_int_unordered_map v;
-
+   {
       mem_start_test (output, category, container, "fill", START_GROUP);
-      for (int c = 1; c <= items_count; c++) {
-         v[c] = c;
-      }
-      mem_end_test (output);
+      int_int_unordered_map v;
+      fill(v);
+      stop_time(output);
+   }
+   mem_end_test (output);
+
+   {
+      int_int_unordered_map v;
+      fill(v);
 
       mem_start_test (output, category, container, "copy", SAME_GROUP);
       {
          int_int_unordered_map v_copy (v);
-         mem_end_test (output);
+         stop_time(output);
       }
+      mem_end_test (output);
 
       int count = 0;
       mem_start_test (output, category, container, "cursor loop", START_GROUP);
       for (auto it = v.begin(), __end=v.end(); it != __end; ++it) {
-         if (it->second <= 2) {
+         if (check_element_int(it->second)) {
             count ++;
          }
       }
       mem_end_test (output);
-      if (count != 2) {
-         std::cout << "C++ error while counting" << count << std::endl;
+      if (count != items_count) {
+         std::cout << "C++ error while counting cursor "
+            << category << container << count << std::endl;
       }
 
+      mem_start_test (output, category, container, "for-of loop", SAME_GROUP);
       count = 0;
-      mem_start_test (output, category, container, "for-in/of loop", SAME_GROUP);
       for (auto& e : v) {
-         if (e.second <= 2) {
+         if (check_element_int(e.second)) {
             count ++;
          }
       }
       mem_end_test (output);
-      if (count != 2) {
-         std::cout << "C++ error while counting" << count << std::endl;
+      if (count != items_count) {
+         std::cout << "C++ error while counting for-in "
+            << category << container << count << std::endl;
       }
 
       mem_start_test (output, category, container, "count_if", SAME_GROUP);
-      count = std::count_if (v.begin(), v.end(), valueIsLessEqual2);
+      count = std::count_if (v.begin(), v.end(), check_element_value_int_int);
       mem_end_test (output);
-      if (count != 2) {
-         std::cout << "C++ error while counting" << std::endl;
-      }
-
-      count = 0;
-      mem_start_test (output, category, container, "indexed", START_GROUP);
-      for (int r = 1; r <= items_count; r++) {
-         if (v[r] <= 2) {
-            count ++;
-         }
-      }
-      if (count != 2) {
-         std::cout << "C++ error while counting" << std::endl;
+      if (count != items_count) {
+         std::cout << "C++ error while counting count_if "
+            << category << container << std::endl;
       }
 
       count = 0;
       mem_start_test (output, category, container, "find", START_GROUP);
       for (int c = 1; c <= items_count; c++) {
-         if (IsLessEqual2(v[c])) {
+         if (check_element_int(v[c])) {
             count++;
          }
       }
       mem_end_test (output);
+      if (count != items_count) {
+         std::cout << "C++ error while counting find "
+            << category << container << std::endl;
+      }
    }
 }
+
+/**
+ * test_cpp_str_int_map
+ */
+
+typedef std::map<std::string, int> str_int_map;
+
+void fill(str_int_map &v) {
+   for (int c = 1; c <= items_count; c++) {
+      v[nth_str_key(c)] = nth_int(c);
+   }
+}
+
+extern "C"
+void test_cpp_str_int_map (void * output) {
+
+   const char* category = "String-Integer Map";
+   const char* container = "C++ ordered";
+
+   set_column (output, category, container, sizeof(str_int_map), FAVORITE);
+
+   {
+      mem_start_test (output, category, container, "fill", START_GROUP);
+      str_int_map v;
+      fill(v);
+      stop_time(output);
+   }
+   mem_end_test (output);
+
+   {
+      str_int_map v;
+      fill(v);
+
+      mem_start_test (output, category, container, "copy", SAME_GROUP);
+      {
+         str_int_map v_copy (v);
+         stop_time(output);
+      }
+      mem_end_test (output);
+
+      int count = 0;
+      mem_start_test (output, category, container, "cursor loop", START_GROUP);
+      for (auto it = v.begin(), __end=v.end(); it != __end; ++it) {
+         if (check_element_int(it->second)) {
+            count ++;
+         }
+      }
+      mem_end_test (output);
+      if (count != items_count) {
+         std::cout << "C++ error while counting cursor "
+            << category << container << count << std::endl;
+      }
+
+      mem_start_test (output, category, container, "for-of loop", SAME_GROUP);
+      count = 0;
+      for (auto& e : v) {
+         if (check_element_int(e.second)) {
+            count ++;
+         }
+      }
+      mem_end_test (output);
+      if (count != items_count) {
+         std::cout << "C++ error while counting for-in "
+            << category << container << count << std::endl;
+      }
+
+      mem_start_test (output, category, container, "count_if", SAME_GROUP);
+      count = std::count_if (v.begin(), v.end(), check_element_value_str_int);
+      mem_end_test (output);
+      if (count != items_count) {
+         std::cout << "C++ error while counting count_if "
+            << category << container << std::endl;
+      }
+
+      mem_start_test (output, category, container, "find", START_GROUP);
+      count = 0;
+      for (int c = 1; c <= items_count; c++) {
+         if (check_element_int(v[nth_str_key(c)])) {
+            count++;
+         }
+      }
+      mem_end_test (output);
+      if (count != items_count) {
+         std::cout << "C++ error while counting find "
+            << category << container << std::endl;
+      }
+   }
+}
+
 
 /**
  * test_cpp_str_str_map
  */
 
+typedef std::map<std::string, std::string> str_str_map;
+
+void fill(str_str_map &v) {
+   for (int c = 1; c <= items_count; c++) {
+      v[nth_str_key(c)] = nth_str_value(c);
+   }
+}
+
 extern "C"
 void test_cpp_str_str_map (void * output) {
-   typedef std::map<std::string, std::string> str_str_map;
 
-   const char* category = "StrStr Map";
+   const char* category = "String-String Map";
    const char* container = "C++ ordered";
 
    set_column (output, category, container, sizeof(str_str_map), FAVORITE);
 
-   for (int r = 0; r < repeat_count; r++) {
-      str_str_map v;
-
+   {
       mem_start_test (output, category, container, "fill", START_GROUP);
-      for (int c = 1; c <= items_count; c++) {
-         v[std::to_string(c)] = "foo";
-      }
-      mem_end_test (output);
+      str_str_map v;
+      fill(v);
+      stop_time(output);
+   }
+   mem_end_test (output);
+
+   {
+      str_str_map v;
+      fill(v);
 
       mem_start_test (output, category, container, "copy", SAME_GROUP);
       {
          str_str_map v_copy (v);
-         mem_end_test (output);
+         stop_time(output);
       }
+      mem_end_test (output);
 
       int count = 0;
       mem_start_test (output, category, container, "cursor loop", START_GROUP);
       for (auto it = v.begin(), __end=v.end(); it != __end; ++it) {
-         if (startsWithStr(it->second)) {  // value
+         if (check_element_str(it->second)) {
             count ++;
          }
       }
       mem_end_test (output);
       if (count != items_count) {
-         std::cout << "C++ error while counting" << count << std::endl;
+         std::cout << "C++ error while counting cursor "
+            << category << container << count << std::endl;
       }
 
+      mem_start_test (output, category, container, "for-of loop", SAME_GROUP);
       count = 0;
-      mem_start_test (output, category, container, "for-in/of loop", SAME_GROUP);
       for (auto& e : v) {
-         if (startsWithStr(e.second)) { // value
+         if (check_element_str(e.second)) {
             count ++;
          }
       }
       mem_end_test (output);
       if (count != items_count) {
-         std::cout << "C++ error while counting" << count << std::endl;
+         std::cout << "C++ error while counting for-in "
+            << category << container << count << std::endl;
       }
 
       mem_start_test (output, category, container, "count_if", SAME_GROUP);
-      count = std::count_if (v.begin(), v.end(), valueStartsWithStr);
+      count = std::count_if (v.begin(), v.end(), check_element_value_str);
       mem_end_test (output);
       if (count != items_count) {
-         std::cout << "C++ error while counting" << std::endl;
-      }
-
-      count = 0;
-      mem_start_test (output, category, container, "indexed", START_GROUP);
-      for (int r = 1; r <= items_count; r++) {
-         if (startsWithStr(v["1"])) {
-            count ++;
-         }
-      }
-      if (count != items_count) {
-         std::cout << "C++ error while counting" << std::endl;
+         std::cout << "C++ error while counting count_if "
+            << category << container << std::endl;
       }
 
       mem_start_test (output, category, container, "find", START_GROUP);
+      count = 0;
       for (int c = 1; c <= items_count; c++) {
-         if (startsWithStr(v[std::to_string(c)])) {
+         if (check_element_str(v[nth_str_key(c)])) {
             count++;
          }
       }
       mem_end_test (output);
+      if (count != items_count) {
+         std::cout << "C++ error while counting find "
+            << category << container << std::endl;
+      }
    }
 }
 
@@ -590,89 +741,94 @@ void test_cpp_str_str_map (void * output) {
  * test_cpp_str_str_unordered_map
  */
 
+typedef std::unordered_map<std::string, std::string> str_str_unordered_map;
+
+void fill(str_str_unordered_map &v) {
+   for (int c = 1; c <= items_count; c++) {
+      v[nth_str_key(c)] = nth_str_value(c);
+   }
+}
+
 extern "C"
 void test_cpp_str_str_unordered_map (void * output) {
-   typedef std::unordered_map<std::string, std::string> str_str_unordered_map;
 
-   const char* category = "StrStr Map";
+   const char* category = "String-String Map";
    const char* container = "C++ unordered";
 
    set_column
       (output, category, container, sizeof(str_str_unordered_map), FAVORITE);
 
-   for (int r = 0; r < repeat_count; r++) {
-      str_str_unordered_map v;
-
+   {
       mem_start_test
          (output, category, container, "fill", START_GROUP);
-      for (int c = 1; c <= items_count; c++) {
-         v[std::to_string(c)] = "foo";
-      }
-      mem_end_test (output);
+      str_str_unordered_map v;
+      fill(v);
+      stop_time(output);
+   }
+   mem_end_test (output);
+
+   {
+      str_str_unordered_map v;
+      fill(v);
 
       mem_start_test
          (output, category, container, "copy", SAME_GROUP);
       {
          str_str_unordered_map v_copy (v);
-         mem_end_test (output);
+         stop_time(output);
       }
+      mem_end_test (output);
 
       int count = 0;
       mem_start_test
          (output, category, container, "cursor loop", START_GROUP);
       for (auto it = v.begin(), __end=v.end(); it != __end; ++it) {
          //  ??? Using valueStartsWithStr(*it) is twice as slow...
-         if (startsWithStr(it->second)) {  // value
+         if (check_element_str(it->second)) {
             count ++;
          }
       }
       mem_end_test (output);
       if (count != items_count) {
-         std::cout << "C++ error while counting" << count << std::endl;
+         std::cout << "C++ error while counting cursor "
+            << category << container << count << std::endl;
       }
 
       count = 0;
       mem_start_test
-         (output, category, container, "for-in/of loop", SAME_GROUP);
+         (output, category, container, "for-of loop", SAME_GROUP);
       for (auto& e : v) {
-         if (startsWithStr(e.second)) { // value
+         if (check_element_str(e.second)) {
             count ++;
          }
       }
       mem_end_test (output);
       if (count != items_count) {
-         std::cout << "C++ error while counting" << count << std::endl;
+         std::cout << "C++ error while counting for-in "
+            << category << container << count << std::endl;
       }
 
       mem_start_test
          (output, category, container, "count_if", SAME_GROUP);
-      count = std::count_if (v.begin(), v.end(), valueStartsWithStr);
+      count = std::count_if (v.begin(), v.end(), check_element_value_str);
       mem_end_test (output);
       if (count != items_count) {
-         std::cout << "C++ error while counting" << std::endl;
+         std::cout << "C++ error while counting count_if "
+            << category << container << std::endl;
       }
 
-      count = 0;
-      mem_start_test
-         (output, category, container, "indexed", START_GROUP);
-      for (int r = 1; r <= items_count; r++) {
-         if (startsWithStr(v["1"])) {
-            count ++;
-         }
-      }
-      mem_end_test (output);
-      if (count != items_count) {
-         std::cout << "C++ error while counting" << std::endl;
-      }
-
-      count = 0;
       mem_start_test
          (output, category, container, "find", START_GROUP);
+      count = 0;
       for (int c = 1; c <= items_count; c++) {
-         if (startsWithStr(v[std::to_string(c)])) {
+         if (check_element_str(v[nth_str_key(c)])) {
             count++;
          }
       }
       mem_end_test (output);
+      if (count != items_count) {
+         std::cout << "C++ error while counting find "
+            << category << container << std::endl;
+      }
    }
 }

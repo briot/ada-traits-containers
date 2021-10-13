@@ -1,6 +1,6 @@
+with Support_Lists;
 with Conts.Lists.Definite_Bounded;
 with Test_Support;
-with Support_Lists;
 package body Tests_Lists_Definite_Bounded is
 
    package Lists0 is new Conts.Lists.Definite_Bounded
@@ -11,6 +11,7 @@ package body Tests_Lists_Definite_Bounded is
        Image          => Test_Support.Image,
        Lists          => Lists0.Lists,
        Nth            => Test_Support.Nth,
+       Perf_Nth       => Test_Support.Perf_Nth,
        Check_Element  => Test_Support.Check_Element);
 
    procedure Test0 is
@@ -22,6 +23,6 @@ package body Tests_Lists_Definite_Bounded is
    procedure Test_Perf0 (Result : in out Report.Output'Class) is
       L1, L2 : Lists0.List (Test_Support.Items_Count);
    begin
-      Tests0.Test_Perf (Result, L1, L2);
+      Tests0.Test_Perf (Result, L1, L2, Favorite => False);
    end Test_Perf0;
 end Tests_Lists_Definite_Bounded;

@@ -6,7 +6,7 @@ with "gnatcoll.gpr";
 project Tests_Perfs is
    for Source_Dirs use ("generated", ".");
    for Object_Dir use "obj/" & Containers_Shared.Mode;
-   for Languages use ("Ada", "C++", "Python");
+   for Languages use ("Ada", "C++");
    for Main use ("main_perf.adb");
 
    --  Can be used to indicate the location of the Boost library

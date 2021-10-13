@@ -424,6 +424,9 @@ package Conts.Maps.Impl with SPARK_Mode is
              and then P_Get (Positions (Self), Next'Result) =
                P_Get (Positions (Self), Position) + 1);
 
+   procedure Next
+     (Self : Base_Map'Class; Position : in out Cursor);
+
    function First_Primitive (Self : Base_Map) return Cursor
       is (First (Self)) with Inline;
 

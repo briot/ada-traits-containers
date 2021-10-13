@@ -20,7 +20,6 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Ada.Text_IO;
 with Asserts;
 with Conts.Algorithms;
 with GNAT.Source_Info;
@@ -55,23 +54,12 @@ package body Support_Lists is
 
    function Check_Element_Internal
       (E : Lists.Storage.Elements.Constant_Returned_Type)
-      return Boolean;
-   --  Return Check_Element
+      return Boolean
+      is (Check_Element (Lists.Storage.Elements.To_Element (E)));
 
    function Count_If is new Conts.Algorithms.Count_If
       (Cursors   => Lists.Cursors.Forward,
        Getters   => Lists.Maps.Constant_Returned);
-
-   ----------------------------
-   -- Check_Element_Internal --
-   ----------------------------
-
-   function Check_Element_Internal
-      (E : Lists.Storage.Elements.Constant_Returned_Type)
-      return Boolean is
-   begin
-      return Check_Element (Lists.Storage.Elements.To_Element (E));
-   end Check_Element_Internal;
 
    -----------------
    -- Assert_List --
@@ -230,8 +218,9 @@ package body Support_Lists is
    ---------------
 
    procedure Test_Perf
-      (Results : in out Report.Output'Class;
-       L1, L2  : in out Lists.List)
+      (Results  : in out Report.Output'Class;
+       L1, L2   : in out Lists.List;
+       Favorite : Boolean)
    is
       Count : Natural;
 
@@ -245,7 +234,6 @@ package body Support_Lists is
 
       procedure Do_Clear2 is
       begin
-         Count := 0;
          L2.Clear;
       end Do_Clear2;
 
@@ -253,7 +241,7 @@ package body Support_Lists is
       procedure Do_Fill is
       begin
          for C in 1 .. Items_Count loop
-            L1.Append (Nth (C));
+            L1.Append (Perf_Nth (C));
          end loop;
       end Do_Fill;
 
@@ -305,7 +293,7 @@ package body Support_Lists is
           Category    => Category,
           Column      => Container_Name,
           Size        => L1'Size / 8,
-          Favorite    => False);
+          Favorite    => Favorite);
 
       Time_Fill
          (Results,

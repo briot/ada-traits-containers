@@ -20,24 +20,27 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Elements;
 with Conts.Vectors.Generics;
-with Conts.Vectors.Storage;
 with GNAT.Source_Info;
+with Report;
 
 generic
-   Test_Name : String;
-
-   with package Elements is new Conts.Elements.Traits (<>);
-   with package Storage is new Conts.Vectors.Storage.Traits
-      (Elements => Elements, others => <>);
+   Category       : String;  --  which table we want to show results in
+   Container_Name : String;  --  which column
    with package Vectors is new Conts.Vectors.Generics
-      (Storage => Storage, Index_Type => Positive);
-   with function Image (Self : Elements.Element_Type) return String;
+      (Index_Type => Positive, others => <>);
+   with function Image
+      (Self : Vectors.Storage.Elements.Element_Type) return String;
+   with function Nth
+      (Index : Natural) return Vectors.Storage.Elements.Element_Type;
+   with function Perf_Nth
+      (Index : Natural) return Vectors.Storage.Elements.Element_Type;
+   with function Check_Element
+      (E : Vectors.Storage.Elements.Element_Type) return Boolean;
+   --  Should be True for all elements returned by Nth (and use E)
 
-   with function Nth (Index : Natural) return Elements.Element_Type;
-   with function "=" (L, R : Elements.Element_Type) return Boolean is <>;
-
+   with function "="
+      (L, R : Vectors.Storage.Elements.Element_Type) return Boolean is <>;
 package Support_Vectors is
 
    procedure Assert_Vector
@@ -52,5 +55,11 @@ package Support_Vectors is
    --  Perform various tests.
    --  All vectors should be empty on input. This is used to handle bounded
    --  vectors.
+
+   procedure Test_Perf
+      (Results  : in out Report.Output'Class;
+       L1, L2   : in out Vectors.Vector;
+       Favorite : Boolean);
+   --  Run performance tests
 
 end Support_Vectors;

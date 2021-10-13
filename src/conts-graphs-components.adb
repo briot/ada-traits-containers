@@ -89,8 +89,8 @@ package body Conts.Graphs.Components is
 
       Open : Vertex_Vectors.Vector;
 
-      Comp  : Positive := 1;   --  current component
-      DFS_Index : Positive := 1;         --  current DFS index
+      Comp  : Positive := 1;     --  current component
+      DFS_Index : Positive := 1; --  current DFS index
 
       --  A custom color map which stores integers instead
       procedure Set

@@ -20,6 +20,7 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
+with Asserts;
 with Conts.Algorithms;
 with Conts.Adaptors;     use Conts.Adaptors;
 with Report;
@@ -28,28 +29,6 @@ with Test_Support;       use Test_Support;
 
 package body Perf_Support is
    use type System.Storage_Elements.Storage_Offset;
-
-   -----------
-   -- Image --
-   -----------
-
-   function Image (P : Integer) return String is
-      Img : constant String := P'Img;
-   begin
-      return Img (Img'First + 1 .. Img'Last);
-   end Image;
-
-   ------------
-   -- Assert --
-   ------------
-
-   procedure Assert (Count, Expected : Natural; Reason : String := "") is
-   begin
-      if Count /= Expected then
-         raise Program_Error with "Wrong count (" & Reason & "): got"
-            & Count'Img & " expected" & Expected'Img;
-      end if;
-   end Assert;
 
    ---------------------
    -- Test_Arrays_Int --
@@ -68,6 +47,7 @@ package body Perf_Support is
          (Adaptors.Cursors.Forward, Adaptors.Maps.Element);
 
       V : Int_Array (1 .. Items_Count);
+      Count : Natural;
 
       procedure Do_Fill;
       procedure Do_Fill is
@@ -76,8 +56,47 @@ package body Perf_Support is
             V (C) := 2;
          end loop;
       end Do_Fill;
-      procedure Time_Fill is new Report.Timeit (Do_Fill);
 
+      procedure Do_Copy;
+      procedure Do_Copy is
+         V_Copy : Int_Array := V with Unreferenced;
+      begin
+         null;
+      end Do_Copy;
+
+      procedure Do_Cursor;
+      procedure Do_Cursor is
+      begin
+         Count := 0;
+         for It in V'Range loop
+            if Test_Support.Check_Element (V (It)) then
+               Count := Count + 1;
+            end if;
+         end loop;
+      end Do_Cursor;
+
+      procedure Do_For_Of;
+      procedure Do_For_Of is
+      begin
+         Count := 0;
+         for C of V loop
+            if Test_Support.Check_Element (C) then
+               Count := Count + 1;
+            end if;
+         end loop;
+      end Do_For_Of;
+
+      procedure Do_Count_If;
+      procedure Do_Count_If is
+      begin
+         Count := Count_If (V, Test_Support.Check_Element'Access);
+      end Do_Count_If;
+
+      procedure Time_Fill is new Report.Timeit (Do_Fill);
+      procedure Time_Copy is new Report.Timeit (Do_Copy);
+      procedure Time_Cursor is new Report.Timeit (Do_Cursor);
+      procedure Time_For_Of is new Report.Timeit (Do_For_Of);
+      procedure Time_Count_If is new Report.Timeit (Do_Count_If);
    begin
       Stdout.Set_Column
          (Category  => Category,
@@ -89,50 +108,32 @@ package body Perf_Support is
           Category  => Category,
           Column    => Container,
           Row       => "fill");
+      Time_Copy
+         (Stdout,
+          Category  => Category,
+          Column    => Container,
+          Row       => "copy");
 
---      procedure Run (V : in out Int_Array);
---      procedure Run (V : in out Int_Array) is
---         Co : Natural := 0;
---      begin
---         Stdout.Start_Test ("fill");
---         for C in 1 .. Items_Count loop
---            V (C) := 2;
---         end loop;
---         Stdout.End_Test;
---
---         Stdout.Start_Test ("copy");
---         declare
---            V_Copy : Int_Array := V;
---            pragma Unreferenced (V_Copy);
---         begin
---            Stdout.End_Test;
---         end;
---
---         Co := 0;
---         Stdout.Start_Test ("cursor loop");
---         for It in V'Range loop
---            if Predicate (V (It)) then
---               Co := Co + 1;
---            end if;
---         end loop;
---         Stdout.End_Test;
---         Assert (Co, Items_Count);
---
---         Co := 0;
---         Stdout.Start_Test ("for-of loop");
---         for E of V loop
---            if Predicate (E) then
---               Co := Co + 1;
---            end if;
---         end loop;
---         Stdout.End_Test;
---         Assert (Co, Items_Count);
---
---         Stdout.Start_Test ("count_if");
---         Co := Count_If (V, Predicate'Access);
---         Stdout.End_Test;
---         Assert (Co, Items_Count);
---      end Run;
+      Time_Cursor
+         (Stdout,
+          Category  => Category,
+          Column    => Container,
+          Row       => "cursor loop");
+      Asserts.Integers.Assert (Count, Items_Count);
+
+      Time_For_Of
+         (Stdout,
+          Category  => Category,
+          Column    => Container,
+          Row       => "for-of loop");
+      Asserts.Integers.Assert (Count, Items_Count);
+
+      Time_Count_If
+         (Stdout,
+          Category  => Category,
+          Column    => Container,
+          Row       => "count_if");
+      Asserts.Integers.Assert (Count, Items_Count);
    end Test_Arrays_Int;
 
 end Perf_Support;

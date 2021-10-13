@@ -20,9 +20,12 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Asserts;           use Asserts;
+with Asserts;
+with Conts.Algorithms;
 with GNATCOLL.Strings;
-with System.Assertions; use System.Assertions;
+with System.Assertions;        use System.Assertions;
+with System.Storage_Elements;  use System.Storage_Elements;
+with Test_Support;             use Test_Support;
 
 package body Support_Vectors is
 
@@ -31,7 +34,11 @@ package body Support_Vectors is
    use Asserts.Strings;
    use Vectors;
 
-   function "+" (S : String) return String is (Test_Name & ": " & S);
+   package Elements renames Vectors.Storage.Elements;
+   subtype Index_Type is Positive;
+
+   function "+" (S : String) return String
+      is (Category & '-' & Container_Name & ": " & S);
    --  Create error messages for failed tests
 
    package Element_Asserts is new Asserts.Asserts.Equals
@@ -41,7 +48,14 @@ package body Support_Vectors is
    package Index_Asserts is new Asserts.Asserts.Equals
       (Vectors.Extended_Index, Vectors.Extended_Index'Image, "=" => "=");
 
-   subtype Index_Type is Positive;
+   function Check_Element_Internal
+      (E : Vectors.Storage.Elements.Constant_Returned_Type)
+      return Boolean
+      is (Check_Element (Vectors.Storage.Elements.To_Element (E)));
+
+   function Count_If is new Conts.Algorithms.Count_If
+      (Cursors   => Vectors.Cursors.Forward,
+       Getters   => Vectors.Maps.Constant_Returned);
 
    -------------------
    -- Assert_Vector --
@@ -309,4 +323,149 @@ package body Support_Vectors is
       end;
    end Test;
 
+   ---------------
+   -- Test_Perf --
+   ---------------
+
+   procedure Test_Perf
+      (Results  : in out Report.Output'Class;
+       L1, L2   : in out Vectors.Vector;
+       Favorite : Boolean)
+   is
+      Count : Natural;
+
+      procedure Do_Clear;
+      procedure Do_Clear2;
+
+      procedure Do_Clear is
+      begin
+         L1.Clear;
+      end Do_Clear;
+
+      procedure Do_Clear2 is
+      begin
+         L2.Clear;
+      end Do_Clear2;
+
+      procedure Do_Fill;
+      procedure Do_Fill is
+      begin
+         for C in 1 .. Items_Count loop
+            L1.Append (Perf_Nth (C));
+         end loop;
+      end Do_Fill;
+
+      procedure Do_Copy;
+      procedure Do_Copy is
+      begin
+         L2.Assign (L1);
+      end Do_Copy;
+
+      procedure Do_Cursor;
+      procedure Do_Cursor is
+         C     : Vectors.Cursor := L1.First;
+      begin
+         Count := 0;
+         while L1.Has_Element (C) loop
+            if Check_Element_Internal (L1.Element (C)) then
+               Count := Count + 1;
+            end if;
+            L1.Next (C);
+         end loop;
+      end Do_Cursor;
+
+      procedure Do_For_Of;
+      procedure Do_For_Of is
+      begin
+         Count := 0;
+         for E of L1 loop
+            if Check_Element_Internal (E) then
+               Count := Count + 1;
+            end if;
+         end loop;
+      end Do_For_Of;
+
+      procedure Do_Count_If;
+      procedure Do_Count_If is
+      begin
+         Count := Count_If (L1, Check_Element_Internal'Access);
+      end Do_Count_If;
+
+      procedure Do_Indexed;
+      procedure Do_Indexed is
+      begin
+         Count := 0;
+         for C in 1 .. Items_Count loop
+            if Check_Element_Internal (L1 (C)) then
+               Count := Count + 1;
+            end if;
+         end loop;
+      end Do_Indexed;
+
+      procedure Time_Fill is new Report.Timeit (Do_Fill, Cleanup => Do_Clear);
+      procedure Time_Copy is new Report.Timeit (Do_Copy, Cleanup => Do_Clear2);
+      procedure Time_Cursor is new Report.Timeit (Do_Cursor);
+      procedure Time_For_Of is new Report.Timeit (Do_For_Of);
+      procedure Time_Count_If is new Report.Timeit (Do_Count_If);
+      procedure Time_Indexed is new Report.Timeit (Do_Indexed);
+
+   begin
+      Report.Set_Column
+         (Results,
+          Category    => Category,
+          Column      => Container_Name,
+          Size        => L1'Size / 8,
+          Favorite    => Favorite);
+
+      Time_Fill
+         (Results,
+          Category    => Category,
+          Column      => Container_Name,
+          Row         => "fill",
+          Start_Group => True);
+
+      Do_Clear;
+      Do_Fill;
+      Time_Copy
+         (Results,
+          Category    => Category,
+          Column      => Container_Name,
+          Row         => "copy");
+
+      Do_Clear;
+      Do_Fill;
+      Time_Cursor
+         (Results,
+          Category    => Category,
+          Column      => Container_Name,
+          Row         => "cursor loop");
+      Asserts.Integers.Assert (Count, Items_Count, +"");
+
+      Do_Clear;
+      Do_Fill;
+      Time_For_Of
+         (Results,
+          Category    => Category,
+          Column      => Container_Name,
+          Row         => "for-of loop");
+      Asserts.Integers.Assert (Count, Items_Count, +"");
+
+      Do_Clear;
+      Do_Fill;
+      Time_Count_If
+         (Results,
+          Category    => Category,
+          Column      => Container_Name,
+          Row         => "count_if");
+      Asserts.Integers.Assert (Count, Items_Count, +"");
+
+      Do_Clear;
+      Do_Fill;
+      Time_Indexed
+         (Results,
+          Category    => Category,
+          Column      => Container_Name,
+          Row         => "indexed");
+      Asserts.Integers.Assert (Count, Items_Count, +"");
+   end Test_Perf;
 end Support_Vectors;

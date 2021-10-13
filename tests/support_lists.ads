@@ -30,12 +30,19 @@ generic
    with package Lists is new Conts.Lists.Generics (<>);
    with function Image
       (Self : Lists.Storage.Elements.Element_Type) return String;
+
    with function Nth
       (Index : Natural) return Lists.Storage.Elements.Element_Type;
+   --  What to insert in the list for correctness tests. Should all be
+   --  different.
+
+   with function Perf_Nth
+      (Index : Natural) return Lists.Storage.Elements.Element_Type;
+   --  What to insert in the list for performance tests.
 
    with function Check_Element
       (E : Lists.Storage.Elements.Element_Type) return Boolean;
-   --  Should be True for all elements returned by Nth
+   --  Should be True for all elements returned by Nth (and use E)
 
    with function "="
       (L, R : Lists.Storage.Elements.Element_Type) return Boolean is <>;
@@ -57,8 +64,9 @@ package Support_Lists is
    --  lists.
 
    procedure Test_Perf
-      (Results : in out Report.Output'Class;
-       L1, L2  : in out Lists.List);
+      (Results  : in out Report.Output'Class;
+       L1, L2   : in out Lists.List;
+       Favorite : Boolean);
    --  Run performance tests
 
 end Support_Lists;

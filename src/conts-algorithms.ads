@@ -183,13 +183,13 @@ package Conts.Algorithms is
       with procedure Swap
         (Self        : in out Cursors.Container;
          Left, Right : Cursors.Index) is <>;
-      Gaps : Shell_Sort_Gaps := Ciura_Gaps;
+      Gaps : Shell_Sort_Gaps := Sedgewick_Gaps;
    procedure Shell_Sort
      (Self : in out Cursors.Container)
      with Global => null;
    --  Sort the container.
    --  This is an improvement over Insertion_Sort. It does several iterations
-   --  of Insertion_Sort, each looking lookip at elements apart from each other
+   --  of Insertion_Sort, each looking at elements apart from each other
    --  based on the Gaps settings. The Wiki page for this algorithm suggests
    --  a number of possible gaps, the default is usually a good choice.
    --

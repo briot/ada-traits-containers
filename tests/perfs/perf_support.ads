@@ -20,7 +20,6 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Report;                use Report;
 with System;
 
@@ -106,22 +105,6 @@ package Perf_Support is
    -- Tests --
    -----------
 
-   Repeat_Count : constant Natural := 1;
-   pragma Export (C, Repeat_Count, "repeat_count");
-   --  Number of times that tests should be repeated
-
-   function Predicate (P : Integer) return Boolean is (P <= 2)
-      with Inline;
-   function Predicate (P : String) return Boolean is (P (P'First) = 'f')
-      with Inline;
-   function Predicate (P : Unbounded_String) return Boolean is
-      (Element (P, 1) = 'f')
-      with Inline;
-   procedure Assert (Count, Expected : Natural; Reason : String := "")
-      with Inline;
-
-   function Image (P : Integer) return String with Inline;
-
    procedure Test_Cpp_Int_List (Stdout : System.Address)
       with Import, Convention => C, External_Name => "test_cpp_int_list";
    procedure Test_Cpp_Str_List (Stdout : System.Address)
@@ -130,6 +113,8 @@ package Perf_Support is
       with Import, Convention => C, External_Name => "test_cpp_int_vector";
    procedure Test_Cpp_Str_Vector (Stdout : System.Address)
       with Import, Convention => C, External_Name => "test_cpp_str_vector";
+   procedure Test_Cpp_Str_Int_Map (Stdout : System.Address)
+     with Import, Convention => C, External_Name => "test_cpp_str_int_map";
    procedure Test_Cpp_Str_Str_Map (Stdout : System.Address)
      with Import, Convention => C, External_Name => "test_cpp_str_str_map";
    procedure Test_Cpp_Str_Str_Unordered_Map (Stdout : System.Address)

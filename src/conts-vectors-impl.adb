@@ -227,10 +227,12 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
       for J in Min_Index .. L loop
          Storage.Release_Element (Self, J);
       end loop;
+      Storage.Release (Self);
 
       --  Deallocate all memory
       Storage.Resize (Self, 0, L, Force => True);
       Self.Last := No_Last;
+
    end Clear;
 
    ------------

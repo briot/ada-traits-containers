@@ -35,8 +35,8 @@ Base = Literal[
 Pkg = Literal['Unbounded', 'Bounded', 'Unbounded_SPARK']
 
 
-def base_to_str(base: Optional[Base]) -> str:
-    if base is None or base == 'Conts.Controlled_Base':
+def base_to_str(base: Base) -> str:
+    if base == 'Conts.Controlled_Base':
         return ''
     elif base == 'Conts.Limited_Base':
         return ' limited'
@@ -333,6 +333,7 @@ Vector_Test_Data = Tuple[
     str,             # index type
     str,             # list of element types to test
     Optional[Base],  # container_base (if applicable)
+    bool,            # favorite: is this a container users would likely use
 ]
 
 
@@ -345,8 +346,19 @@ class Vector_Test(Test):
         self.index: str = data[0]
         self.element: str = data[1]
         self.base: Optional[Base] = data[2]
+        self.favorite = ("True" if data[3] else "False")
         self.container = container
         self.withs = "with Support_Vectors;"
+
+    def category(self) -> str:
+        return f"{self.element} Vector"
+
+    def container_name(self) -> str:
+        base = base_to_str(self.base or self.container.storage.base)
+        return (
+            f"{self.container.elements.descr}"
+            f" {self.container.storage.pkg}{base}"
+        )
 
     def test_name(self) -> str:
         return self.container.pkg_name.lower(
@@ -364,12 +376,13 @@ class Vector_Test(Test):
    package Vecs{idx} is new {self.container.pkg_name}
       {actual_str};
    package Tests{idx} is new Support_Vectors
-      (Test_Name    => "{self.test_name()}",
-       Image        => Test_Support.Image,
-       Elements     => Vecs{idx}.Elements.Traits,
-       Storage      => Vecs{idx}.Storage.Traits,
-       Vectors      => Vecs{idx}.Vectors,
-       Nth          => Test_Support.Nth);
+      (Category       => "{self.category()}",
+       Container_Name => "{self.container_name()}",
+       Image          => Test_Support.Image,
+       Vectors        => Vecs{idx}.Vectors,
+       Check_Element  => Test_Support.Check_Element,
+       Nth            => Test_Support.Nth,
+       Perf_Nth       => Test_Support.Perf_Nth);
 
    procedure Test{idx} is
       V : Vecs{idx}.Vector{self.container.storage.bounds_for_test};
@@ -378,8 +391,9 @@ class Vector_Test(Test):
    end Test{idx};
 
    procedure Test_Perf{idx} (Result : in out Report.Output'Class) is
+      V1, V2 : Vecs{idx}.Vector{self.container.storage.bounds_for_perf_test};
    begin
-      null;
+      Tests{idx}.Test_Perf (Result, V1, V2, Favorite => {self.favorite});
    end Test_Perf{idx};
 """
 
@@ -468,6 +482,7 @@ end {self.pkg_name};
 List_Test_Data = Tuple[
     str,             # list of element types to test
     Optional[Base],  # container_base (if applicable)
+    bool,            # favorite: is this a container users would likely use
 ]
 
 
@@ -477,15 +492,16 @@ class List_Test(Test):
         self.element = data[0]
         self.base = data[1]
         self.withs = "with Support_Lists;"
+        self.favorite = ("True" if data[2] else "False")
 
     def category(self) -> str:
         return f"{self.element} List"
 
     def container_name(self) -> str:
+        base = base_to_str(self.base or self.container.storage.base)
         return (
             f"{self.container.elements.descr}"
-            f" {self.container.storage.pkg}"
-            f"{base_to_str(self.base)}"
+            f" {self.container.storage.pkg}{base}"
         )
 
     def test_name(self) -> str:
@@ -509,6 +525,7 @@ class List_Test(Test):
        Image          => Test_Support.Image,
        Lists          => Lists{idx}.Lists,
        Nth            => Test_Support.Nth,
+       Perf_Nth       => Test_Support.Perf_Nth,
        Check_Element  => Test_Support.Check_Element);
 
    procedure Test{idx} is
@@ -520,7 +537,7 @@ class List_Test(Test):
    procedure Test_Perf{idx} (Result : in out Report.Output'Class) is
       L1, L2 : Lists{idx}.List{self.container.storage.bounds_for_perf_test};
    begin
-      Tests{idx}.Test_Perf (Result, L1, L2);
+      Tests{idx}.Test_Perf (Result, L1, L2, Favorite => {self.favorite});
    end Test_Perf{idx};
 """
 
@@ -603,6 +620,7 @@ Map_Test_Data = Tuple[
     str,             # key type
     str,             # element type
     Optional[Base],  # container_base (if applicable)
+    bool,            # favorite: is this a container users would likely use
 ]
 
 
@@ -615,8 +633,20 @@ class Map_Test(Test):
         self.key: str = data[0]
         self.element: str = data[1]
         self.base: Optional[Base] = data[2]
+        self.favorite = ("True" if data[3] else "False")
         self.container = container
         self.withs = "with Support_Maps;"
+
+    def category(self) -> str:
+        return f"{self.key}-{self.element} Map"
+
+    def container_name(self) -> str:
+        base = base_to_str(self.base or self.container.storage.base)
+        return (
+            f"{self.container.keys.descr}-"
+            f"{self.container.elements.descr}"
+            f" {self.container.storage.pkg}{base}"
+        )
 
     def test_name(self) -> str:
         return self.container.pkg_name.lower(
@@ -638,21 +668,25 @@ class Map_Test(Test):
    package Maps{idx} is new {self.container.pkg_name}
       {actual_str};
    package Tests{idx} is new Support_Maps
-      (Test_Name     => "{self.test_name()}",
-       Image_Element => Test_Support.Image,
-       Maps          => Maps{idx}.Impl,
-       Nth_Key       => Test_Support.Nth,
-       Nth_Element   => Test_Support.Nth);
+      (Category         => "{self.category()}",
+       Container_Name   => "{self.container_name()}",
+       Image_Element    => Test_Support.Image,
+       Maps             => Maps{idx}.Impl,
+       Check_Element    => Test_Support.Check_Element,
+       Nth_Key          => Test_Support.Nth,
+       Nth_Element      => Test_Support.Nth,
+       Nth_Perf_Element => Test_Support.Perf_Nth);
 
    procedure Test{idx} is
-      M : Maps{idx}.Map{self.container.storage.bounds_for_test};
+      M1, M2 : Maps{idx}.Map{self.container.storage.bounds_for_test};
    begin
-      Tests{idx}.Test (M);
+      Tests{idx}.Test (M1, M2);
    end Test{idx};
 
    procedure Test_Perf{idx} (Result : in out Report.Output'Class) is
+      M1, M2 : Maps{idx}.Map{self.container.storage.bounds_for_test};
    begin
-      null;
+      Tests{idx}.Test_Perf (Result, M1, M2, Favorite => {self.favorite});
    end Test_Perf{idx};
 """
 
@@ -769,21 +803,21 @@ containers = [
         pkg_name="Conts.Vectors.Definite_Bounded",
         elements=Definite_Elements(),
         storage=Storage_Vector(pkg='Bounded', base='Conts.Controlled_Base'),
-        tests=[("Positive", "Integer", None)],
+        tests=[("Positive", "Integer", None, False)],
     ),
     Vector_Container(
         pkg_name="Conts.Vectors.Definite_Unbounded",
         elements=Definite_Elements(),
         storage=Storage_Vector(pkg='Unbounded'),
-        tests=[("Positive", "Integer", "Conts.Controlled_Base")],
+        tests=[("Positive", "Integer", "Conts.Controlled_Base", True)],
     ),
     Vector_Container(
         pkg_name="Conts.Vectors.Indefinite_Bounded",
         elements=Indefinite_Elements(),
         storage=Storage_Vector(pkg='Bounded', base='Conts.Controlled_Base'),
         tests=[
-            ("Positive", "Integer", None),
-            ("Positive", "String", None),
+            ("Positive", "Integer", None, False),
+            ("Positive", "String", None, False),
         ],
     ),
     Vector_Container(
@@ -791,8 +825,8 @@ containers = [
         elements=Indefinite_Elements(),
         storage=Storage_Vector(pkg='Unbounded'),
         tests=[
-            ("Positive", "Integer", "Conts.Controlled_Base"),
-            ("Positive", "String", "Conts.Controlled_Base"),
+            ("Positive", "Integer", "Conts.Controlled_Base", False),
+            ("Positive", "String", "Conts.Controlled_Base", True),
         ],
     ),
     Vector_Container(
@@ -800,8 +834,8 @@ containers = [
         elements=Indefinite_Elements_SPARK(),
         storage=Storage_Vector(pkg='Unbounded', base="Conts.Limited_Base"),
         tests=[
-            ("Positive", "Integer", None),
-            ("Positive", "String", None),
+            ("Positive", "Integer", None, False),
+            ("Positive", "String", None, False),
         ],
     ),
 #    Vector_Container(
@@ -813,33 +847,33 @@ containers = [
         pkg_name="Conts.Lists.Definite_Bounded",
         elements=Definite_Elements(),
         storage=Storage_List(pkg='Bounded', base='Conts.Controlled_Base'),
-        tests=[("Integer", None)],
+        tests=[("Integer", None, False)],
     ),
     List_Container(
         pkg_name="Conts.Lists.Definite_Bounded_Limited",
         elements=Definite_Elements(),
         storage=Storage_List(pkg='Bounded', base='Conts.Limited_Base'),
-        tests=[("Integer", None)],
+        tests=[("Integer", None, False)],
     ),
     List_Container(
         pkg_name="Conts.Lists.Definite_Unbounded",
         elements=Definite_Elements(),
         storage=Storage_List(pkg='Unbounded'),
-        tests=[("Integer", "Conts.Controlled_Base")],
+        tests=[("Integer", "Conts.Controlled_Base", True)],
     ),
     List_Container(
         pkg_name="Conts.Lists.Definite_Unbounded_Limited",
         elements=Definite_Elements(),
         storage=Storage_List(pkg='Unbounded', base='Conts.Limited_Base'),
-        tests=[("Integer", None)],
+        tests=[("Integer", None, False)],
     ),
     List_Container(
         pkg_name="Conts.Lists.Indefinite_Bounded",
         elements=Indefinite_Elements(),
         storage=Storage_List(pkg='Bounded', base='Conts.Controlled_Base'),
         tests=[
-            ("Integer", None),
-            ("String", None),
+            ("Integer", None, False),
+            ("String", None, False),
         ],
     ),
     List_Container(
@@ -847,8 +881,8 @@ containers = [
         elements=Indefinite_Elements(),
         storage=Storage_List(pkg='Unbounded'),
         tests=[
-            ("Integer", "Conts.Controlled_Base"),
-            ("String", "Conts.Controlled_Base"),
+            ("Integer", "Conts.Controlled_Base", False),
+            ("String", "Conts.Controlled_Base", True),
         ],
     ),
     List_Container(
@@ -856,8 +890,8 @@ containers = [
         elements=Indefinite_Elements_SPARK(),
         storage=Storage_List(base="Conts.Limited_Base", pkg="Unbounded_SPARK"),
         tests=[
-            ("Integer", None),
-            ("String", None),
+            ("Integer", None, False),
+            ("String", None, False),
         ],
     ),
 #    List_Container(
@@ -872,7 +906,7 @@ containers = [
         keys=Definite_Elements(name='Key'),
         elements=Definite_Elements(),
         tests=[
-            ("Integer", "Integer", "Conts.Controlled_Base"),
+            ("Integer", "Integer", "Conts.Controlled_Base", True),
         ],
     ),
     Map_Container(
@@ -881,8 +915,8 @@ containers = [
         keys=Indefinite_Elements(name='Key'),
         elements=Definite_Elements(),
         tests=[
-            ("Integer", "Integer", "Conts.Controlled_Base"),
-            ("String", "Integer", "Conts.Controlled_Base"),
+            ("Integer", "Integer", "Conts.Controlled_Base", False),
+            ("String", "Integer", "Conts.Controlled_Base", True),
         ],
     ),
     Map_Container(
@@ -891,8 +925,8 @@ containers = [
         keys=Indefinite_Elements(name='Key'),
         elements=Indefinite_Elements(),
         tests=[
-            ("Integer", "Integer", "Conts.Controlled_Base"),
-            ("String", "String", "Conts.Controlled_Base"),
+            ("Integer", "Integer", "Conts.Controlled_Base", False),
+            ("String", "String", "Conts.Controlled_Base", True),
         ],
     ),
     Map_Container(
@@ -902,8 +936,8 @@ containers = [
         elements=Indefinite_Elements_SPARK(),
         base='Conts.Limited_Base',
         tests=[
-            ("Integer", "Integer", None),
-            ("String", "String", None),
+            ("Integer", "Integer", None, False),
+            ("String", "String", None, False),
         ],
     ),
 ]

@@ -11,6 +11,7 @@ package body Tests_Lists_Indefinite_Unbounded is
        Image          => Test_Support.Image,
        Lists          => Lists0.Lists,
        Nth            => Test_Support.Nth,
+       Perf_Nth       => Test_Support.Perf_Nth,
        Check_Element  => Test_Support.Check_Element);
 
    procedure Test0 is
@@ -22,7 +23,7 @@ package body Tests_Lists_Indefinite_Unbounded is
    procedure Test_Perf0 (Result : in out Report.Output'Class) is
       L1, L2 : Lists0.List;
    begin
-      Tests0.Test_Perf (Result, L1, L2);
+      Tests0.Test_Perf (Result, L1, L2, Favorite => False);
    end Test_Perf0;
 
    package Lists1 is new Conts.Lists.Indefinite_Unbounded
@@ -33,6 +34,7 @@ package body Tests_Lists_Indefinite_Unbounded is
        Image          => Test_Support.Image,
        Lists          => Lists1.Lists,
        Nth            => Test_Support.Nth,
+       Perf_Nth       => Test_Support.Perf_Nth,
        Check_Element  => Test_Support.Check_Element);
 
    procedure Test1 is
@@ -44,6 +46,6 @@ package body Tests_Lists_Indefinite_Unbounded is
    procedure Test_Perf1 (Result : in out Report.Output'Class) is
       L1, L2 : Lists1.List;
    begin
-      Tests1.Test_Perf (Result, L1, L2);
+      Tests1.Test_Perf (Result, L1, L2, Favorite => True);
    end Test_Perf1;
 end Tests_Lists_Indefinite_Unbounded;

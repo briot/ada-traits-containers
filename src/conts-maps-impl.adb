@@ -351,6 +351,16 @@ package body Conts.Maps.Impl with SPARK_Mode => Off is
       return C;
    end Next;
 
+   ----------
+   -- Next --
+   ----------
+
+   procedure Next
+     (Self : Base_Map'Class; Position : in out Cursor) is
+   begin
+      Position := Next (Self, Position);
+   end Next;
+
    ---------
    -- Key --
    ---------

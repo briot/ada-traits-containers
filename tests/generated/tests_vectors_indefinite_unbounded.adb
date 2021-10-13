@@ -6,12 +6,13 @@ package body Tests_Vectors_Indefinite_Unbounded is
    package Vecs0 is new Conts.Vectors.Indefinite_Unbounded
       (Positive, Integer, Container_Base_Type => Conts.Controlled_Base);
    package Tests0 is new Support_Vectors
-      (Test_Name    => "vectors-indefinite_unbounded-integer",
-       Image        => Test_Support.Image,
-       Elements     => Vecs0.Elements.Traits,
-       Storage      => Vecs0.Storage.Traits,
-       Vectors      => Vecs0.Vectors,
-       Nth          => Test_Support.Nth);
+      (Category       => "Integer Vector",
+       Container_Name => "Indef Unbounded",
+       Image          => Test_Support.Image,
+       Vectors        => Vecs0.Vectors,
+       Check_Element  => Test_Support.Check_Element,
+       Nth            => Test_Support.Nth,
+       Perf_Nth       => Test_Support.Perf_Nth);
 
    procedure Test0 is
       V : Vecs0.Vector;
@@ -20,19 +21,21 @@ package body Tests_Vectors_Indefinite_Unbounded is
    end Test0;
 
    procedure Test_Perf0 (Result : in out Report.Output'Class) is
+      V1, V2 : Vecs0.Vector;
    begin
-      null;
+      Tests0.Test_Perf (Result, V1, V2, Favorite => False);
    end Test_Perf0;
 
    package Vecs1 is new Conts.Vectors.Indefinite_Unbounded
       (Positive, String, Container_Base_Type => Conts.Controlled_Base);
    package Tests1 is new Support_Vectors
-      (Test_Name    => "vectors-indefinite_unbounded-string",
-       Image        => Test_Support.Image,
-       Elements     => Vecs1.Elements.Traits,
-       Storage      => Vecs1.Storage.Traits,
-       Vectors      => Vecs1.Vectors,
-       Nth          => Test_Support.Nth);
+      (Category       => "String Vector",
+       Container_Name => "Indef Unbounded",
+       Image          => Test_Support.Image,
+       Vectors        => Vecs1.Vectors,
+       Check_Element  => Test_Support.Check_Element,
+       Nth            => Test_Support.Nth,
+       Perf_Nth       => Test_Support.Perf_Nth);
 
    procedure Test1 is
       V : Vecs1.Vector;
@@ -41,7 +44,8 @@ package body Tests_Vectors_Indefinite_Unbounded is
    end Test1;
 
    procedure Test_Perf1 (Result : in out Report.Output'Class) is
+      V1, V2 : Vecs1.Vector;
    begin
-      null;
+      Tests1.Test_Perf (Result, V1, V2, Favorite => True);
    end Test_Perf1;
 end Tests_Vectors_Indefinite_Unbounded;

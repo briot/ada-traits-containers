@@ -12,6 +12,12 @@ package Test_Support is
    function Nth (Index : Natural) return Integer is (Index);
    function Nth (Index : Natural) return String is (Index'Image);
 
+   function Perf_Nth (Index : Natural) return Integer is (Index);
+   function Perf_Nth (Index : Natural) return String
+      is (if Index mod 2 = 0
+          then "foo"
+          else "foofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoo");
+
    function Image (Value : Integer) return String is (Integer'Image (Value));
    function Image (Value : String) return String is (Value);
 

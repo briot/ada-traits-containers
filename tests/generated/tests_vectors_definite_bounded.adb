@@ -1,17 +1,18 @@
 with Support_Vectors;
-with Test_Support;
 with Conts.Vectors.Definite_Bounded;
+with Test_Support;
 package body Tests_Vectors_Definite_Bounded is
 
    package Vecs0 is new Conts.Vectors.Definite_Bounded
       (Positive, Integer);
    package Tests0 is new Support_Vectors
-      (Test_Name    => "vectors-definite_bounded-integer",
-       Image        => Test_Support.Image,
-       Elements     => Vecs0.Elements.Traits,
-       Storage      => Vecs0.Storage.Traits,
-       Vectors      => Vecs0.Vectors,
-       Nth          => Test_Support.Nth);
+      (Category       => "Integer Vector",
+       Container_Name => "Def Bounded",
+       Image          => Test_Support.Image,
+       Vectors        => Vecs0.Vectors,
+       Check_Element  => Test_Support.Check_Element,
+       Nth            => Test_Support.Nth,
+       Perf_Nth       => Test_Support.Perf_Nth);
 
    procedure Test0 is
       V : Vecs0.Vector (20);
@@ -20,7 +21,8 @@ package body Tests_Vectors_Definite_Bounded is
    end Test0;
 
    procedure Test_Perf0 (Result : in out Report.Output'Class) is
+      V1, V2 : Vecs0.Vector (Test_Support.Items_Count);
    begin
-      null;
+      Tests0.Test_Perf (Result, V1, V2, Favorite => False);
    end Test_Perf0;
 end Tests_Vectors_Definite_Bounded;

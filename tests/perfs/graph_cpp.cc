@@ -26,38 +26,49 @@ void test_cpp_graph(void* output) {
 
   set_column (output, category, container, sizeof(Graph), FAVORITE);
   
-  for (int r = 0; r < repeat_count; r++) {
-     mem_start_test (output, category, container, "fill", START_GROUP);
+  mem_start_test (output, category, container, "fill", START_GROUP);
+  {
      Graph g(num_vertices);
      for (int i = 0; i < num_vertices - 1; i++) {
         add_edge(i, i + 1, g);
      }
-     mem_end_test (output);
+     stop_time (output);
+  }
+  mem_end_test (output);
+
+  {
+     Graph g(num_vertices);
+     for (int i = 0; i < num_vertices - 1; i++) {
+        add_edge(i, i + 1, g);
+     }
 
      mem_start_test
         (output, category, container, "dfs, no visitor", START_GROUP);
      default_dfs_visitor vis;
      depth_first_search (g, visitor (vis));
      mem_end_test (output);
-
+  
      add_edge(num_vertices / 10, 3, g);
      add_edge(2 * num_vertices / 10, num_vertices - 1, g);
-
+  
      mem_start_test (output, category, container,  "dfs, visitor", SAME_GROUP);
      end_test_not_run (output);
-
+  
      mem_start_test
         (output, category, container, "dfs-recursive, visitor", SAME_GROUP);
      end_test_not_run (output);
-
+  
      mem_start_test (output, category, container, "is_acyclic", SAME_GROUP);
      end_test_not_run (output);
-
-     mem_start_test (output, category, container, "scc", START_GROUP);
-     std::vector<int> c(num_vertices);
-     int num = strong_components(
-           g,
-           make_iterator_property_map(c.begin(), get(vertex_index, g)));
+  
+     {
+        mem_start_test (output, category, container, "scc", START_GROUP);
+        std::vector<int> c(num_vertices);
+        int num = strong_components(
+              g,
+              make_iterator_property_map(c.begin(), get(vertex_index, g)));
+        stop_time(output);
+     }
      mem_end_test (output);
   }
 }

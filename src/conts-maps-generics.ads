@@ -156,6 +156,8 @@ package Conts.Maps.Generics with SPARK_Mode is
    function Next
      (Self : Base_Map'Class; Position : Cursor) return Cursor
      renames Impl.Next;
+   procedure Next (Self : Base_Map'Class; Position : in out Cursor)
+     renames Impl.Next;
 
    function Element
      (S : Impl.M.Map; K : Key_Type) return Element_Type

@@ -27,7 +27,6 @@
 
 extern "C" {
    extern const int items_count;
-   extern const int repeat_count;
    extern void set_column
       (void* output,
        const char* category,

@@ -21,18 +21,25 @@
 
 pragma Ada_2012;
 with Asserts;
-with Conts;                         use Conts;
 with Conts.Elements.Null_Elements;  use Conts.Elements.Null_Elements;
 with Conts.Graphs.Adjacency_List;
+with Conts.Graphs.DFS;
+with Conts;                         use Conts;
+with Graph1_Support;                use Graph1_Support;
+with Report;                        use Report;
+with System.Storage_Elements;       use System.Storage_Elements;
+with Test_Support;                  use Test_Support;
 
 package body Test_Graph_Adjlist is
    use Asserts.Integers;
+
+   Category  : constant String := "Graph";
 
    type Vertex_With_Null is (Null_V, A, B, C, D, E, F, G, H);
    pragma Unreferenced (Null_V);
    subtype Vertex is Vertex_With_Null range A .. Vertex_With_Null'Last;
 
-   package Graphs is new Conts.Graphs.Adjacency_List
+   package Enum_Graphs is new Conts.Graphs.Adjacency_List
      (Vertex_Type         => Vertex,
       Vertex_Properties   => Conts.Elements.Null_Elements.Traits,
       Edge_Properties     => Conts.Elements.Null_Elements.Traits,
@@ -43,8 +50,8 @@ package body Test_Graph_Adjlist is
    ----------
 
    procedure Test is
-      Gr  : Graphs.Graph;
-      Map : Graphs.Integer_Maps.Map;
+      Gr  : Enum_Graphs.Graph;
+      Map : Enum_Graphs.Integer_Maps.Map;
       Count : Positive;
    begin
       Gr.Add_Vertices
@@ -66,16 +73,164 @@ package body Test_Graph_Adjlist is
       Gr.Add_Edge (H, F, No_Element);
       Gr.Add_Edge (H, H, No_Element);
 
-      Graphs.Strongly_Connected_Components
+      Enum_Graphs.Strongly_Connected_Components
          (Gr, Map, Components_Count => Count);
       Assert (Count, 4, "number of strongly connected components");
-      Assert (Graphs.Integer_Maps.Get (Map, A), 1);
-      Assert (Graphs.Integer_Maps.Get (Map, B), 1);
-      Assert (Graphs.Integer_Maps.Get (Map, C), 1);
-      Assert (Graphs.Integer_Maps.Get (Map, D), 3);
-      Assert (Graphs.Integer_Maps.Get (Map, E), 3);
-      Assert (Graphs.Integer_Maps.Get (Map, F), 2);
-      Assert (Graphs.Integer_Maps.Get (Map, G), 2);
-      Assert (Graphs.Integer_Maps.Get (Map, H), 4);
+      Assert (Enum_Graphs.Integer_Maps.Get (Map, A), 1);
+      Assert (Enum_Graphs.Integer_Maps.Get (Map, B), 1);
+      Assert (Enum_Graphs.Integer_Maps.Get (Map, C), 1);
+      Assert (Enum_Graphs.Integer_Maps.Get (Map, D), 3);
+      Assert (Enum_Graphs.Integer_Maps.Get (Map, E), 3);
+      Assert (Enum_Graphs.Integer_Maps.Get (Map, F), 2);
+      Assert (Enum_Graphs.Integer_Maps.Get (Map, G), 2);
+      Assert (Enum_Graphs.Integer_Maps.Get (Map, H), 4);
    end Test;
+
+   ------------------------------
+   -- Test_Perf_Adjacency_List --
+   ------------------------------
+
+   procedure Test_Perf_Adjacency_List (Stdout : in out Output'Class) is
+      Container : constant String := "adjacency list";
+
+      package Graphs is new Conts.Graphs.Adjacency_List
+        (Vertex_Type         => Positive,
+         Vertex_Properties   => Conts.Elements.Null_Elements.Traits,
+         Edge_Properties     => Conts.Elements.Null_Elements.Traits,
+         Container_Base_Type => Conts.Controlled_Base);
+
+      type My_Visit is null record;
+      procedure Finish_Vertex (Ignored : in out My_Visit; V : Graphs.Vertex);
+      procedure Finish_Vertex (Ignored : in out My_Visit; V : Graphs.Vertex) is
+      begin
+         null;
+      end Finish_Vertex;
+
+      package Visitors is new Conts.Graphs.DFS.DFS_Visitor_Traits
+         (Graphs        => Graphs.Traits,
+          Visitor_Type  => My_Visit,
+          Finish_Vertex => Finish_Vertex);
+      procedure DFS is new Graphs.DFS.Search (Visitors);
+
+      subtype Vertex is Graphs.Vertex;
+
+      G : Graphs.Graph;
+      Acyclic : Boolean;
+
+      procedure Do_Clear;
+      procedure Do_Clear is
+      begin
+         G.Clear;
+      end Do_Clear;
+
+      procedure Do_Fill;
+      procedure Do_Fill is
+      begin
+         G.Add_Vertices (No_Element, Count => Items_Count);
+
+         for V in Vertex'First
+           .. Vertex'First + Vertex (Items_Count) - 2
+         loop
+            G.Add_Edge (V, V + 1, No_Element);
+         end loop;
+      end Do_Fill;
+
+      procedure Do_DFS_No_Visit;
+      procedure Do_DFS_No_Visit is
+         Vis : My_Visit;
+      begin
+         DFS (G, Vis);
+      end Do_DFS_No_Visit;
+
+      procedure Do_Is_Acyclic;
+      procedure Do_Is_Acyclic is
+      begin
+         Acyclic := Graphs.DFS.Is_Acyclic (G);
+      end Do_Is_Acyclic;
+
+      procedure Do_SCC;
+      procedure Do_SCC is
+         M : Graphs.Integer_Maps.Map := Graphs.Integer_Maps.Create_Map (G);
+         Count : Integer;
+      begin
+         Graphs.Strongly_Connected_Components
+            (G, M, Components_Count => Count);
+      end Do_SCC;
+
+      procedure Time_Fill is new Report.Timeit
+         (Run => Do_Fill, Cleanup => Do_Clear);
+      procedure Time_DFS_No_Visit is new Report.Timeit (Do_DFS_No_Visit);
+      procedure Time_Acyclic is new Report.Timeit (Do_Is_Acyclic);
+      procedure Time_SCC is new Report.Timeit (Do_SCC);
+
+   begin
+      Stdout.Set_Column
+         (Category, Container, G'Size / 8, Favorite => True);
+
+      Time_Fill (Stdout, Category, Container, "fill", Start_Group => True);
+
+      Do_Clear;
+      Do_Fill;
+      Time_DFS_No_Visit
+         (Stdout, Category, Container, "dfs, no visitor", Start_Group => True);
+
+      Do_Clear;
+      Do_Fill;
+      Time_Acyclic (Stdout, Category, Container, "is_acyclic");
+      Asserts.Booleans.Assert (Acyclic, True);
+
+      Do_Clear;
+      Do_Fill;
+      G.Add_Edge (Items_Count / 10 + 1, 4, No_Element);
+      G.Add_Edge (2 * Items_Count / 10 + 1, Items_Count, No_Element);
+      Time_SCC (Stdout, Category, Container, "scc", Start_Group => True);
+   end Test_Perf_Adjacency_List;
+
+   ----------------------
+   -- Test_Perf_Custom --
+   ----------------------
+
+   procedure Test_Perf_Custom (Stdout : in out Output'Class) is
+      Container : constant String := "custom graph";
+
+      procedure Search is new Graph1_Support.DFS.Search (My_Visitors);
+      procedure Search is new Graph1_Support.DFS.Search (My_Visitors2);
+      procedure Recursive is
+        new Graph1_Support.DFS.Search_Recursive (My_Visitors2);
+
+      G     : Graph;
+
+      procedure Do_Search1;
+      procedure Do_Search1 is
+         V     : My_Visitor;
+      begin
+         Search (G, V);
+      end Do_Search1;
+
+      procedure Do_Search2;
+      procedure Do_Search2 is
+         V     : My_Visitor2;
+      begin
+         Search (G, V);
+      end Do_Search2;
+
+      procedure Do_Recursive;
+      procedure Do_Recursive is
+         V     : My_Visitor2;
+      begin
+         Recursive (G, V);
+      end Do_Recursive;
+
+      procedure Time_Search1 is new Report.Timeit (Do_Search1);
+      procedure Time_Search2 is new Report.Timeit (Do_Search2);
+      procedure Time_Recursive is new Report.Timeit (Do_Recursive);
+
+   begin
+      Stdout.Set_Column (Category, Container, G'Size / 8);
+
+      Time_Search1 (Stdout, Category, Container, "dfs, no visitor");
+      Time_Search2 (Stdout, Category, Container, "dfs, visitor");
+      Time_Recursive (Stdout, Category, Container, "dfs, recursive");
+   end Test_Perf_Custom;
+
 end Test_Graph_Adjlist;

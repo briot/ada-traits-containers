@@ -28,7 +28,7 @@ with Conts.Elements.Definite;
 with Conts.Graphs;      use Conts.Graphs;
 with Conts.Graphs.DFS;
 with Conts.Properties;
-with Perf_Support;
+with Test_Support;
 
 package Graph1_Support is
 
@@ -46,7 +46,7 @@ package Graph1_Support is
    type Color_Map is array (Vertex range <>) of Color;
 
    type Graph is record
-      Colors : Color_Map (1 .. Perf_Support.Items_Count);
+      Colors : Color_Map (1 .. Test_Support.Items_Count);
    end record;
 
    --------------------
