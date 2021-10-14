@@ -20,6 +20,7 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
+with GNAT.Branch_Prediction;  use GNAT.Branch_Prediction;
 
 package body Conts.Vectors.Impl with SPARK_Mode => Off is
    use Conts.Vectors.Storage;
@@ -52,7 +53,7 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
 
    function First (Self : Base_Vector'Class) return Cursor is
    begin
-      if Self.Last = No_Last then
+      if Unlikely (Self.Last = No_Last) then
          return No_Element;
       else
          return To_Index (Min_Index);
@@ -66,7 +67,7 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
    function Next
      (Self : Base_Vector'Class; Position : Cursor) return Cursor is
    begin
-      if To_Count (Position) < Self.Last then
+      if Likely (To_Count (Position) < Self.Last) then
          return Cursor'Succ (Position);
       else
          return No_Element;
@@ -91,7 +92,7 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
    is
       pragma Unreferenced (Self);
    begin
-      if To_Count (Position) > Min_Index then
+      if Likely (To_Count (Position) > Min_Index) then
          return Cursor'Pred (Position);
       else
          return No_Element;
@@ -282,7 +283,7 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
    function Last_Element
      (Self : Base_Vector'Class) return Constant_Returned_Type is
    begin
-      if Self.Last = No_Last then
+      if Unlikely (Self.Last = No_Last) then
          raise Invalid_Index with "empty vector";
       end if;
       return Storage.Elements.To_Constant_Returned
@@ -352,7 +353,7 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
    is
       Pos : constant Count_Type := To_Count (Index);
    begin
-      if Pos > Self.Last then
+      if Unlikely (Pos > Self.Last) then
          raise Invalid_Index with "Invalid index in Replace_Element";
       end if;
       Storage.Release_Element (Self, Pos);
@@ -371,7 +372,7 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
       L     : constant Count_Type := To_Count (Left);
       R     : constant Count_Type := To_Count (Right);
    begin
-      if L > Self.Last or R > Self.Last then
+      if Unlikely (L > Self.Last or R > Self.Last) then
          raise Invalid_Index with "invalid index in Delete";
       end if;
 

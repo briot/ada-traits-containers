@@ -21,7 +21,8 @@
 
 pragma Ada_2012;
 with Ada.Unchecked_Conversion;
-with System;                 use System;
+with GNAT.Branch_Prediction;  use GNAT.Branch_Prediction;
+with System;                  use System;
 with System.Assertions;
 
 package body Conts.Lists.Impl with SPARK_Mode => Off is
@@ -164,7 +165,7 @@ package body Conts.Lists.Impl with SPARK_Mode => Off is
    function Previous
      (Self : Base_List'Class; Position : Cursor) return Cursor is
    begin
-      if Position.Current = Null_Access then
+      if Unlikely (Position.Current = Null_Access) then
          return Position;
       else
          return (Current => Get_Previous (Self, Position.Current));
@@ -357,7 +358,7 @@ package body Conts.Lists.Impl with SPARK_Mode => Off is
    procedure Assign
      (Self : in out Base_List'Class; Source : Base_List'Class) is
    begin
-      if Self'Address = Source'Address then
+      if Unlikely (Self'Address = Source'Address) then
          --  Tagged types are always passed by reference, so we know they
          --  are the same, and do nothing.
          return;
