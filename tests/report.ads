@@ -27,10 +27,11 @@ with Ada.Containers.Doubly_Linked_Lists;
 with GNATCOLL.Strings; use GNATCOLL.Strings;
 with Memory;           use Memory;
 with System.Storage_Elements;
+private with Ada.Finalization;
 
 package Report is
 
-   type Output is tagged private;
+   type Output is tagged limited private;
 
    subtype Category_Type is String;
    --  Tests are grouped into categories (the overall part of the code they are
@@ -154,7 +155,7 @@ private
    package Category_Lists is new Ada.Containers.Doubly_Linked_Lists
       (Element_Type => Category_Descr_Type);
 
-   type Output is tagged record
+   type Output is new Ada.Finalization.Limited_Controlled with record
       Categories           : Category_Lists.List;
       Current              : Row_Descr_Access;
       At_Test_Start        : Memory.Mem_Info;
@@ -164,5 +165,7 @@ private
       Maximum_Runs         : Positive := Default_Maximum_Runs;
       Warmup_Runs          : Natural := Default_Warmup_Runs;
    end record;
+
+   overriding procedure Finalize (Self : in out Output);
 
 end Report;

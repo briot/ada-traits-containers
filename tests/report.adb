@@ -22,6 +22,7 @@
 pragma Ada_2012;
 with Ada.Exceptions;
 with Ada.Text_IO;
+with Ada.Unchecked_Deallocation;
 with GNAT.Calendar;
 with GNAT.Directory_Operations; use GNAT.Directory_Operations;
 with Interfaces.C;              use Interfaces.C;
@@ -37,6 +38,9 @@ package body Report is
    pragma No_Strict_Aliasing (Output_Access);
    function To_Output is new Ada.Unchecked_Conversion
       (System.Address, Output_Access);
+
+   procedure Unchecked_Free is new Ada.Unchecked_Deallocation
+      (Row_Descr_Type, Row_Descr_Access);
 
    procedure Set_Column
      (Self             : System.Address;
@@ -149,6 +153,22 @@ package body Report is
              others   => <>)));
       return Column.Rows.Reference (Column.Rows.Last);
    end Get_Or_Create_Row;
+
+   --------------
+   -- Finalize --
+   --------------
+
+   overriding procedure Finalize (Self : in out Output) is
+   begin
+      for Cat of Self.Categories loop
+         for Col of Cat.Columns loop
+            for Row of Col.Rows loop
+               Unchecked_Free (Row);
+            end loop;
+         end loop;
+      end loop;
+      Self.Categories.Clear;
+   end Finalize;
 
    -----------
    -- Setup --
