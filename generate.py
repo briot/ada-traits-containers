@@ -274,7 +274,7 @@ class Container:
                 adb_withs.add(t.withs)
 
             with open("%s/%s.adb" % (test_generated, testname), "w") as f:
-                f.write("\n".join(adb_withs))
+                f.write("\n".join(sorted(adb_withs)))
                 f.write(f"\npackage body {self.test_pkg} is\n")
                 for idx, t in enumerate(self.tests):
                     f.write(t.code(idx))

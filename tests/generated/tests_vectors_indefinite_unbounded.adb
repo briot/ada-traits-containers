@@ -1,6 +1,6 @@
-with Test_Support;
-with Support_Vectors;
 with Conts.Vectors.Indefinite_Unbounded;
+with Support_Vectors;
+with Test_Support;
 package body Tests_Vectors_Indefinite_Unbounded is
 
    package Vecs0 is new Conts.Vectors.Indefinite_Unbounded

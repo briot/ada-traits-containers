@@ -1,6 +1,6 @@
 with Conts.Vectors.Indefinite_Unbounded_SPARK;
-with Test_Support;
 with Support_Vectors;
+with Test_Support;
 package body Tests_Vectors_Indefinite_Unbounded_SPARK is
 
    package Vecs0 is new Conts.Vectors.Indefinite_Unbounded_SPARK

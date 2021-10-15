@@ -1,6 +1,6 @@
 with Conts.Vectors.Definite_Bounded;
-with Test_Support;
 with Support_Vectors;
+with Test_Support;
 package body Tests_Vectors_Definite_Bounded is
 
    package Vecs0 is new Conts.Vectors.Definite_Bounded
