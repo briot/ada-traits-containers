@@ -85,10 +85,11 @@ private
    type Element_Access is access all Element_Type;
    type Element_Array is
      array (Positive_Count_Type range <>) of Element_Access;
-   type Element_Array_Access is not null access
-     Element_Array;
+   type Element_Array_Access is not null access all Element_Array;
+
+   Null_Array : aliased Element_Array := (1 .. 0 => null);
    Empty_Element_Array_Access : constant Element_Array_Access :=
-     new Element_Array'(1 .. 0 => null);
+      Null_Array'Access;
 
    type Container is record
       Elements : Element_Array_Access := Empty_Element_Array_Access;
