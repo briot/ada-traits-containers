@@ -103,6 +103,8 @@ package body Test_Algo_Sort is
    Random_Large         : Vector;
    Ada_Random_Large     : Int_Ada_Vecs.Vector;
 
+   Initialized : Boolean := False;
+
    procedure Init_Refs;
    --  Initialize the reference vectors
 
@@ -114,6 +116,11 @@ package body Test_Algo_Sort is
       Val   : Extended_Index;
       G     : Rand.Generator;
    begin
+      if Initialized then
+         return;
+      end if;
+      Initialized := True;
+
       for J in 1 .. 10_000 loop
          Rand.Random (G, Val);
 
@@ -184,6 +191,7 @@ package body Test_Algo_Sort is
 
    procedure Test is
    begin
+      Init_Refs;
       Test_Sort (Sorted_Small,   "sorted array  ");
       Test_Sort (Reversed_Small, "reversed array");
       Test_Sort (Cst_Small,      "constant array");
@@ -306,6 +314,8 @@ package body Test_Algo_Sort is
       procedure Time_Ada_Cst_L      is new Time_Ada_Sort (Ada_Cst_Large);
 
    begin
+      Init_Refs;
+
       --  Standard Ada tests
 
       Result.Set_Column (Category, "Ada", Size => 0, Favorite => True);
@@ -327,6 +337,4 @@ package body Test_Algo_Sort is
       Do_Shell2  (Omit_Large => True);
    end Test_Perf;
 
-begin
-   Init_Refs;
 end Test_Algo_Sort;
