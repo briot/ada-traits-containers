@@ -58,8 +58,12 @@ test: build
 		./obj/Production/main_perf
 
 clean:
-	${PPATH} gprclean -P${GPR_ROOT} -XBUILD=Debug -r -q
-	${PPATH} gprclean -P${GPR_ROOT} -XBUILD=Production -r -q
-	-rm -f tests/*/auto_*.gpr
-	-rm -rf tests/*/obj/
+	-rm -rf tests/perfs/obj/
+	-rm -rf tests/perfs/lib/
+	-rm -rf src/obj/
+	-rm -rf src/lib/
+	-rm -rf tests/obj
 	-rm -f docs/perfs/data.js
+	-rm -rf src/generated
+	-rm -rf tests/generated
+	-rm -rf tests/perfs/generated
