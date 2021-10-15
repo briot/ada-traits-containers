@@ -321,6 +321,22 @@ package body Support_Vectors is
          when Assert_Failure | Vectors.Invalid_Index =>
             null;
       end;
+
+      ----------------------------------------------
+      -- Deleting an element and existing cursors --
+      ----------------------------------------------
+
+      declare
+         C : Cursor;
+      begin
+         V1.Clear;
+         V1.Append (Nth (1));
+         V1.Append (Nth (2));
+         C := V1.Last;
+         V1.Delete_Last;
+         Asserts.Booleans.Assert (V1.Has_Element (C), False);
+      end;
+
    end Test;
 
    ---------------
