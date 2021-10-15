@@ -1,6 +1,6 @@
+with Test_Support;
 with Support_Vectors;
 with Conts.Vectors.Definite_Unbounded;
-with Test_Support;
 package body Tests_Vectors_Definite_Unbounded is
 
    package Vecs0 is new Conts.Vectors.Definite_Unbounded

@@ -304,29 +304,34 @@ package body Test_Algo_Sort is
       procedure Do_Quick   is new Do_Sort (Quicksort,      "quicksort+shell");
       procedure Do_Quick_P is new Do_Sort (Quicksort_Only, "quicksort_only");
 
-      procedure Time_Ada_Random_S   is new Time_Ada_Sort (Ada_Random_Small);
-      procedure Time_Ada_Sorted_S   is new Time_Ada_Sort (Ada_Sorted_Small);
-      procedure Time_Ada_Reversed_S is new Time_Ada_Sort (Ada_Reversed_Small);
-      procedure Time_Ada_Cst_S      is new Time_Ada_Sort (Ada_Cst_Small);
-      procedure Time_Ada_Random_L   is new Time_Ada_Sort (Ada_Random_Large);
-      procedure Time_Ada_Sorted_L   is new Time_Ada_Sort (Ada_Sorted_Large);
-      procedure Time_Ada_Reversed_L is new Time_Ada_Sort (Ada_Reversed_Large);
-      procedure Time_Ada_Cst_L      is new Time_Ada_Sort (Ada_Cst_Large);
-
    begin
       Init_Refs;
 
       --  Standard Ada tests
 
       Result.Set_Column (Category, "Ada", Size => 0, Favorite => True);
-      Time_Ada_Random_S   ("random-vec-small", Start_Group => True);
-      Time_Ada_Sorted_S   ("sorted-vec-small");
-      Time_Ada_Reversed_S ("reversed-vec-small");
-      Time_Ada_Cst_S      ("constant-vec-small");
-      Time_Ada_Random_L   ("random-vec-large", Start_Group => True);
-      Time_Ada_Sorted_L   ("sorted-vec-large");
-      Time_Ada_Reversed_L ("reversed-vec-large");
-      Time_Ada_Cst_L      ("constant-vec-large");
+
+      declare
+         procedure Time_Ada_Random_S   is new Time_Ada_Sort (Ada_Random_Small);
+         procedure Time_Ada_Sorted_S   is new Time_Ada_Sort (Ada_Sorted_Small);
+         procedure Time_Ada_Reversed_S is
+            new Time_Ada_Sort (Ada_Reversed_Small);
+         procedure Time_Ada_Cst_S      is new Time_Ada_Sort (Ada_Cst_Small);
+         procedure Time_Ada_Random_L   is new Time_Ada_Sort (Ada_Random_Large);
+         procedure Time_Ada_Sorted_L   is new Time_Ada_Sort (Ada_Sorted_Large);
+         procedure Time_Ada_Reversed_L is
+            new Time_Ada_Sort (Ada_Reversed_Large);
+         procedure Time_Ada_Cst_L      is new Time_Ada_Sort (Ada_Cst_Large);
+      begin
+         Time_Ada_Random_S   ("random-vec-small", Start_Group => True);
+         Time_Ada_Sorted_S   ("sorted-vec-small");
+         Time_Ada_Reversed_S ("reversed-vec-small");
+         Time_Ada_Cst_S      ("constant-vec-small");
+         Time_Ada_Random_L   ("random-vec-large", Start_Group => True);
+         Time_Ada_Sorted_L   ("sorted-vec-large");
+         Time_Ada_Reversed_L ("reversed-vec-large");
+         Time_Ada_Cst_L      ("constant-vec-large");
+      end;
 
       --  Traits containers
 

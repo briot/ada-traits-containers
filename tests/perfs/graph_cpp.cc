@@ -16,7 +16,7 @@ extern "C"
 void test_cpp_graph(void* output) {
   using namespace boost;
 
-  const char* category = "Graph";
+  const char* category = "Integer Graph";
   const char* container = "C++ Boost";
 
   // create a typedef for the Graph type

@@ -141,6 +141,10 @@ package Conts.Graphs.Adjacency_List is
          Vertices : Vertex_Vectors.Vector;
       end record;
 
+      procedure Adjust (Self : in out Graph);
+      procedure Finalize (Self : in out Graph);
+      --  Might be overriding
+
       type Vertex_Cursor is record
          Current : Vertex_Vectors.Cursor;
       end record;
@@ -237,7 +241,7 @@ package Conts.Graphs.Adjacency_List is
 
    package DFS is new Conts.Graphs.DFS.Exterior
      (Traits, Color_Maps.As_Map, Create_Map => Color_Maps.Create_Map);
-   procedure Strongly_Connected_Components is
+   package Strongly_Connected_Components is
       new Conts.Graphs.Components.Strongly_Connected_Components
          (Graphs         => Traits,
           Component_Maps => Integer_Maps.As_Map);

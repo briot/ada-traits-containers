@@ -43,6 +43,24 @@ package body Conts.Graphs.Adjacency_List is
          Self.Vertices.Clear;
       end Clear;
 
+      --------------
+      -- Finalize --
+      --------------
+
+      procedure Finalize (Self : in out Graph) is
+      begin
+         Self.Clear;
+      end Finalize;
+
+      ------------
+      -- Adjust --
+      ------------
+
+      procedure Adjust (Self : in out Graph) is
+      begin
+         raise Program_Error with "Adjust not implemented for graphs";
+      end Adjust;
+
       ------------------
       -- Add_Vertices --
       ------------------

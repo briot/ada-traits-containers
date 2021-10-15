@@ -33,7 +33,7 @@ with Test_Support;                  use Test_Support;
 package body Test_Graph_Adjlist is
    use Asserts.Integers;
 
-   Category  : constant String := "Graph";
+   Category  : constant String := "Integer Graph";
 
    type Vertex_With_Null is (Null_V, A, B, C, D, E, F, G, H);
    pragma Unreferenced (Null_V);
@@ -73,7 +73,7 @@ package body Test_Graph_Adjlist is
       Gr.Add_Edge (H, F, No_Element);
       Gr.Add_Edge (H, H, No_Element);
 
-      Enum_Graphs.Strongly_Connected_Components
+      Enum_Graphs.Strongly_Connected_Components.Compute
          (Gr, Map, Components_Count => Count);
       Assert (Count, 4, "number of strongly connected components");
       Assert (Enum_Graphs.Integer_Maps.Get (Map, A), 1);
@@ -150,10 +150,10 @@ package body Test_Graph_Adjlist is
 
       procedure Do_SCC;
       procedure Do_SCC is
-         M : Graphs.Integer_Maps.Map := Graphs.Integer_Maps.Create_Map (G);
+         M : Graphs.Integer_Maps.Map; -- := Graphs.Integer_Maps.Create_Map (G);
          Count : Integer;
       begin
-         Graphs.Strongly_Connected_Components
+         Graphs.Strongly_Connected_Components.Compute
             (G, M, Components_Count => Count);
       end Do_SCC;
 
@@ -230,7 +230,7 @@ package body Test_Graph_Adjlist is
 
       Time_Search1 (Stdout, Category, Container, "dfs, no visitor");
       Time_Search2 (Stdout, Category, Container, "dfs, visitor");
-      Time_Recursive (Stdout, Category, Container, "dfs, recursive");
+      Time_Recursive (Stdout, Category, Container, "dfs-recursive, visitor");
    end Test_Perf_Custom;
 
 end Test_Graph_Adjlist;
