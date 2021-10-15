@@ -399,7 +399,9 @@ begin
 
    Run_Test ("sort", Test_Algo_Sort.Test_Perf'Access);
 
-   Test_QGen;
+   if Filter.Active ("qgen") then
+      Test_QGen;
+   end if;
 
    Run_All (Stdout, Filter);
    Stdout.Save;
