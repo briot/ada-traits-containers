@@ -198,9 +198,11 @@ package body Conts.Vectors.Storage.Unbounded with SPARK_Mode => Off is
 
       procedure Release (Self : in out Container'Class) is
       begin
-         System.Memory.Free (Convert (Self.Nodes));
-         Self.Nodes := null;
-         Self.Capacity := 0;
+         if Self.Nodes /= null then
+            System.Memory.Free (Convert (Self.Nodes));
+            Self.Nodes := null;
+            Self.Capacity := 0;
+         end if;
       end Release;
 
    end Impl;
