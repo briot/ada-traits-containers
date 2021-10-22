@@ -46,16 +46,17 @@ install:
 
 # Run Ada tests (not using gnatpython)
 test: build
+	${GPRBUILD} -q -XBUILD=Debug tests/tests.gpr
+	${GPRBUILD} -q -XBUILD=Debug tests/perfs/tests_perfs.gpr
+	${GPRBUILD} -q -XBUILD=Production tests/tests.gpr
+	${GPRBUILD} -q -XBUILD=Production tests/perfs/tests_perfs.gpr
+
 	@echo "==== Running tests in Debug mode ===="
-	@${GPRBUILD} -q -XBUILD=Debug tests/tests.gpr && \
-		tests/obj/Debug/main
+	tests/obj/Debug/main
 	@echo "==== Running tests in Production mode ===="
-	@${GPRBUILD} -q -XBUILD=Production tests/tests.gpr && \
-		tests/obj/Production/main
+	tests/obj/Production/main
 	@echo "==== Running performance tests ===="
-	@cd tests/perfs; \
-		${GPRBUILD} -q -XBUILD=Production && \
-		./obj/Production/main_perf
+	tests/perfs/obj/Production/main_perf
 
 clean:
 	-rm -rf tests/perfs/obj/
