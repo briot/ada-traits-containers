@@ -40,8 +40,15 @@ generic
    --  access type that you want to deallocate.
 
    Movable  : Boolean := True;    --  should be False for controlled types
+   Copyable : Boolean := True;    --  should be False for controlled types
 
 package Conts.Elements.Definite with SPARK_Mode is
+--   pragma Compile_Time_Error
+--      (Copyable and Element_Type'Finalization_Size /= 0,
+--       "Copyable should be False for controlled types");
+--   pragma Compile_Time_Error
+--      (Movable and Element_Type'Finalization_Size /= 0,
+--       "Movable should be False for controlled types");
 
    type Reference_Type (Element : not null access Element_Type)
       is null record with Implicit_Dereference => Element;
@@ -55,7 +62,7 @@ package Conts.Elements.Definite with SPARK_Mode is
       Stored_Type            => Element_Type,
       Returned_Type          => Reference_Type,
       Constant_Returned_Type => Element_Type,
-      Copyable               => True,
+      Copyable               => Copyable,
       Movable                => Movable,
       Release                => Free,
       To_Stored              => Identity,
