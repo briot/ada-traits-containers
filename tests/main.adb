@@ -15,9 +15,24 @@ begin
    end loop;
 
    Main_Driver (Filter);
-   Test_Graph_Adjlist.Test;
-   Test_Algo_Equals.Test;
-   Test_Algo_Random.Test;
-   Test_Algo_Shuffle.Test;
-   Test_Algo_Sort.Test;
+
+   if Filter.Active ("graph") then
+      Test_Graph_Adjlist.Test;
+   end if;
+
+   if Filter.Active ("equals") then
+      Test_Algo_Equals.Test;
+   end if;
+
+   if Filter.Active ("random") then
+      Test_Algo_Random.Test;
+   end if;
+
+   if Filter.Active ("shuffle") then
+      Test_Algo_Shuffle.Test;
+   end if;
+
+   if Filter.Active ("sort") then
+      Test_Algo_Sort.Test;
+   end if;
 end Main;
