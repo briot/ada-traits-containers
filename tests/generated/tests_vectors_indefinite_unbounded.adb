@@ -1,4 +1,5 @@
 with Conts.Vectors.Indefinite_Unbounded;
+with GNATCOLL.Strings;
 with Support_Vectors;
 with Test_Support;
 package body Tests_Vectors_Indefinite_Unbounded is
@@ -52,4 +53,30 @@ package body Tests_Vectors_Indefinite_Unbounded is
    begin
       Tests1.Test_Perf (Result, V1, V2, Favorite => True);
    end Test_Perf1;
+
+   package Vecs2 is new Conts.Vectors.Indefinite_Unbounded
+      (Positive,
+       GNATCOLL.Strings.XString,
+       Container_Base_Type => Conts.Controlled_Base);
+   package Tests2 is new Support_Vectors
+      (Category       => "String Vector",
+       Container_Name => "Indef Unbounded (XString)",
+       Image          => Test_Support.Image,
+       Vectors        => Vecs2.Vectors,
+       Check_Element  => Test_Support.Check_Element,
+       Nth            => Test_Support.Nth,
+       Perf_Nth       => Test_Support.Perf_Nth,
+       "="            => GNATCOLL.Strings."=");
+
+   procedure Test2 is
+      V : Vecs2.Vector;
+   begin
+      Tests2.Test (V);
+   end Test2;
+
+   procedure Test_Perf2 (Result : in out Report.Output'Class) is
+      V1, V2 : Vecs2.Vector;
+   begin
+      Tests2.Test_Perf (Result, V1, V2, Favorite => True);
+   end Test_Perf2;
 end Tests_Vectors_Indefinite_Unbounded;

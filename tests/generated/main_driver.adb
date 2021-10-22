@@ -12,6 +12,7 @@ with Tests_Lists_Definite_Unbounded_Limited;
 with Tests_Lists_Indefinite_Bounded;
 with Tests_Lists_Indefinite_Unbounded;
 with Tests_Lists_Indefinite_Unbounded_SPARK;
+with Tests_Lists_Unmovable_Definite_Unbounded;
 with Tests_Maps_Def_Def_Unbounded;
 with Tests_Maps_Indef_Def_Unbounded;
 with Tests_Maps_Indef_Indef_Unbounded;
@@ -39,6 +40,9 @@ begin
    end if;
    if F.Active ("vectors-indefinite_unbounded-string") then
       Tests_Vectors_Indefinite_Unbounded.Test1;
+   end if;
+   if F.Active ("vectors-indefinite_unbounded-gnatcoll.strings.xstring") then
+      Tests_Vectors_Indefinite_Unbounded.Test2;
    end if;
    if F.Active ("vectors-indefinite_unbounded_spark-integer") then
       Tests_Vectors_Indefinite_Unbounded_SPARK.Test0;
@@ -75,6 +79,9 @@ begin
    end if;
    if F.Active ("lists-indefinite_unbounded_spark-string") then
       Tests_Lists_Indefinite_Unbounded_SPARK.Test1;
+   end if;
+   if F.Active ("lists-unmovable_definite_unbounded-gnatcoll.strings.xstring") then
+      Tests_Lists_Unmovable_Definite_Unbounded.Test0;
    end if;
    if F.Active ("maps-def_def_unbounded-integer-integer") then
       Tests_Maps_Def_Def_Unbounded.Test0;

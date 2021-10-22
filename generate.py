@@ -503,6 +503,7 @@ List_Test_Data = Tuple[
     str,             # list of element types to test
     Optional[Base],  # container_base (if applicable)
     bool,            # favorite: is this a container users would likely use
+    str,             # category of the test
 ]
 
 
@@ -512,19 +513,24 @@ class List_Test(Test):
         self.element = data[0]
         self.base = data[1]
         self.favorite = ("True" if data[2] else "False")
+        self.category_name = data[3] or self.element
         self.withs = ["Support_Lists"]
         if '.' in self.element:
             self.withs.append(self.element.rsplit('.', 1)[0])
 
     def category(self) -> str:
-        return f"{self.element} List"
+        return f"{self.category_name} List"
 
     def container_name(self) -> str:
         base = base_to_str(self.base or self.container.storage.base)
-        return (
+        n = (
             f"{self.container.elements.descr}"
             f" {self.container.storage.pkg}{base}"
         )
+        if self.element != self.category_name:
+            e = self.element.rsplit('.', 1)[-1]
+            n += f" ({e})"
+        return n
 
     def test_name(self) -> str:
         return self.container.pkg_name.lower(
@@ -538,6 +544,14 @@ class List_Test(Test):
             actual.append(f"Container_Base_Type => {self.base}")
         actual_str = "(%s)" % ", ".join(actual)
 
+        actual_support = []
+        if '.' in self.element:
+            p = self.element.rsplit('.', 1)[0]
+            actual_support.append(f'"="            => {p}."="')
+        actual_support_str = "".join(
+            ",\n       {}".format(s)
+            for s in actual_support)
+
         return f"""
    package Lists{idx} is new {self.container.pkg_name}
       {actual_str};
@@ -548,7 +562,7 @@ class List_Test(Test):
        Lists          => Lists{idx}.Lists,
        Nth            => Test_Support.Nth,
        Perf_Nth       => Test_Support.Perf_Nth,
-       Check_Element  => Test_Support.Check_Element);
+       Check_Element  => Test_Support.Check_Element{actual_support_str});
 
    procedure Test{idx} is
       L1, L2 : Lists{idx}.List{self.container.storage.bounds_for_test};
@@ -864,6 +878,8 @@ containers = [
         tests=[
             ("Positive", "Integer", "Conts.Controlled_Base", False, "Integer"),
             ("Positive", "String", "Conts.Controlled_Base", True, "String"),
+            ("Positive", "GNATCOLL.Strings.XString", "Conts.Controlled_Base",
+             True, "String"),
         ],
     ),
     Vector_Container(
@@ -884,33 +900,33 @@ containers = [
         pkg_name="Conts.Lists.Definite_Bounded",
         elements=Definite_Elements(),
         storage=Storage_List(pkg='Bounded', base='Conts.Controlled_Base'),
-        tests=[("Integer", None, False)],
+        tests=[("Integer", None, False, "Integer")],
     ),
     List_Container(
         pkg_name="Conts.Lists.Definite_Bounded_Limited",
         elements=Definite_Elements(),
         storage=Storage_List(pkg='Bounded', base='Conts.Limited_Base'),
-        tests=[("Integer", None, False)],
+        tests=[("Integer", None, False, "Integer")],
     ),
     List_Container(
         pkg_name="Conts.Lists.Definite_Unbounded",
         elements=Definite_Elements(),
         storage=Storage_List(pkg='Unbounded'),
-        tests=[("Integer", "Conts.Controlled_Base", True)],
+        tests=[("Integer", "Conts.Controlled_Base", True, "Integer")],
     ),
     List_Container(
         pkg_name="Conts.Lists.Definite_Unbounded_Limited",
         elements=Definite_Elements(),
         storage=Storage_List(pkg='Unbounded', base='Conts.Limited_Base'),
-        tests=[("Integer", None, False)],
+        tests=[("Integer", None, False, "Integer")],
     ),
     List_Container(
         pkg_name="Conts.Lists.Indefinite_Bounded",
         elements=Indefinite_Elements(),
         storage=Storage_List(pkg='Bounded', base='Conts.Controlled_Base'),
         tests=[
-            ("Integer", None, False),
-            ("String", None, False),
+            ("Integer", None, False, "Integer"),
+            ("String", None, False, "String"),
         ],
     ),
     List_Container(
@@ -918,8 +934,8 @@ containers = [
         elements=Indefinite_Elements(),
         storage=Storage_List(pkg='Unbounded'),
         tests=[
-            ("Integer", "Conts.Controlled_Base", False),
-            ("String", "Conts.Controlled_Base", True),
+            ("Integer", "Conts.Controlled_Base", False, "Integer"),
+            ("String", "Conts.Controlled_Base", True, "String"),
         ],
     ),
     List_Container(
@@ -927,8 +943,18 @@ containers = [
         elements=Indefinite_Elements_SPARK(),
         storage=Storage_List(base="Conts.Limited_Base", pkg="Unbounded_SPARK"),
         tests=[
-            ("Integer", None, False),
-            ("String", None, False),
+            ("Integer", None, False, "Integer"),
+            ("String", None, False, "String"),
+        ],
+    ),
+    List_Container(
+        pkg_name="Conts.Lists.Unmovable_Definite_Unbounded",
+        elements=Definite_Elements(movable=False, copyable=False),
+        storage=Storage_List(pkg='Unbounded'),
+        tests=[
+            ("GNATCOLL.Strings.XString",
+             "Conts.Controlled_Base",
+             True, "String"),
         ],
     ),
 #    List_Container(
