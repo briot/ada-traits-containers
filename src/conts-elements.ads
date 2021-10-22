@@ -97,6 +97,14 @@ package Conts.Elements with SPARK_Mode is
       function Identity (E : Returned_Type) return Returned_Type is (E);
       --  Convenience function
 
+      function To_Stored_Type (E : Element_Type) return Stored_Type
+         renames To_Stored;
+      function To_Element_Type
+        (E : Constant_Returned_Type) return Element_Type
+        renames To_Element;
+      function To_Constant_Returned_Type
+        (E : Stored_Type) return Constant_Returned_Type
+        renames To_Constant_Returned;
    end Traits;
 
 end Conts.Elements;
