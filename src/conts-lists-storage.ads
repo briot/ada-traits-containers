@@ -50,7 +50,6 @@ package Conts.Lists.Storage with SPARK_Mode is
 
       with procedure Allocate
          (Self     : in out Container'Class;
-          Element  : Elements.Stored_Type;
           New_Node : out Node_Access);
       --  Allocate a new node, that contains Element. Its next and previous
       --  siblings have been initialized to Null_Access.
@@ -71,22 +70,21 @@ package Conts.Lists.Storage with SPARK_Mode is
       --  taken care of by the container. This is so that a null procedure
       --  can be passed in the common case.
 
-      with function Get_Element
-         (Self : Container'Class;
-          Pos  : Node_Access) return Elements.Stored_Type is <>;
       with function Get_Next
-         (Self : Container'Class; Pos  : Node_Access) return Node_Access is <>;
+         (Self : Container'Class; Pos : Node_Access) return Node_Access is <>;
       with function Get_Previous
-         (Self : Container'Class; Pos  : Node_Access) return Node_Access is <>;
+         (Self : Container'Class; Pos : Node_Access) return Node_Access is <>;
       --  Get the next and previous elements for a node
       --  Must return Null_Access when there is no such element.
 
-      with procedure Set_Element
-        (Self     : in out Container'Class;
-         Pos      : Node_Access;
-         Element  : Elements.Stored_Type) is <>;
-      --  Replace the element at the given position.
-      --  This does not free the previous element.
+      with function Get_RO_Stored
+         (Self : aliased Container'Class;
+          Pos  : Node_Access)
+         return not null access constant Elements.Stored_Type is <>;
+      with function Get_RW_Stored
+         (Self : in out Container'Class;
+          Pos  : Node_Access)
+         return not null access Elements.Stored_Type is <>;
 
       with procedure Set_Previous
          (Self     : in out Container'Class;

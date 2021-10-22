@@ -39,4 +39,12 @@ package body Conts.Elements.Indefinite is
       end if;
    end Release;
 
+   ----------------
+   -- Set_Stored --
+   ----------------
+
+   procedure Set_Stored (E : Element_Type; S : out Element_Access) is
+   begin
+      S := new Element_Type'(E);
+   end Set_Stored;
 end Conts.Elements.Indefinite;

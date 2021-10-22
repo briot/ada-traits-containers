@@ -58,22 +58,19 @@ package body Conts.Elements.Arrays is
       procedure Unchecked_Free is new Ada.Unchecked_Deallocation
           (Array_Type, Array_Access);
 
-      ---------------
-      -- To_Stored --
-      ---------------
+      ----------------
+      -- Set_Stored --
+      ----------------
 
-      function To_Stored (A : Array_Type) return Stored_Array is
+      procedure Set_Stored (A : Array_Type; S : out Stored_Array) is
       begin
          if A'Length <= Short_Size then
-            return S : Stored_Array (Short_Array) do
-               Fat_Pointers.Set (S.Short, A);
-            end return;
+            S := (Kind => Short_Array, others => <>);
+            Fat_Pointers.Set (S.Short, A);
          else
-            return S : Stored_Array (Long_Array) do
-               S.Long := new Array_Type'(A);
-            end return;
+            S := (Kind => Long_Array, Long => new Array_Type'(A));
          end if;
-      end To_Stored;
+      end Set_Stored;
 
       ------------
       -- To_Ref --

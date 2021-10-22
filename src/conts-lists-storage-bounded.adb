@@ -30,7 +30,6 @@ package body Conts.Lists.Storage.Bounded with SPARK_Mode => Off is
 
       procedure Allocate
          (Self    : in out Container'Class;
-          Element : Stored_Type;
           N       : out Node_Access)
       is
       begin
@@ -44,7 +43,7 @@ package body Conts.Lists.Storage.Bounded with SPARK_Mode => Off is
 
          if Count_Type (N) <= Self.Nodes'Last then
             Self.Nodes (Count_Type (N)) :=
-               (Element  => Element,
+               (Element  => <>,
                 Previous => Null_Node_Access,
                 Next     => Null_Node_Access);
          else
@@ -61,15 +60,29 @@ package body Conts.Lists.Storage.Bounded with SPARK_Mode => Off is
          Self.Free := 0;
       end Release;
 
-      -----------------
-      -- Get_Element --
-      -----------------
+      -------------------
+      -- Get_RO_Stored --
+      -------------------
 
-      function Get_Element
-         (Self : Container'Class; N : Node_Access) return Stored_Type is
+      function Get_RO_Stored
+         (Self : aliased Impl.Container'Class;
+          Pos  : Impl.Node_Access)
+         return not null access constant Elements.Stored_Type is
       begin
-         return Self.Nodes (Count_Type (N)).Element;
-      end Get_Element;
+         return Self.Nodes (Count_Type (Pos)).Element'Access;
+      end Get_RO_Stored;
+
+      -------------------
+      -- Get_RW_Stored --
+      -------------------
+
+      function Get_RW_Stored
+         (Self : in out Impl.Container'Class;
+          Pos  : Impl.Node_Access)
+         return not null access Elements.Stored_Type is
+      begin
+         return Self.Nodes (Count_Type (Pos)).Element'Unchecked_Access;
+      end Get_RW_Stored;
 
       --------------
       -- Get_Next --
@@ -110,19 +123,6 @@ package body Conts.Lists.Storage.Bounded with SPARK_Mode => Off is
       begin
          Self.Nodes (Count_Type (N)).Next := Next;
       end Set_Next;
-
-      -----------------
-      -- Set_Element --
-      -----------------
-
-      procedure Set_Element
-        (Self : in out Impl.Container'Class;
-         N    : Node_Access;
-         E    : Stored_Type)
-      is
-      begin
-         Self.Nodes (Count_Type (N)).Element := E;
-      end Set_Element;
 
       ------------
       -- Assign --

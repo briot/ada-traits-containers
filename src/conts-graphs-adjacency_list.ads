@@ -130,6 +130,7 @@ package Conts.Graphs.Adjacency_List is
 
       package Vertex_Elements is new Conts.Elements.Definite
         (Vertex_Record, Free => Release);
+         --  ??? needs handling of Copy, Movable, Copyable
       package Vertex_Storage is new Conts.Vectors.Storage.Unbounded
         (Vertex_Elements.Traits,
          Container_Base_Type => Dummy_Record,
@@ -165,18 +166,7 @@ package Conts.Graphs.Adjacency_List is
    function Identity (V : not null access Vertex) return Vertex
       is (V.all) with Inline;
 
-   package Vertices is new Conts.Elements.Traits
-     (Element_Type           => Vertex,
-      Stored_Type            => Vertex,
-      Returned_Type          => Vertex,
-      Constant_Returned_Type => Vertex,
-      To_Stored              => Identity,
-      To_Returned            => Identity,
-      To_Constant_Returned   => Identity,
-      To_Element             => Identity,
-      Copy                   => Identity,   --  Unused since Copyable is True
-      Copyable               => True,
-      Movable                => True);
+   package Vertices is new Conts.Elements.Definite (Vertex);
 
    package Vertices_Cursors is new Conts.Cursors.Forward_Cursors
      (Container_Type => Graph,
@@ -194,7 +184,7 @@ package Conts.Graphs.Adjacency_List is
 
    package Out_Edges_Cursors is new Conts.Graphs.Edge_Cursors
      (Container_Type => Graph,
-      Vertices       => Vertices,
+      Vertices       => Vertices.Traits,
       Edge_Type      => Edge,
       Cursor_Type    => Impl.Edges_Cursor,
       First          => Impl.Out_Edges,
@@ -204,7 +194,7 @@ package Conts.Graphs.Adjacency_List is
 
    package Traits is new Conts.Graphs.Traits
      (Graph_Type        => Impl.Graph,
-      Vertices          => Vertices,
+      Vertices          => Vertices.Traits,
       Null_Vertex       => Impl.Null_Vertex,
       Get_Target        => Impl.Get_Target,
       Vertex_Cursors    => Vertices_Cursors,

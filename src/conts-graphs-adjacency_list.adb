@@ -68,13 +68,12 @@ package body Conts.Graphs.Adjacency_List is
       procedure Add_Vertices
         (Self  : in out Graph;
          Props : Vertex_Properties.Element_Type;
-         Count : Count_Type := 1) is
+         Count : Count_Type := 1)
+      is
+         V : Vertex_Record;
       begin
-         Self.Vertices.Append
-           (Element =>
-              (Props     => Vertex_Properties.To_Stored (Props),
-               Out_Edges => <>),
-            Count   => Count);
+         Vertex_Properties.Set_Stored (Props, V.Props);
+         Self.Vertices.Append (V, Count   => Count);
       end Add_Vertices;
 
       --------------
@@ -84,13 +83,15 @@ package body Conts.Graphs.Adjacency_List is
       procedure Add_Edge
         (Self     : in out Graph;
          From, To : Vertex;
-         Props    : Edge_Properties.Element_Type) is
+         Props    : Edge_Properties.Element_Type)
+      is
+         E : Edge;
       begin
-         Self.Vertices.Reference (From).Out_Edges.Append
-           (Edge'
-              (From  => From,
-               To    => To,
-               Props => Edge_Properties.To_Stored (Props)));
+         E.From := From;
+         E.To   := To;
+         Edge_Properties.Set_Stored (Props, E.Props);
+
+         Self.Vertices.Reference (From).Out_Edges.Append (E);
       end Add_Edge;
 
       ------------

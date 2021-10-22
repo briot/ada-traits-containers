@@ -52,23 +52,34 @@ package Conts.Elements.Definite with SPARK_Mode is
 
    type Reference_Type (Element : not null access Element_Type)
       is null record with Implicit_Dereference => Element;
+   type Constant_Reference_Type
+      (Element : not null access constant Element_Type)
+      is null record with Implicit_Dereference => Element;
 
    function Identity (E : Element_Type) return Element_Type is (E) with Inline;
+   function To_Constant_Ref
+      (E : not null access constant Element_Type)
+      return Constant_Reference_Type
+      is (Constant_Reference_Type'(Element => E)) with Inline;
    function To_Ref (E : not null access Element_Type) return Reference_Type
       is (Reference_Type'(Element => E)) with Inline;
+   function To_Element
+      (E : Constant_Reference_Type) return Element_Type
+      is (E.Element.all);
+   procedure Set_Stored (E : Element_Type; S : out Element_Type) with Inline;
 
    package Traits is new Conts.Elements.Traits
      (Element_Type           => Element_Type,
       Stored_Type            => Element_Type,
       Returned_Type          => Reference_Type,
-      Constant_Returned_Type => Element_Type,
+      Constant_Returned_Type => Constant_Reference_Type,
       Copyable               => Copyable,
       Movable                => Movable,
       Release                => Free,
-      To_Stored              => Identity,
+      Set_Stored             => Set_Stored,
       To_Returned            => To_Ref,
-      To_Constant_Returned   => Identity,
-      To_Element             => Identity,
+      To_Constant_Returned   => To_Constant_Ref,
+      To_Element             => To_Element,
       Copy                   => Identity);
 
 end Conts.Elements.Definite;

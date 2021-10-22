@@ -90,16 +90,17 @@ package Conts.Vectors.Storage with SPARK_Mode is
       --  This does not free the individual elements, since Self itself does
       --  not know the valid range of elements.
 
-      with procedure Set_Element
-        (Self    : in out Container'Class;
-         Pos     : Count_Type;
-         Element : Elements.Stored_Type) is <>;
       with function Get_Returned
          (Self : in out Container'Class;
           Pos  : Count_Type) return Elements.Returned_Type is <>;
-      with function Get_Stored
-         (Self : Container'Class;
-          Pos  : Count_Type) return Elements.Stored_Type is <>;
+      with function Get_RO_Stored
+         (Self : aliased Container'Class;
+          Pos  : Count_Type)
+         return not null access constant Elements.Stored_Type is <>;
+      with function Get_RW_Stored
+         (Self : in out Container'Class;
+          Pos  : Count_Type)
+         return not null access Elements.Stored_Type is <>;
       --  Return the element stored at the given position.
       --  Pos will always be a valid position within Self.
       --  Set_Element should not release the element itself, this is done by
@@ -134,6 +135,11 @@ package Conts.Vectors.Storage with SPARK_Mode is
       --  Copying might be optimized depending on the element traits
       --  attributes. This procedure assumes that Self is large enough to
       --  contain the elements.
+
+      with procedure Swap_In_Storage
+        (Self        : in out Container'Class;
+         Left, Right : Count_Type) is <>;
+      --  Swap the two elements stored at Left and Right
 
    package Traits with SPARK_Mode is
    end Traits;

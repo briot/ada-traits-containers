@@ -42,7 +42,7 @@ package Conts.Lists.Storage.Unbounded_SPARK with SPARK_Mode is
    type Node_Access is new Count_Type;
    Null_Node_Access : constant Node_Access := 0;
    type Node is record
-      Element        : Elements.Stored_Type;
+      Element        : aliased Elements.Stored_Type;
       Previous, Next : Node_Access := Null_Node_Access;
    end record;
 
@@ -53,13 +53,16 @@ package Conts.Lists.Storage.Unbounded_SPARK with SPARK_Mode is
 
       procedure Allocate
         (Self    : in out Nodes_List'Class;
-         Element : Elements.Stored_Type;
          N       : out Node_Access);   --  not inlined
       procedure Release (Self : in out Nodes_List'Class);
-      function Get_Element
-        (Self : Nodes_List'Class; N : Node_Access)
-        return Elements.Stored_Type
-        with Inline;
+      function Get_RO_Stored
+         (Self : aliased Nodes_List'Class;
+          Pos  : Node_Access)
+         return not null access constant Elements.Stored_Type with Inline;
+      function Get_RW_Stored
+         (Self : in out Nodes_List'Class;
+          Pos  : Node_Access)
+         return not null access Elements.Stored_Type with Inline;
       function Get_Next
         (Self : Nodes_List'Class; N : Node_Access) return Node_Access
         with Inline;
@@ -72,10 +75,6 @@ package Conts.Lists.Storage.Unbounded_SPARK with SPARK_Mode is
       procedure Set_Previous
         (Self : in out Nodes_List'Class; N, Previous : Node_Access)
         with Inline;
-      procedure Set_Element
-        (Self : in out Nodes_List'Class;
-         N    : Node_Access;
-         E    : Elements.Stored_Type) with Inline;
       function Capacity (Self_Ignored : Nodes_List'Class) return Count_Type
         is (Count_Type'Last) with Inline;
       procedure Assign
@@ -99,10 +98,6 @@ package Conts.Lists.Storage.Unbounded_SPARK with SPARK_Mode is
          --  free element
       end record;
 
-      function Get_Element
-        (Self : Nodes_List'Class; N : Node_Access)
-       return Elements.Stored_Type
-      is (Self.Nodes (Count_Type (N)).Element);
       function Get_Next
         (Self : Nodes_List'Class; N : Node_Access) return Node_Access
       is (Self.Nodes (Count_Type (N)).Next);

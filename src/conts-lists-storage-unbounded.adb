@@ -33,13 +33,11 @@ package body Conts.Lists.Storage.Unbounded with SPARK_Mode => Off is
 
    procedure Allocate
       (Self    : in out Nodes_Container'Class;
-       Element : Elements.Stored_Type;
        N       : out Node_Access)
    is
       pragma Unreferenced (Self);
    begin
       N := new Node;
-      N.Element := Element;
    end Allocate;
 
    ------------------
@@ -54,17 +52,33 @@ package body Conts.Lists.Storage.Unbounded with SPARK_Mode => Off is
       Unchecked_Free (N);
    end Release_Node;
 
-   -----------------
-   -- Get_Element --
-   -----------------
+   -------------------
+   -- Get_RO_Stored --
+   -------------------
 
-   function Get_Element (Self : Nodes_Container'Class; N : Node_Access)
-      return Elements.Stored_Type
+   function Get_RO_Stored
+      (Self : aliased Nodes_Container'Class;
+       Pos  : Node_Access)
+      return not null access constant Elements.Stored_Type
    is
       pragma Unreferenced (Self);
    begin
-      return N.Element;
-   end Get_Element;
+      return Pos.Element'Access;
+   end Get_RO_Stored;
+
+   -------------------
+   -- Get_RW_Stored --
+   -------------------
+
+   function Get_RW_Stored
+      (Self : in out Nodes_Container'Class;
+       Pos  : Node_Access)
+      return not null access Elements.Stored_Type
+   is
+      pragma Unreferenced (Self);
+   begin
+      return Pos.Element'Access;
+   end Get_RW_Stored;
 
    --------------
    -- Get_Next --
@@ -114,20 +128,6 @@ package body Conts.Lists.Storage.Unbounded with SPARK_Mode => Off is
       N.Next := Next;
    end Set_Next;
 
-   -----------------
-   -- Set_Element --
-   -----------------
-
-   procedure Set_Element
-     (Self : in out Nodes_Container'Class;
-      N    : Node_Access;
-      E    : Elements.Stored_Type)
-   is
-      pragma Unreferenced (Self);
-   begin
-      N.Element := E;
-   end Set_Element;
-
    ------------
    -- Assign --
    ------------
@@ -150,10 +150,11 @@ package body Conts.Lists.Storage.Unbounded with SPARK_Mode => Off is
       end if;
 
       Tmp2 := Old_Head;
+      Allocate (Nodes, Tmp);
       if Elements.Copyable then
-         Allocate (Nodes, Tmp2.Element, Tmp);
+         Tmp.Element := Tmp2.Element;
       else
-         Allocate (Nodes, Elements.Copy (Tmp2.Element), Tmp);
+         Tmp.Element := Elements.Copy (Tmp2.Element);
       end if;
       New_Head := Tmp;
 
@@ -161,10 +162,11 @@ package body Conts.Lists.Storage.Unbounded with SPARK_Mode => Off is
          Tmp2 := Tmp2.Next;
          exit when Tmp2 = null;
 
+         Allocate (Nodes, N);
          if Elements.Copyable then
-            Allocate (Nodes, Tmp2.Element, N);
+            N.Element := Tmp2.Element;
          else
-            Allocate (Nodes, Elements.Copy (Tmp2.Element), N);
+            N.Element := Elements.Copy (Tmp2.Element);
          end if;
 
          Tmp.Next := N;

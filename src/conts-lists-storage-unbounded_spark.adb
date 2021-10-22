@@ -41,7 +41,6 @@ package body Conts.Lists.Storage.Unbounded_SPARK with SPARK_Mode is
 
       procedure Allocate
         (Self    : in out Nodes_List'Class;
-         Element : Elements.Stored_Type;
          N       : out Node_Access)
       is
          New_Size : System.Unsigned_Types.Unsigned := 4;
@@ -93,7 +92,7 @@ package body Conts.Lists.Storage.Unbounded_SPARK with SPARK_Mode is
          end if;
 
          Self.Nodes (Count_Type (N)) :=
-           (Element  => Element,
+           (Element  => <>,
             Previous => Null_Node_Access,
             Next     => Null_Node_Access);
       end Allocate;
@@ -175,17 +174,29 @@ package body Conts.Lists.Storage.Unbounded_SPARK with SPARK_Mode is
          Self.Nodes (Count_Type (N)).Previous := Previous;
       end Set_Previous;
 
-      -----------------
-      -- Set_Element --
-      -----------------
+      -------------------
+      -- Get_RO_Stored --
+      -------------------
 
-      procedure Set_Element
-        (Self : in out Nodes_List'Class;
-         N    : Node_Access;
-         E    : Elements.Stored_Type) is
+      function Get_RO_Stored
+         (Self : aliased Nodes_List'Class;
+          Pos  : Node_Access)
+         return not null access constant Elements.Stored_Type is
       begin
-         Self.Nodes (Count_Type (N)).Element := E;
-      end Set_Element;
+         return Self.Nodes (Count_Type (Pos)).Element'Access;
+      end Get_RO_Stored;
+
+      -------------------
+      -- Get_RW_Stored --
+      -------------------
+
+      function Get_RW_Stored
+         (Self : in out Nodes_List'Class;
+          Pos  : Node_Access)
+         return not null access Elements.Stored_Type is
+      begin
+         return Self.Nodes (Count_Type (Pos)).Element'Access;
+      end Get_RW_Stored;
 
    end Private_Nodes_List;
 

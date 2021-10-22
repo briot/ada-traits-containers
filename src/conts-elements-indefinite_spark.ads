@@ -41,13 +41,17 @@ package Conts.Elements.Indefinite_SPARK with SPARK_Mode => On is
       subtype Constant_Reference_Type is Element_Type;
       --  References are not allowed in SPARK, use the element directly instead
 
-      function To_Element_Access (E : Element_Type) return Element_Access
+      procedure Set_Stored (E : Element_Type; S : out Element_Access)
       with Inline,
         Global => null,
-        Post   => To_Constant_Reference_Type (To_Element_Access'Result) = E;
+        Post   => To_Element (S) = E;
+
+      function To_Element (E : Element_Access) return Element_Type
+         with Inline, Global => null;
 
       function To_Constant_Reference_Type
-        (E : Element_Access) return Constant_Reference_Type
+        (E : not null access constant Element_Access)
+        return Constant_Reference_Type
       with Inline,
         Global => null;
 
@@ -74,29 +78,31 @@ package Conts.Elements.Indefinite_SPARK with SPARK_Mode => On is
 
       for Element_Access'Storage_Pool use Pool.Pool;
 
-      function To_Element_Access (E : Element_Type) return Element_Access
-      is (new Element_Type'(E));
-
-      function To_Element_Type (E : Element_Access) return Element_Type
+      function To_Element (E : Element_Access) return Element_Type
       is (E.all);
 
       function Copy (E : Element_Access) return Element_Access
       is (new Element_Type'(E.all));
 
       function To_Constant_Reference_Type
-        (E : Element_Access) return Constant_Reference_Type
-        is (E.all);
+        (E : not null access constant Element_Access)
+        return Constant_Reference_Type
+        is (E.all.all);
       function To_Reference_Type
         (E : not null access Element_Access) return Constant_Reference_Type
         is (E.all.all);
    end Impl;
+
+   subtype Stored is Impl.Element_Access;
+   function To_Element (E : Stored) return Element_Type
+      renames Impl.To_Element;
 
    package Traits is new Conts.Elements.Traits
      (Element_Type           => Element_Type,
       Stored_Type            => Impl.Element_Access,
       Returned_Type          => Impl.Constant_Reference_Type,
       Constant_Returned_Type => Impl.Constant_Reference_Type,
-      To_Stored              => Impl.To_Element_Access,
+      Set_Stored             => Impl.Set_Stored,
       To_Returned            => Impl.To_Reference_Type,
       To_Constant_Returned   => Impl.To_Constant_Reference_Type,
       To_Element             => Impl.To_Element,

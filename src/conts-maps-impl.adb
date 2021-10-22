@@ -74,9 +74,9 @@ package body Conts.Maps.Impl with SPARK_Mode => Off is
          declare
             S : constant Slot := Self.Table (C.Index);
             K : constant Key_Type := Keys.To_Element
-              (Keys.To_Constant_Returned (S.Key));
+              (Keys.To_Constant_Returned (S.Key'Access));
             V : constant Element_Type := Elements.To_Element
-              (Elements.To_Constant_Returned (S.Value));
+              (Elements.To_Constant_Returned (S.Value'Access));
          begin
             R := M.Add (R, K, V);
          end;
@@ -128,7 +128,7 @@ package body Conts.Maps.Impl with SPARK_Mode => Off is
          declare
             S : constant Slot := Self.Table (C.Index);
             L : constant Key_Type := Keys.To_Element
-              (Keys.To_Constant_Returned (S.Key));
+              (Keys.To_Constant_Returned (S.Key'Access));
          begin
             R := K.Add (R, L);
          end;
@@ -371,7 +371,7 @@ package body Conts.Maps.Impl with SPARK_Mode => Off is
    is
       P : Slot renames Self.Table (Position.Index);
    begin
-      return Keys.To_Constant_Returned (P.Key);
+      return Keys.To_Constant_Returned (P.Key'Access);
    end Key;
 
    -------------
@@ -384,7 +384,7 @@ package body Conts.Maps.Impl with SPARK_Mode => Off is
    is
       P : Slot renames Self.Table (Position.Index);
    begin
-      return Elements.To_Constant_Returned (P.Value);
+      return Elements.To_Constant_Returned (P.Value'Access);
    end Element;
 
    --------------
@@ -506,21 +506,25 @@ package body Conts.Maps.Impl with SPARK_Mode => Off is
             when Empty =>
                S := (Hash  => H,
                      Kind  => Full,
-                     Key   => Keys.To_Stored (Key),
-                     Value => Elements.To_Stored (Value));
+                     Key   => <>,
+                     Value => <>);
+               Keys.Set_Stored (Key, S.Key);
+               Elements.Set_Stored (Value, S.Value);
                Self.Used := Self.Used + 1;
                Self.Fill := Self.Fill + 1;
 
             when Dummy =>
                S := (Hash  => H,
                      Kind  => Full,
-                     Key   => Keys.To_Stored (Key),
-                     Value => Elements.To_Stored (Value));
+                     Key   => <>,
+                     Value => <>);
+               Keys.Set_Stored (Key, S.Key);
+               Elements.Set_Stored (Value, S.Value);
                Self.Used := Self.Used + 1;
 
             when Full =>
                Elements.Release (S.Value);
-               S.Value := Elements.To_Stored (Value);
+               Elements.Set_Stored (Value, S.Value);
          end case;
       end;
 
@@ -554,7 +558,7 @@ package body Conts.Maps.Impl with SPARK_Mode => Off is
          begin
             if Self.Table (Index).Kind = Full then
                return Elements.To_Constant_Returned
-                 (Self.Table (Index).Value);
+                 (Self.Table (Index).Value'Access);
             end if;
          end;
       end if;

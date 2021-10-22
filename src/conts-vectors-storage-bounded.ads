@@ -44,16 +44,19 @@ package Conts.Vectors.Storage.Bounded with SPARK_Mode is
          is (Self.Capacity) with Inline;
       procedure Release_Element
         (Self : in out Container'Class; Index : Count_Type) with Inline;
-      procedure Set_Element
-        (Self    : in out Container'Class;
-         Index   : Count_Type;
-         Element : Elements.Stored_Type) with Inline;
       function Get_Returned
         (Self  : in out Container'Class;
          Index : Count_Type) return Elements.Returned_Type with Inline;
-      function Get_Stored
-        (Self  : Container'Class;
-         Index : Count_Type) return Elements.Stored_Type with Inline;
+      function Get_RO_Stored
+        (Self  : aliased Container'Class;
+         Index : Count_Type)
+        return not null access constant Elements.Stored_Type
+        with Inline;
+      function Get_RW_Stored
+        (Self  : in out Container'Class;
+         Index : Count_Type)
+        return not null access Elements.Stored_Type
+        with Inline;
       procedure Assign
         (Self        : in out Container'Class;
          Last        : Count_Type;
@@ -64,6 +67,9 @@ package Conts.Vectors.Storage.Bounded with SPARK_Mode is
          Source                 : Container'Class;
          Source_From, Source_To : Count_Type;
          Self_From              : Count_Type) with Inline;
+      procedure Swap_In_Storage
+        (Self        : in out Container'Class;
+         Left, Right : Count_Type);
 
    private
       pragma SPARK_Mode (Off);
@@ -76,10 +82,16 @@ package Conts.Vectors.Storage.Bounded with SPARK_Mode is
          Nodes : Elem_Array (Min_Index .. Capacity);
       end record;
 
-      function Get_Stored
-        (Self  : Container'Class;
-         Index : Count_Type) return Elements.Stored_Type
-         is (Self.Nodes (Index));
+      function Get_RO_Stored
+        (Self  : aliased Container'Class;
+         Index : Count_Type)
+        return not null access constant Elements.Stored_Type
+         is (Self.Nodes (Index)'Access);
+      function Get_RW_Stored
+        (Self  : in out Container'Class;
+         Index : Count_Type)
+        return not null access Elements.Stored_Type
+         is (Self.Nodes (Index)'Unchecked_Access);
       function Get_Returned
         (Self  : in out Container'Class;
          Index : Count_Type) return Elements.Returned_Type
@@ -92,10 +104,11 @@ package Conts.Vectors.Storage.Bounded with SPARK_Mode is
       Max_Capacity    => Impl.Max_Capacity,
       Capacity        => Impl.Capacity,
       Release_Element => Impl.Release_Element,
-      Set_Element     => Impl.Set_Element,
       Get_Returned    => Impl.Get_Returned,
-      Get_Stored      => Impl.Get_Stored,
+      Get_RO_Stored   => Impl.Get_RO_Stored,
+      Get_RW_Stored   => Impl.Get_RW_Stored,
       Assign          => Impl.Assign,
+      Swap_In_Storage => Impl.Swap_In_Storage,
       Copy            => Impl.Copy);
 
 end Conts.Vectors.Storage.Bounded;

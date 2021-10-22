@@ -469,8 +469,8 @@ private
    --    * full: the node is currently in use.
 
    type Slot is record
-      Key   : Keys.Stored_Type;
-      Value : Elements.Stored_Type;
+      Key   : aliased Keys.Stored_Type;
+      Value : aliased Elements.Stored_Type;
       Hash  : Hash_Type;
       --  Cached value for the hash, to speed lookups in the table
       --  (before we do more extensive comparison of the key), and

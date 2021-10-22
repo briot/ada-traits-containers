@@ -110,18 +110,6 @@ package body Conts.Vectors.Storage.Unbounded with SPARK_Mode => Off is
          Elements.Release (Self.Nodes (Index));
       end Release_Element;
 
-      -----------------
-      -- Set_Element --
-      -----------------
-
-      procedure Set_Element
-        (Self    : in out Container'Class;
-         Index   : Count_Type;
-         Element : Elements.Stored_Type) is
-      begin
-         Self.Nodes (Index) := Element;
-      end Set_Element;
-
       -------------------
       -- Internal_Copy --
       -------------------
@@ -279,6 +267,36 @@ package body Conts.Vectors.Storage.Unbounded with SPARK_Mode => Off is
             Self.Capacity := 0;
          end if;
       end Release;
+
+      ---------------------
+      -- Swap_In_Storage --
+      ---------------------
+
+      procedure Swap_In_Storage
+        (Self        : in out Container'Class;
+         Left, Right : Count_Type) is
+      begin
+         --  Since we will only keep one copy of the elements in the end, we
+         --  should test Movable here, not Copyable.
+         if Elements.Movable then
+            declare
+               Tmp : constant Elements.Stored_Type := Self.Nodes (Right);
+            begin
+               Self.Nodes (Right) := Self.Nodes (Left);
+               Self.Nodes (Left) := Tmp;
+            end;
+         else
+            declare
+               Tmp : constant Elements.Stored_Type :=
+                  Elements.Copy (Self.Nodes (Right));
+            begin
+               Elements.Release (Self.Nodes (Right));
+               Self.Nodes (Right) := Elements.Copy (Self.Nodes (Left));
+               Elements.Release (Self.Nodes (Left));
+               Self.Nodes (Left) := Tmp;
+            end;
+         end if;
+      end Swap_In_Storage;
 
    end Impl;
 

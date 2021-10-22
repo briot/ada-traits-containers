@@ -62,7 +62,7 @@ package body Conts.Lists.Impl with SPARK_Mode => Off is
       while Position.Current /= Null_Access loop
          R := M.Add (R, Storage.Elements.To_Element
                      (Storage.Elements.To_Constant_Returned
-                      (Get_Element (Self, Position.Current))));
+                      (Get_RO_Stored (Self, Position.Current))));
          Position := (Current => Get_Next (Self, Position.Current));
       end loop;
       return R;
@@ -85,7 +85,7 @@ package body Conts.Lists.Impl with SPARK_Mode => Off is
    begin
       while C.Current /= Null_Access loop
          N := (Current => Get_Next (Self, C.Current));
-         E := Get_Element (Self, C.Current);
+         E := Get_RO_Stored (Self, C.Current).all;
          Elements.Release (E);
          Storage.Release_Node (Self, C.Current);
          C := N;
@@ -115,7 +115,7 @@ package body Conts.Lists.Impl with SPARK_Mode => Off is
          return Constant_Returned_Type is
    begin
       return Storage.Elements.To_Constant_Returned
-        (Get_Element (Self, Position.Current));
+        (Get_RO_Stored (Self, Position.Current));
    end Element;
 
    -----------------
@@ -186,8 +186,9 @@ package body Conts.Lists.Impl with SPARK_Mode => Off is
       for C in 1 .. Count loop
          Allocate
            (Self,
-            Storage.Elements.To_Stored (Element),
             New_Node => N);
+         Storage.Elements.Set_Stored
+            (Element, Storage.Get_RW_Stored (Self, N).all);
 
          if N = Null_Access then
             raise Constraint_Error with "failed to allocate node";
@@ -226,8 +227,9 @@ package body Conts.Lists.Impl with SPARK_Mode => Off is
 
          Allocate
            (Self,
-            Storage.Elements.To_Stored (Element),
             New_Node => N);
+         Storage.Elements.Set_Stored
+            (Element, Storage.Get_RW_Stored (Self, N).all);
 
          Prev := Get_Previous (Self, Before.Current);
 
@@ -244,8 +246,9 @@ package body Conts.Lists.Impl with SPARK_Mode => Off is
             Prev := N;
             Allocate
               (Self,
-               Storage.Elements.To_Stored (Element),
                New_Node => N);
+            Storage.Elements.Set_Stored
+               (Element, Storage.Get_RW_Stored (Self, N).all);
             Set_Previous (Self, N, Previous => Prev);
             Set_Next (Self, Prev, Next => N);
          end loop;
@@ -274,10 +277,11 @@ package body Conts.Lists.Impl with SPARK_Mode => Off is
       end if;
 
       declare
-         E : Stored_Type := Get_Element (Self, P);
+         E : access Stored_Type := Get_RW_Stored (Self, P);
       begin
-         Storage.Elements.Release (E);
-         Set_Element (Self, P, Storage.Elements.To_Stored (Element));
+         Storage.Elements.Release (E.all);
+         Storage.Elements.Set_Stored
+            (Element, Storage.Get_RW_Stored (Self, P).all);
       end;
    end Replace_Element;
 
@@ -293,14 +297,14 @@ package body Conts.Lists.Impl with SPARK_Mode => Off is
       N    : Node_Access := Position.Current;
       N2   : Node_Access;
       Prev : constant Node_Access := Get_Previous (Self,  N);
-      E    : Stored_Type;
+      E    : access Stored_Type;
    begin
       --  Find first element the range
 
       for C in 1 .. Count loop
-         E := Get_Element (Self, N);
+         E := Get_RW_Stored (Self, N);
          N2 := Get_Next (Self, N);
-         Storage.Elements.Release (E);
+         Storage.Elements.Release (E.all);
          Storage.Release_Node (Self, N);
          N := N2;
          Self.Size := Self.Size - 1;

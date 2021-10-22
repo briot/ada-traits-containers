@@ -31,7 +31,11 @@ package Conts.Elements.Null_Elements is
 
    No_Element : constant Null_Element := (others => <>);
 
+   procedure Set_Stored (E : Null_Element; S : out Null_Element) is null;
    function Identity (E : Null_Element) return Null_Element is (E) with Inline;
+   function To_Constant_Ret
+      (E : not null access constant Null_Element) return Null_Element
+      is (E.all) with Inline;
    function To_Ret (E : not null access Null_Element) return Null_Element
       is (E.all) with Inline;
 
@@ -42,9 +46,9 @@ package Conts.Elements.Null_Elements is
       Constant_Returned_Type  => Null_Element,
       Copyable                => True,
       Movable                 => True,
-      To_Stored               => Identity,
+      Set_Stored              => Set_Stored,
       To_Returned             => To_Ret,
-      To_Constant_Returned    => Identity,
+      To_Constant_Returned    => To_Constant_Ret,
       To_Element              => Identity,
       Copy                    => Identity);
 

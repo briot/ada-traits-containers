@@ -46,21 +46,24 @@ package Conts.Lists.Storage.Unbounded with SPARK_Mode => Off is
 
    --  ??? Compiler crashes if we make this type private
    type Node is record
-      Element        : Elements.Stored_Type;
+      Element        : aliased Elements.Stored_Type;
       Previous, Next : Node_Access;
    end record;
 
    procedure Allocate
       (Self    : in out Nodes_Container'Class;
-       Element : Elements.Stored_Type;
        N       : out Node_Access)
       with Inline;
    procedure Release_Node
       (Self : in out Nodes_Container'Class; N : in out Node_Access);
-   function Get_Element
-      (Self : Nodes_Container'Class; N : Node_Access)
-      return Elements.Stored_Type
-      with Inline;
+   function Get_RO_Stored
+      (Self : aliased Nodes_Container'Class;
+       Pos  : Node_Access)
+      return not null access constant Elements.Stored_Type with Inline;
+   function Get_RW_Stored
+      (Self : in out Nodes_Container'Class;
+       Pos  : Node_Access)
+      return not null access Elements.Stored_Type with Inline;
    function Get_Next
       (Self : Nodes_Container'Class; N : Node_Access) return Node_Access
       with Inline;
@@ -73,11 +76,6 @@ package Conts.Lists.Storage.Unbounded with SPARK_Mode => Off is
    procedure Set_Next
       (Self : in out Nodes_Container'Class; N, Next : Node_Access)
       with Inline;
-   procedure Set_Element
-     (Self : in out Nodes_Container'Class;
-      N    : Node_Access;
-      E    : Elements.Stored_Type)
-     with Inline;
    function Capacity (Self_Ignored : Nodes_Container'Class) return Count_Type
       is (Count_Type'Last) with Inline;
    procedure Assign

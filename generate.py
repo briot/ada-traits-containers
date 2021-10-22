@@ -113,9 +113,9 @@ class Indefinite_Elements_SPARK(Elements):
     def equal(self) -> str:
         return (
             f"""
-   function "=" (Left : {self.name}_Type; Right : {self.name}s.Traits.Stored) return Boolean
-        is (Left = {self.name}s.Impl.To_Element
-           ({self.name}s.Impl.To_Constant_Reference_Type (Right))) with Inline;"""
+   function "=" (Left : {self.name}_Type; Right : {self.name}s.Stored) return Boolean
+        is (Left = {self.name}s.Impl.To_Element (Right))
+        with Inline;"""
         )
 
 

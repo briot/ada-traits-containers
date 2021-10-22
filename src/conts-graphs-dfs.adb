@@ -32,7 +32,7 @@ package body Conts.Graphs.DFS is
       use Graphs;
 
       type Vertex_Info is record
-         VC : Graphs.Vertices.Stored_Type;
+         VC : aliased Graphs.Vertices.Stored_Type;
          EC : Graphs.Out_Edges_Cursors.Cursor;  --  next edge to examine
       end record;
       procedure Free (Self : in out Vertex_Info) with Inline;
@@ -80,9 +80,14 @@ package body Conts.Graphs.DFS is
                return;
             end if;
 
-            Stack.Append
-              ((VC => Graphs.Vertices.To_Stored (Start),
-                EC => Graphs.Out_Edges_Cursors.First (G, Start)));
+            declare
+               V : Vertex_Info := (
+                  VC => <>,
+                  EC => Graphs.Out_Edges_Cursors.First (G, Start));
+            begin
+               Graphs.Vertices.Set_Stored (Start, V.VC);
+               Stack.Append (V);
+            end;
 
             while not Stack.Is_Empty loop
                Info := Stack.Last_Element;
@@ -91,11 +96,10 @@ package body Conts.Graphs.DFS is
                if not Graphs.Out_Edges_Cursors.Has_Element (G, Info.EC) then
                   --  No more out edges
                   declare
-                     --   ??? Inefficient, we might be using the secondary
-                     --   stack here if Vertex is unconstrained
                      V : Vertex renames
                        Graphs.Vertices.To_Element
-                         (Graphs.Vertices.To_Constant_Returned (Info.VC));
+                         (Graphs.Vertices.To_Constant_Returned
+                            (Info.VC'Access));
                   begin
                      Color_Maps.Set (Colors, V, Black);
                      Visitors.Finish_Vertex (Visit, V);
@@ -130,9 +134,16 @@ package body Conts.Graphs.DFS is
                         if Terminated then
                            return;
                         end if;
-                        Stack.Append
-                          ((VC => Graphs.Vertices.To_Stored (Target),
-                            EC => Graphs.Out_Edges_Cursors.First (G, Target)));
+
+                        declare
+                           V : Vertex_Info :=
+                              (VC => <>,
+                               EC =>
+                                  Graphs.Out_Edges_Cursors.First (G, Target));
+                        begin
+                           Graphs.Vertices.Set_Stored (Target, V.VC);
+                           Stack.Append (V);
+                        end;
 
                      when Gray =>
                         Visitors.Back_Edge (Visit, E);

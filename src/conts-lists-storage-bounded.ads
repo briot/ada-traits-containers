@@ -51,12 +51,8 @@ package Conts.Lists.Storage.Bounded with SPARK_Mode => Off is
 
       procedure Allocate
          (Self    : in out Impl.Container'Class;
-          Element : Stored_Type;
           N       : out Impl.Node_Access);
       procedure Release (Self : in out Impl.Container'Class) with Inline;
-      function Get_Element
-         (Self : Impl.Container'Class;
-          N    : Impl.Node_Access) return Stored_Type with Inline;
       function Get_Next
          (Self : Impl.Container'Class;
           N    : Impl.Node_Access) return Impl.Node_Access with Inline;
@@ -69,10 +65,14 @@ package Conts.Lists.Storage.Bounded with SPARK_Mode => Off is
       procedure Set_Next
          (Self    : in out Impl.Container'Class;
           N, Next : Impl.Node_Access) with Inline;
-      procedure Set_Element
-        (Self : in out Impl.Container'Class;
-         N    : Node_Access;
-         E    : Stored_Type) with Inline;
+      function Get_RO_Stored
+         (Self : aliased Impl.Container'Class;
+          Pos  : Impl.Node_Access)
+         return not null access constant Elements.Stored_Type with Inline;
+      function Get_RW_Stored
+         (Self : in out Impl.Container'Class;
+          Pos  : Impl.Node_Access)
+         return not null access Elements.Stored_Type with Inline;
       function Capacity (Self : Impl.Container'Class) return Count_Type
          is (Self.Capacity) with Inline;
       procedure Assign
@@ -87,7 +87,7 @@ package Conts.Lists.Storage.Bounded with SPARK_Mode => Off is
 
    private
       type Node is record
-         Element        : Stored_Type;
+         Element        : aliased Stored_Type;
          Previous, Next : Node_Access := Null_Node_Access;
       end record;
 

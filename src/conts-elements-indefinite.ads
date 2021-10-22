@@ -52,10 +52,11 @@ package Conts.Elements.Indefinite is
    type Reference_Type (Element : not null access Element_Type)
       is null record with Implicit_Dereference => Element;
 
-   function To_Element_Access (E : Element_Type) return Element_Access
-      is (new Element_Type'(E)) with Inline;
-   function To_Constant_Ref (E : Element_Access) return Constant_Reference_Type
-      is (Constant_Reference_Type'(Element => E)) with Inline;
+   procedure Set_Stored (E : Element_Type; S : out Element_Access) with Inline;
+   function To_Constant_Ref
+      (E : not null access constant Element_Access)
+      return Constant_Reference_Type
+      is (Constant_Reference_Type'(Element => E.all)) with Inline;
    function To_Element (E : Constant_Reference_Type) return Element_Type
       is (E.Element.all) with Inline;
    function To_Ref (E : not null access Element_Access) return Reference_Type
@@ -71,7 +72,7 @@ package Conts.Elements.Indefinite is
       Stored_Type            => Element_Access,
       Returned_Type          => Reference_Type,
       Constant_Returned_Type => Constant_Reference_Type,
-      To_Stored              => To_Element_Access,
+      Set_Stored             => Set_Stored,
       To_Returned            => To_Ref,
       To_Constant_Returned   => To_Constant_Ref,
       To_Element             => To_Element,

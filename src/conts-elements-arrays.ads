@@ -77,8 +77,12 @@ package Conts.Elements.Arrays with SPARK_Mode => Off is
 
    package Impl is
       type Stored_Array is private;
-      function To_Stored (A : Array_Type) return Stored_Array with Inline;
+      procedure Set_Stored (A : Array_Type; S : out Stored_Array) with Inline;
       function To_Ref (S : Stored_Array) return Constant_Ref_Type
+         with Inline;
+      function To_Constant_Ref
+         (S : not null access constant Stored_Array) return Constant_Ref_Type
+         is (To_Ref (S.all))
          with Inline;
       function To_Ref
          (S : not null access Stored_Array) return Constant_Ref_Type
@@ -108,9 +112,9 @@ package Conts.Elements.Arrays with SPARK_Mode => Off is
       Stored_Type            => Impl.Stored_Array,
       Returned_Type          => Constant_Ref_Type,
       Constant_Returned_Type => Constant_Ref_Type,
-      To_Stored              => Impl.To_Stored,
+      Set_Stored             => Impl.Set_Stored,
       To_Returned            => Impl.To_Ref,
-      To_Constant_Returned   => Impl.To_Ref,
+      To_Constant_Returned   => Impl.To_Constant_Ref,
       To_Element             => Impl.To_Element,
       Copy                   => Impl.Copy,
       Release                => Impl.Release,

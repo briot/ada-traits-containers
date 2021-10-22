@@ -49,11 +49,12 @@ package Conts.Elements with SPARK_Mode is
       --  for which the discriminant is not "constant"). This is used in
       --  particular for the Constant_Indexing aspect.
 
-      with function To_Stored (E : Element_Type) return Stored_Type;
+      with procedure Set_Stored (E : Element_Type; S : out Stored_Type);
       with function To_Returned
-         (E : not null access Stored_Type) return Returned_Type;
+        (E : not null access Stored_Type) return Returned_Type;
       with function To_Constant_Returned
-        (E : Stored_Type) return Constant_Returned_Type;
+        (E : not null access constant Stored_Type)
+        return Constant_Returned_Type;
       with function To_Element
         (E : Constant_Returned_Type) return Element_Type;
       --  Converting between the types
@@ -97,14 +98,9 @@ package Conts.Elements with SPARK_Mode is
       function Identity (E : Returned_Type) return Returned_Type is (E);
       --  Convenience function
 
-      function To_Stored_Type (E : Element_Type) return Stored_Type
-         renames To_Stored;
       function To_Element_Type
         (E : Constant_Returned_Type) return Element_Type
         renames To_Element;
-      function To_Constant_Returned_Type
-        (E : Stored_Type) return Constant_Returned_Type
-        renames To_Constant_Returned;
    end Traits;
 
 end Conts.Elements;

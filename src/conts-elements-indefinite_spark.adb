@@ -37,6 +37,14 @@ package body Conts.Elements.Indefinite_SPARK with SPARK_Mode => Off is
          Unchecked_Free (X);
       end Free;
 
+      ----------------
+      -- Set_Stored --
+      ----------------
+
+      procedure Set_Stored (E : Element_Type; S : out Element_Access) is
+      begin
+         S := new Element_Type'(E);
+      end Set_Stored;
    end Impl;
 
 end Conts.Elements.Indefinite_SPARK;
