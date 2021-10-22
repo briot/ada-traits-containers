@@ -59,12 +59,6 @@ package body Test_Algo_Shuffle is
       Assert
          (Equals (V, V2), False,
           "Shuffle should change the order of elements");
-
-      V2 := V;
-      Shuffle (V, G);
-      Assert
-         (Equals (V, V2), False,
-          "Shuffle should change the order of elements");
    end Test;
 
 end Test_Algo_Shuffle;
