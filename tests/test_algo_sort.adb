@@ -108,49 +108,44 @@ package body Test_Algo_Sort is
    function Get_Ref (Kind : Kind_Type; Small : Boolean) return Vector;
    --  Return one of the reference vectors
 
-   Initialized : Boolean := False;
-
-   procedure Init_Refs;
+   procedure Init_Refs (Size_Of_Small : Positive; Init_Large : Boolean);
    --  Initialize the reference vectors
 
    ---------------
    -- Init_Refs --
    ---------------
 
-   procedure Init_Refs is
+   procedure Init_Refs (Size_Of_Small : Positive; Init_Large : Boolean) is
       Val   : Extended_Index;
       G     : Rand.Generator;
    begin
-      if Initialized then
-         return;
-      end if;
-      Initialized := True;
-
-      for J in 1 .. 10_000 loop
+      for J in 1 .. Size_Of_Small loop
          Rand.Random (G, Val);
 
          Sorted_Small.Append (J);
-         Reversed_Small.Append (10_000 - J);
+         Reversed_Small.Append (Size_Of_Small - J);
          Cst_Small.Append (10);
          Random_Small.Append (Val);
          Ada_Sorted_Small.Append (J);
-         Ada_Reversed_Small.Append (10_000 - J);
+         Ada_Reversed_Small.Append (Size_Of_Small - J);
          Ada_Cst_Small.Append (10);
          Ada_Random_Small.Append (Val);
       end loop;
 
-      for J in 1 .. 1_000_000 loop
-         Rand.Random (G, Val);
+      if Init_Large then
+         for J in 1 .. 1_000_000 loop
+            Rand.Random (G, Val);
 
-         Sorted_Large.Append (J);
-         Reversed_Large.Append (1_000_000 - J);
-         Cst_Large.Append (10);
-         Random_Large.Append (Val);
-         Ada_Sorted_Large.Append (J);
-         Ada_Reversed_Large.Append (1_000_000 - J);
-         Ada_Cst_Large.Append (10);
-         Ada_Random_Large.Append (Val);
-      end loop;
+            Sorted_Large.Append (J);
+            Reversed_Large.Append (1_000_000 - J);
+            Cst_Large.Append (10);
+            Random_Large.Append (Val);
+            Ada_Sorted_Large.Append (J);
+            Ada_Reversed_Large.Append (1_000_000 - J);
+            Ada_Cst_Large.Append (10);
+            Ada_Random_Large.Append (Val);
+         end loop;
+      end if;
    end Init_Refs;
 
    -------------
@@ -220,7 +215,7 @@ package body Test_Algo_Sort is
 
    procedure Test is
    begin
-      Init_Refs;
+      Init_Refs (Size_Of_Small => 10, Init_Large => False);
       Test_Sort (Sorted_Small,   "sorted array  ");
       Test_Sort (Reversed_Small, "reversed array");
       Test_Sort (Cst_Small,      "constant array");
@@ -334,7 +329,7 @@ package body Test_Algo_Sort is
       procedure Do_Quick_P is new Do_Sort (Quicksort_Only, "quicksort_only");
 
    begin
-      Init_Refs;
+      Init_Refs (Size_Of_Small => 10_000, Init_Large => False);
 
       --  Standard Ada tests
 
