@@ -55,9 +55,10 @@ package Conts.Vectors.Storage.Bounded with SPARK_Mode is
         (Self  : Container'Class;
          Index : Count_Type) return Elements.Stored_Type with Inline;
       procedure Assign
-        (Self                : in out Container'Class;
-         Source              : Container'Class;
-         Last                : Count_Type);
+        (Self        : in out Container'Class;
+         Last        : Count_Type;
+         Source      : Container'Class;
+         Source_Last : Count_Type);
       procedure Copy
         (Self                   : in out Container'Class;
          Source                 : Container'Class;

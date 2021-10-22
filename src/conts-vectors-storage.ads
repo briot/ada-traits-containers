@@ -107,13 +107,22 @@ package Conts.Vectors.Storage with SPARK_Mode is
 
       with procedure Assign
         (Self                : in out Container'Class;
+         Last                : Count_Type;
          Source              : Container'Class;
-         Last                : Count_Type) is <>;
-      --  Replace all nodes Min_Index..Last in Nodes with a copy
-      --  of the nodes in Source. The elements themselves are copied (via
-      --  Elements.Copy).
-      --  Self might be the same as Source, this needs to be handled correctly
-      --  since this is used when calling Adjust for controlled containers.
+         Source_Last         : Count_Type) is <>;
+      --  Self currently containers Last elements.
+      --  Those should be freed and replaced by copies of the source_last
+      --  elements from source.
+      --  Self and Source might be the same container, nothing needs to be
+      --  done in this case.
+
+      with procedure Clone
+        (Self                : in out Container'Class;
+         Last                : Count_Type) is null;
+      --  Called after Adjust for controlled types.
+      --  In this case, Self.Nodes is a pointer copied by the compiler, and
+      --  pointing into another instance of Container. This procedure must
+      --  clone it into an independent clone.
 
       with procedure Copy
         (Self                   : in out Container'Class;

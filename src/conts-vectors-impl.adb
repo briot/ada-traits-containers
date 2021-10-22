@@ -233,7 +233,6 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
       --  Deallocate all memory
       Storage.Resize (Self, 0, L, Force => True);
       Self.Last := No_Last;
-
    end Clear;
 
    ------------
@@ -297,7 +296,7 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
    procedure Assign
      (Self : in out Base_Vector'Class; Source : Base_Vector'Class) is
    begin
-      Storage.Assign (Self, Source, Last => Source.Last);
+      Storage.Assign (Self, Self.Last, Source, Source.Last);
       Self.Last := Source.Last;
    end Assign;
 
@@ -307,7 +306,13 @@ package body Conts.Vectors.Impl with SPARK_Mode => Off is
 
    procedure Adjust (Self : in out Base_Vector) is
    begin
-      Assign (Self, Self);
+      --  with controlled unbounded storage, this procedure is called after the
+      --  compiler has already copied all internal fields. In particular, the
+      --  storage nodes pointers are the same, but we still need to force a
+      --  copy of the elements, but without freeing the old ones first. Cannot
+      --  use Assign for that, since it does nothing when Self = Source.
+
+      Storage.Clone (Self, Self.Last);
    end Adjust;
 
    --------------

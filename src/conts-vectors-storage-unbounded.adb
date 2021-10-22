@@ -102,26 +102,51 @@ package body Conts.Vectors.Storage.Unbounded with SPARK_Mode => Off is
       ------------
 
       procedure Assign
-        (Self                : in out Container'Class;
-         Source              : Container'Class;
-         Last                : Count_Type)
-      is
+        (Self        : in out Container'Class;
+         Last        : Count_Type;
+         Source      : Container'Class;
+         Source_Last : Count_Type) is
+      begin
+         if Self.Nodes = Source.Nodes then
+            return;
+         end if;
+
+         for J in Min_Index .. Last loop
+            Release_Element (Self, J);
+         end loop;
+
          --  We only allocate enough memory to copy everything. This is
          --  slightly faster, avoid fragmentation, and means Copy can be used
          --  to reduce the memory usage in the application.
+         Resize
+            (Self,
+             New_Size => Source_Last,
+             Last     => Min_Index - 1,
+             Force    => True);
+         Internal_Copy
+            (Self.Nodes, Source.Nodes, Min_Index, Source_Last, Min_Index);
+      end Assign;
 
+      -----------
+      -- Clone --
+      -----------
+
+      procedure Clone
+        (Self : in out Container'Class;
+         Last : Count_Type)
+      is
          S   : constant size_t := size_t
            (Last * Big_Nodes_Array'Component_Size
             / System.Storage_Unit);
-
-         --  Use a temporary vector in case Self is the same as Source
          Tmp : Nodes_Array_Access;
       begin
+         --   ??? Need to initialize controlled elements to preserve
+         --   the Ada semantic here
          Tmp := Convert (System.Memory.Alloc (S));
-         Internal_Copy (Tmp, Source.Nodes, Min_Index, Last, Min_Index);
+
+         Internal_Copy (Tmp, Self.Nodes, Min_Index, Last, Min_Index);
          Self.Nodes := Tmp;
-         Self.Capacity := Source.Capacity;
-      end Assign;
+      end Clone;
 
       ----------
       -- Copy --
@@ -170,9 +195,13 @@ package body Conts.Vectors.Storage.Unbounded with SPARK_Mode => Off is
                  (Size * Big_Nodes_Array'Component_Size / System.Storage_Unit);
 
                if Self.Nodes = null then
+                  --   ??? Need to initialize controlled elements to preserve
+                  --   the Ada semantic here
                   Self.Nodes := Convert (System.Memory.Alloc (S));
 
                elsif Elements.Movable then
+                  --   ??? Need to initialize controlled elements to preserve
+                  --   the Ada semantic here
                   Self.Nodes := Convert (Realloc (Convert (Self.Nodes), S));
 
                else
@@ -182,6 +211,9 @@ package body Conts.Vectors.Storage.Unbounded with SPARK_Mode => Off is
                      Tmp (J) := Elements.Copy (Self.Nodes (J));
                      Elements.Release (Self.Nodes (J));
                   end loop;
+
+                  --   ??? Need to initialize controlled elements to preserve
+                  --   the Ada semantic here
 
                   System.Memory.Free (Convert (Self.Nodes));
                   Self.Nodes := Tmp;

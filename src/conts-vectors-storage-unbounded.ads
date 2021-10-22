@@ -57,9 +57,13 @@ package Conts.Vectors.Storage.Unbounded with SPARK_Mode is
          Source_From, Source_To : Count_Type;
          Self_From              : Count_Type) with Inline;
       procedure Assign
-        (Self                : in out Container'Class;
-         Source              : Container'Class;
-         Last                : Count_Type);
+        (Self        : in out Container'Class;
+         Last        : Count_Type;
+         Source      : Container'Class;
+         Source_Last : Count_Type);
+      procedure Clone
+        (Self        : in out Container'Class;
+         Last        : Count_Type);
       procedure Resize
         (Self     : in out Container'Class;
          New_Size : Count_Type;
@@ -108,6 +112,7 @@ package Conts.Vectors.Storage.Unbounded with SPARK_Mode is
       Get_Returned    => Impl.Get_Returned,
       Get_Stored      => Impl.Get_Stored,
       Assign          => Impl.Assign,
+      Clone           => Impl.Clone,
       Copy            => Impl.Copy);
 
 end Conts.Vectors.Storage.Unbounded;

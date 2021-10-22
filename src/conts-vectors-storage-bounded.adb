@@ -20,8 +20,10 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
+with System;
 
 package body Conts.Vectors.Storage.Bounded with SPARK_Mode => Off is
+   use type System.Address;
 
    ----------
    -- Impl --
@@ -56,11 +58,21 @@ package body Conts.Vectors.Storage.Bounded with SPARK_Mode => Off is
       ------------
 
       procedure Assign
-        (Self                : in out Container'Class;
-         Source              : Container'Class;
-         Last                : Count_Type) is
+        (Self        : in out Container'Class;
+         Last        : Count_Type;
+         Source      : Container'Class;
+         Source_Last : Count_Type)
+      is
       begin
-         Copy (Self, Source, Min_Index, Last, Min_Index);
+         if Self.Nodes'Address = Source.Nodes'Address then
+            return;
+         end if;
+
+         for J in Min_Index .. Last loop
+            Release_Element (Self, J);
+         end loop;
+
+         Copy (Self, Source, Min_Index, Source_Last, Min_Index);
       end Assign;
 
       ----------
