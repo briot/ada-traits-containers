@@ -14,6 +14,11 @@ package body Test_Support is
       return Value'Length > 0;
    end Check_Element;
 
+   function Check_Element (Value : GNATCOLL.Strings.XString) return Boolean is
+   begin
+      return Value.Length > 0;
+   end Check_Element;
+
    -----------
    -- Setup --
    -----------

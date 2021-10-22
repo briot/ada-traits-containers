@@ -37,7 +37,7 @@ package Conts.Vectors.Definite_Bounded with SPARK_Mode is
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
    package Elements is new Conts.Elements.Definite
-      (Element_Type, Free => Free);
+      (Element_Type, Free => Free, Movable => True, Copyable => True);
    package Storage is new Conts.Vectors.Storage.Bounded
       (Elements            => Elements.Traits,
        Container_Base_Type => Conts.Controlled_Base);

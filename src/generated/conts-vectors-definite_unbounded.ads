@@ -38,7 +38,7 @@ package Conts.Vectors.Definite_Unbounded with SPARK_Mode is
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
    package Elements is new Conts.Elements.Definite
-      (Element_Type, Free => Free);
+      (Element_Type, Free => Free, Movable => True, Copyable => True);
    package Storage is new Conts.Vectors.Storage.Unbounded
       (Elements            => Elements.Traits,
        Resize_Policy       => Conts.Vectors.Resize_1_5,

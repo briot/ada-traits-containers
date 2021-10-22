@@ -35,7 +35,7 @@ package Conts.Lists.Definite_Bounded_Limited with SPARK_Mode is
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
    package Elements is new Conts.Elements.Definite
-      (Element_Type, Free => Free);
+      (Element_Type, Free => Free, Movable => True, Copyable => True);
    package Storage is new Conts.Lists.Storage.Bounded
       (Elements            => Elements.Traits,
        Container_Base_Type => Conts.Limited_Base);

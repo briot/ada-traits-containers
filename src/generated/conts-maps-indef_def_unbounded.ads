@@ -41,7 +41,7 @@ package Conts.Maps.Indef_Def_Unbounded with SPARK_Mode is
    package Keys is new Conts.Elements.Indefinite
       (Key_Type, Free => Free, Pool => Conts.Global_Pool);
    package Elements is new Conts.Elements.Definite
-      (Element_Type, Free => Free);
+      (Element_Type, Free => Free, Movable => True, Copyable => True);
 
    function "=" (Left : Key_Type; Right : Keys.Traits.Stored) return Boolean
         is (Left = Right.all) with Inline;

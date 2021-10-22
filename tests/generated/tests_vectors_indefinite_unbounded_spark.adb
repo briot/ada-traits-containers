@@ -4,7 +4,8 @@ with Test_Support;
 package body Tests_Vectors_Indefinite_Unbounded_SPARK is
 
    package Vecs0 is new Conts.Vectors.Indefinite_Unbounded_SPARK
-      (Positive, Integer);
+      (Positive,
+       Integer);
    package Tests0 is new Support_Vectors
       (Category       => "Integer Vector",
        Container_Name => "Indef_SPARK Unbounded limited",
@@ -27,7 +28,8 @@ package body Tests_Vectors_Indefinite_Unbounded_SPARK is
    end Test_Perf0;
 
    package Vecs1 is new Conts.Vectors.Indefinite_Unbounded_SPARK
-      (Positive, String);
+      (Positive,
+       String);
    package Tests1 is new Support_Vectors
       (Category       => "String Vector",
        Container_Name => "Indef_SPARK Unbounded limited",

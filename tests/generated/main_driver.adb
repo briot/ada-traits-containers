@@ -1,5 +1,7 @@
+pragma Style_Checks (Off);
 with Tests_Vectors_Definite_Bounded;
 with Tests_Vectors_Definite_Unbounded;
+with Tests_Vectors_Unmovable_Definite_Unbounded;
 with Tests_Vectors_Indefinite_Bounded;
 with Tests_Vectors_Indefinite_Unbounded;
 with Tests_Vectors_Indefinite_Unbounded_SPARK;
@@ -22,6 +24,9 @@ begin
    end if;
    if F.Active ("vectors-definite_unbounded-integer") then
       Tests_Vectors_Definite_Unbounded.Test0;
+   end if;
+   if F.Active ("vectors-unmovable_definite_unbounded-gnatcoll.strings.xstring") then
+      Tests_Vectors_Unmovable_Definite_Unbounded.Test0;
    end if;
    if F.Active ("vectors-indefinite_bounded-integer") then
       Tests_Vectors_Indefinite_Bounded.Test0;

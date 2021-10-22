@@ -4,7 +4,8 @@ with Test_Support;
 package body Tests_Vectors_Definite_Bounded is
 
    package Vecs0 is new Conts.Vectors.Definite_Bounded
-      (Positive, Integer);
+      (Positive,
+       Integer);
    package Tests0 is new Support_Vectors
       (Category       => "Integer Vector",
        Container_Name => "Def Bounded",

@@ -4,7 +4,8 @@ with Test_Support;
 package body Tests_Vectors_Indefinite_Bounded is
 
    package Vecs0 is new Conts.Vectors.Indefinite_Bounded
-      (Positive, Integer);
+      (Positive,
+       Integer);
    package Tests0 is new Support_Vectors
       (Category       => "Integer Vector",
        Container_Name => "Indef Bounded",
@@ -27,7 +28,8 @@ package body Tests_Vectors_Indefinite_Bounded is
    end Test_Perf0;
 
    package Vecs1 is new Conts.Vectors.Indefinite_Bounded
-      (Positive, String);
+      (Positive,
+       String);
    package Tests1 is new Support_Vectors
       (Category       => "String Vector",
        Container_Name => "Indef Bounded",

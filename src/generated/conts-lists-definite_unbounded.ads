@@ -36,7 +36,7 @@ package Conts.Lists.Definite_Unbounded with SPARK_Mode is
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
    package Elements is new Conts.Elements.Definite
-      (Element_Type, Free => Free);
+      (Element_Type, Free => Free, Movable => True, Copyable => True);
    package Storage is new Conts.Lists.Storage.Unbounded
       (Elements            => Elements.Traits,
        Pool                => Conts.Global_Pool,

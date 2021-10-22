@@ -38,9 +38,9 @@ package Conts.Maps.Def_Def_Unbounded with SPARK_Mode is
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
    package Keys is new Conts.Elements.Definite
-      (Key_Type, Free => Free);
+      (Key_Type, Free => Free, Movable => True, Copyable => True);
    package Elements is new Conts.Elements.Definite
-      (Element_Type, Free => Free);
+      (Element_Type, Free => Free, Movable => True, Copyable => True);
 
 
    package Impl is new Conts.Maps.Generics

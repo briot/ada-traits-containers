@@ -44,7 +44,7 @@ def base_to_str(base: Base) -> str:
 
 
 class Test:
-    withs: str
+    withs: Sequence[str]
     def code(self, idx: int) -> str: ...
     def test_name(self) -> str: ...
 
@@ -59,7 +59,7 @@ class Elements:
 
 
 class Definite_Elements(Elements):
-    def __init__(self, name="Element"):
+    def __init__(self, name="Element", movable=True, copyable=True):
         self.descr = "Def"
         self.withs = "with Conts.Elements.Definite;"
         self.formals = f"   type {name}_Type is private;\n"
@@ -68,7 +68,8 @@ class Definite_Elements(Elements):
         )
         self.traits = (
             f"   package {name}s is new Conts.Elements.Definite\n"
-            f"      ({name}_Type, Free => Free);"
+            f"      ({name}_Type, Free => Free, Movable => {movable},"
+            f" Copyable => {copyable});"
         )
 
     def equal(self) -> str:
@@ -271,7 +272,8 @@ class Container:
                 f"with Test_Support;",
             ])
             for t in self.tests:
-                adb_withs.add(t.withs)
+                for w in t.withs:
+                    adb_withs.add('with %s;' % w)
 
             with open("%s/%s.adb" % (test_generated, testname), "w") as f:
                 f.write("\n".join(sorted(adb_withs)))
@@ -283,6 +285,7 @@ class Container:
     @classmethod
     def write_main_driver(cls) -> None:
         with open("tests/generated/main_driver.adb", "w") as f:
+            f.write('pragma Style_Checks (Off);\n')
             for cont in cls.all_tests:
                 if cont.tests:
                     f.write(f"with {cont.test_pkg};\n")
@@ -303,6 +306,7 @@ class Container:
             pass
 
         with open("tests/perfs/generated/run_all.adb", "w") as f:
+            f.write('pragma Style_Checks (Off);\n')
             for cont in cls.all_tests:
                 if cont.tests:
                     f.write(f"with {cont.test_pkg};\n")
@@ -348,7 +352,9 @@ class Vector_Test(Test):
         self.base: Optional[Base] = data[2]
         self.favorite = ("True" if data[3] else "False")
         self.container = container
-        self.withs = "with Support_Vectors;"
+        self.withs = ["Support_Vectors"]
+        if '.' in self.element:
+            self.withs.append(self.element.rsplit('.', 1)[0])
 
     def category(self) -> str:
         return f"{self.element} Vector"
@@ -370,7 +376,15 @@ class Vector_Test(Test):
         actual = [self.index, self.element]
         if self.base:
             actual.append(f"Container_Base_Type => {self.base}")
-        actual_str = "(%s)" % ", ".join(actual)
+        actual_str = "(%s)" % ",\n       ".join(actual)
+
+        actual_support = []
+        if '.' in self.element:
+            p = self.element.rsplit('.', 1)[0]
+            actual_support.append(f'"="            => {p}."="')
+        actual_support_str = "".join(
+            ",\n       {}".format(s)
+            for s in actual_support)
 
         return f"""
    package Vecs{idx} is new {self.container.pkg_name}
@@ -382,7 +396,7 @@ class Vector_Test(Test):
        Vectors        => Vecs{idx}.Vectors,
        Check_Element  => Test_Support.Check_Element,
        Nth            => Test_Support.Nth,
-       Perf_Nth       => Test_Support.Perf_Nth);
+       Perf_Nth       => Test_Support.Perf_Nth{actual_support_str});
 
    procedure Test{idx} is
       V : Vecs{idx}.Vector{self.container.storage.bounds_for_test};
@@ -491,8 +505,10 @@ class List_Test(Test):
         self.container = container
         self.element = data[0]
         self.base = data[1]
-        self.withs = "with Support_Lists;"
         self.favorite = ("True" if data[2] else "False")
+        self.withs = ["Support_Lists"]
+        if '.' in self.element:
+            self.withs.append(self.element.rsplit('.', 1)[0])
 
     def category(self) -> str:
         return f"{self.element} List"
@@ -635,7 +651,11 @@ class Map_Test(Test):
         self.base: Optional[Base] = data[2]
         self.favorite = ("True" if data[3] else "False")
         self.container = container
-        self.withs = "with Support_Maps;"
+        self.withs = ["Support_Maps"]
+        if '.' in self.key:
+            self.withs.append(self.key.rsplit('.', 1)[0])
+        if '.' in self.element:
+            self.withs.append(self.element.rsplit('.', 1)[0])
 
     def category(self) -> str:
         return f"{self.key}-{self.element} Map"
@@ -810,6 +830,14 @@ containers = [
         elements=Definite_Elements(),
         storage=Storage_Vector(pkg='Unbounded'),
         tests=[("Positive", "Integer", "Conts.Controlled_Base", True)],
+    ),
+    Vector_Container(
+        pkg_name="Conts.Vectors.Unmovable_Definite_Unbounded",
+        elements=Definite_Elements(movable=False, copyable=False),
+        storage=Storage_Vector(pkg='Unbounded'),
+        tests=[
+            ("Positive", "GNATCOLL.Strings.XString", "Conts.Controlled_Base", True),
+        ],
     ),
     Vector_Container(
         pkg_name="Conts.Vectors.Indefinite_Bounded",
