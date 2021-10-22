@@ -739,7 +739,7 @@ class Map_Container(Container):
 
     def ads(self) -> str:
         spark_mode = " with SPARK_Mode"
-        withs = "\n".join(set([self.elements.withs, self.keys.withs,]))
+        withs = "\n".join(sorted(set([self.elements.withs, self.keys.withs,])))
 
         spark_withs = (
             ""

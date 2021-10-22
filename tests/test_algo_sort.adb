@@ -329,7 +329,7 @@ package body Test_Algo_Sort is
       procedure Do_Quick_P is new Do_Sort (Quicksort_Only, "quicksort_only");
 
    begin
-      Init_Refs (Size_Of_Small => 10_000, Init_Large => False);
+      Init_Refs (Size_Of_Small => 10_000, Init_Large => True);
 
       --  Standard Ada tests
 
