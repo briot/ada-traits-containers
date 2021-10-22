@@ -103,6 +103,11 @@ package body Test_Algo_Sort is
    Random_Large         : Vector;
    Ada_Random_Large     : Int_Ada_Vecs.Vector;
 
+   type Kind_Type is (Kind_Random, Kind_Sorted, Kind_Constant, Kind_Reversed);
+
+   function Get_Ref (Kind : Kind_Type; Small : Boolean) return Vector;
+   --  Return one of the reference vectors
+
    Initialized : Boolean := False;
 
    procedure Init_Refs;
@@ -147,6 +152,30 @@ package body Test_Algo_Sort is
          Ada_Random_Large.Append (Val);
       end loop;
    end Init_Refs;
+
+   -------------
+   -- Get_Ref --
+   -------------
+
+   function Get_Ref
+      (Kind : Kind_Type; Small : Boolean) return Vector is
+   begin
+      if Small then
+         case Kind is
+         when Kind_Random   => return Random_Small;
+         when Kind_Sorted   => return Sorted_Small;
+         when Kind_Constant => return Cst_Small;
+         when Kind_Reversed => return Reversed_Small;
+         end case;
+      else
+         case Kind is
+         when Kind_Random   => return Random_Large;
+         when Kind_Sorted   => return Sorted_Large;
+         when Kind_Constant => return Cst_Large;
+         when Kind_Reversed => return Reversed_Large;
+         end case;
+      end if;
+   end Get_Ref;
 
    -------------
    -- Do_Sort --
@@ -240,11 +269,12 @@ package body Test_Algo_Sort is
 
       procedure Do_Sort (Omit_Large : Boolean; Favorite : Boolean := False) is
          generic
-            Ref  : Vector;
+            Kind  : Kind_Type;
+            Small : Boolean;
          procedure Time_Sort (Name : String; Start_Group : Boolean := False);
 
          procedure Time_Sort (Name : String; Start_Group : Boolean := False) is
-            V : Vector := Ref;
+            V : Vector := Get_Ref (Kind, Small);  --  in case it is bounded
 
             procedure Do_Setup;
             procedure Do_Sort;
@@ -252,7 +282,7 @@ package body Test_Algo_Sort is
 
             procedure Do_Setup is
             begin
-               V.Assign (Ref);
+               V.Assign (Get_Ref (Kind, Small));
             end Do_Setup;
 
             procedure Do_Clear is
@@ -268,18 +298,17 @@ package body Test_Algo_Sort is
                (Do_Sort, Setup => Do_Setup, Cleanup => Do_Clear);
          begin
             T (Result, Category, Algo, Name, Start_Group => Start_Group);
-            --  V.Clear;  --  ??? Is this necessary
          end Time_Sort;
 
-         procedure Time_Random_Small     is new Time_Sort (Random_Small);
-         procedure Time_Sorted_Small     is new Time_Sort (Sorted_Small);
-         procedure Time_Reversed_Small   is new Time_Sort (Reversed_Small);
-         procedure Time_Constant_Small   is new Time_Sort (Cst_Small);
+         procedure Time_Random_Small   is new Time_Sort (Kind_Random, True);
+         procedure Time_Sorted_Small   is new Time_Sort (Kind_Sorted, True);
+         procedure Time_Reversed_Small is new Time_Sort (Kind_Reversed, True);
+         procedure Time_Constant_Small is new Time_Sort (Kind_Constant, True);
 
-         procedure Time_Random_Large     is new Time_Sort (Random_Large);
-         procedure Time_Sorted_Large     is new Time_Sort (Sorted_Large);
-         procedure Time_Reversed_Large   is new Time_Sort (Reversed_Large);
-         procedure Time_Constant_Large   is new Time_Sort (Cst_Large);
+         procedure Time_Random_Large   is new Time_Sort (Kind_Random, False);
+         procedure Time_Sorted_Large   is new Time_Sort (Kind_Sorted, False);
+         procedure Time_Reversed_Large is new Time_Sort (Kind_Reversed, False);
+         procedure Time_Constant_Large is new Time_Sort (Kind_Constant, False);
 
       begin
          Result.Set_Column (Category, Algo, Size => 0, Favorite => Favorite);
