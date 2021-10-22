@@ -9,8 +9,8 @@ package body Tests_Vectors_Unmovable_Definite_Unbounded is
        GNATCOLL.Strings.XString,
        Container_Base_Type => Conts.Controlled_Base);
    package Tests0 is new Support_Vectors
-      (Category       => "GNATCOLL.Strings.XString Vector",
-       Container_Name => "Def Unbounded",
+      (Category       => "String Vector",
+       Container_Name => "Def Unbounded (XString)",
        Image          => Test_Support.Image,
        Vectors        => Vecs0.Vectors,
        Check_Element  => Test_Support.Check_Element,

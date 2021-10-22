@@ -338,6 +338,7 @@ Vector_Test_Data = Tuple[
     str,             # list of element types to test
     Optional[Base],  # container_base (if applicable)
     bool,            # favorite: is this a container users would likely use
+    str,             # category of the test
 ]
 
 
@@ -351,20 +352,25 @@ class Vector_Test(Test):
         self.element: str = data[1]
         self.base: Optional[Base] = data[2]
         self.favorite = ("True" if data[3] else "False")
+        self.category_name = data[4] or self.element
         self.container = container
         self.withs = ["Support_Vectors"]
         if '.' in self.element:
             self.withs.append(self.element.rsplit('.', 1)[0])
 
     def category(self) -> str:
-        return f"{self.element} Vector"
+        return f"{self.category_name} Vector"
 
     def container_name(self) -> str:
         base = base_to_str(self.base or self.container.storage.base)
-        return (
+        n = (
             f"{self.container.elements.descr}"
             f" {self.container.storage.pkg}{base}"
         )
+        if self.element != self.category_name:
+            e = self.element.rsplit('.', 1)[-1]
+            n += f" ({e})"
+        return n
 
     def test_name(self) -> str:
         return self.container.pkg_name.lower(
@@ -823,20 +829,23 @@ containers = [
         pkg_name="Conts.Vectors.Definite_Bounded",
         elements=Definite_Elements(),
         storage=Storage_Vector(pkg='Bounded', base='Conts.Controlled_Base'),
-        tests=[("Positive", "Integer", None, False)],
+        tests=[("Positive", "Integer", None, False, "Integer")],
     ),
     Vector_Container(
         pkg_name="Conts.Vectors.Definite_Unbounded",
         elements=Definite_Elements(),
         storage=Storage_Vector(pkg='Unbounded'),
-        tests=[("Positive", "Integer", "Conts.Controlled_Base", True)],
+        tests=[
+            ("Positive", "Integer", "Conts.Controlled_Base", True, "Integer"),
+        ],
     ),
     Vector_Container(
         pkg_name="Conts.Vectors.Unmovable_Definite_Unbounded",
         elements=Definite_Elements(movable=False, copyable=False),
         storage=Storage_Vector(pkg='Unbounded'),
         tests=[
-            ("Positive", "GNATCOLL.Strings.XString", "Conts.Controlled_Base", True),
+            ("Positive", "GNATCOLL.Strings.XString", "Conts.Controlled_Base",
+             True, "String"),
         ],
     ),
     Vector_Container(
@@ -844,8 +853,8 @@ containers = [
         elements=Indefinite_Elements(),
         storage=Storage_Vector(pkg='Bounded', base='Conts.Controlled_Base'),
         tests=[
-            ("Positive", "Integer", None, False),
-            ("Positive", "String", None, False),
+            ("Positive", "Integer", None, False, "Integer"),
+            ("Positive", "String", None, False, "String"),
         ],
     ),
     Vector_Container(
@@ -853,8 +862,8 @@ containers = [
         elements=Indefinite_Elements(),
         storage=Storage_Vector(pkg='Unbounded'),
         tests=[
-            ("Positive", "Integer", "Conts.Controlled_Base", False),
-            ("Positive", "String", "Conts.Controlled_Base", True),
+            ("Positive", "Integer", "Conts.Controlled_Base", False, "Integer"),
+            ("Positive", "String", "Conts.Controlled_Base", True, "String"),
         ],
     ),
     Vector_Container(
@@ -862,8 +871,8 @@ containers = [
         elements=Indefinite_Elements_SPARK(),
         storage=Storage_Vector(pkg='Unbounded', base="Conts.Limited_Base"),
         tests=[
-            ("Positive", "Integer", None, False),
-            ("Positive", "String", None, False),
+            ("Positive", "Integer", None, False, "Integer"),
+            ("Positive", "String", None, False, "String"),
         ],
     ),
 #    Vector_Container(
