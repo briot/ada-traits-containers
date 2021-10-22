@@ -24,7 +24,6 @@ with Ada.Exceptions;
 with Ada.Text_IO;
 with Ada.Unchecked_Deallocation;
 with GNAT.Calendar;
-with GNAT.Directory_Operations; use GNAT.Directory_Operations;
 with Interfaces.C;              use Interfaces.C;
 with Interfaces.C.Strings;      use Interfaces.C.Strings;
 with Memory;
@@ -435,7 +434,7 @@ package body Report is
    -- Save --
    ----------
 
-   procedure Save (Self : in out Output'Class) is
+   procedure Save (Self : in out Output'Class; Filename : String) is
       function Short_Image (D : Duration) return String;
       function Image (D : Duration) return String;
 
@@ -459,88 +458,90 @@ package body Report is
       end Image;
 
    begin
-      for Cat of Self.Categories loop
-         Ada.Text_IO.Put_Line ("=== " & Cat.Category.To_String & " ===");
-         for Col of Cat.Columns loop
-            Ada.Text_IO.Put_Line ("   " & Col.Column.To_String);
-            Ada.Text_IO.Put ("     ");
-            for Row of Col.Rows loop
-               Ada.Text_IO.Put
-                  (' ' & Row.Row.To_String & '=' & Image (Row.Timing));
-            end loop;
-            Ada.Text_IO.New_Line;
-         end loop;
-      end loop;
-
-      declare
-         use Ada.Text_IO;
-         F : File_Type;
-         First_Row : Boolean;
-         First_Test : Boolean := True;
-      begin
-         Create (F, Out_File, "../../docs/perfs/data.js");
-         Put_Line (F, "var data = {");
-         Put_Line (F, "   ""repeat_count"": 5,");  --  to be removed
-         Put_Line (F, "   ""items_count"":"
-            & Test_Support.Items_Count'Image & ",");
-         Put_Line (F, "   ""tests"": [");
-
+      if Filename = "" then
          for Cat of Self.Categories loop
+            Ada.Text_IO.Put_Line ("=== " & Cat.Category.To_String & " ===");
             for Col of Cat.Columns loop
-               if not First_Test then
-                  Put_Line (F, ",");
-               end if;
-               First_Test := False;
-
-               Put_Line (F, "      {");
-               Put_Line (F, "       ""name"": """
-                  & Col.Column.To_String
-                  & """,");
-               Put_Line (F, "       ""category"": """
-                  & Cat.Category.To_String
-                  & """,");
-               Put_Line (F, "       ""favorite"": "
-                  & (if Col.Favorite then "true" else "false")
-                  & ",");
-               Put_Line (F, "       ""size"":"
-                  & Col.Size'Image & ",");
-               Put_Line (F, "       ""tests"": {");
-
-               First_Row := True;
+               Ada.Text_IO.Put_Line ("   " & Col.Column.To_String);
+               Ada.Text_IO.Put ("     ");
                for Row of Col.Rows loop
-                  if not First_Row then
+                  Ada.Text_IO.Put
+                     (' ' & Row.Row.To_String & '=' & Image (Row.Timing));
+               end loop;
+               Ada.Text_IO.New_Line;
+            end loop;
+         end loop;
+
+      else
+         declare
+            use Ada.Text_IO;
+            F : File_Type;
+            First_Row : Boolean;
+            First_Test : Boolean := True;
+         begin
+            Create (F, Out_File, Filename);
+            Put_Line (F, "var data = {");
+            Put_Line (F, "   ""repeat_count"": 5,");  --  to be removed
+            Put_Line (F, "   ""items_count"":"
+               & Test_Support.Items_Count'Image & ",");
+            Put_Line (F, "   ""tests"": [");
+
+            for Cat of Self.Categories loop
+               for Col of Cat.Columns loop
+                  if not First_Test then
                      Put_Line (F, ",");
                   end if;
-                  First_Row := False;
-                  Put_Line (F, "          """ & Row.Row.To_String & """: {");
-                  Put_Line (F, "             ""duration"":"
-                     & Row.Timing'Image & ",");
-                  Put_Line (F, "             ""group"":"
-                     & (if Row.Start_Group then "true" else "false")
+                  First_Test := False;
+
+                  Put_Line (F, "      {");
+                  Put_Line (F, "       ""name"": """
+                     & Col.Column.To_String
+                     & """,");
+                  Put_Line (F, "       ""category"": """
+                     & Cat.Category.To_String
+                     & """,");
+                  Put_Line (F, "       ""favorite"": "
+                     & (if Col.Favorite then "true" else "false")
                      & ",");
-                  Put_Line (F, "             ""allocated"":"
-                     & Row.Allocated'Image & ",");
-                  Put_Line (F, "             ""allocs"":"
-                     & Row.Allocs'Image & ",");
-                  Put_Line (F, "             ""reallocs"":"
-                     & Row.Reallocs'Image & ",");
-                  Put_Line (F, "             ""frees"":"
-                     & Row.Frees'Image);
-                  Put (F, "        }");
+                  Put_Line (F, "       ""size"":"
+                     & Col.Size'Image & ",");
+                  Put_Line (F, "       ""tests"": {");
+
+                  First_Row := True;
+                  for Row of Col.Rows loop
+                     if not First_Row then
+                        Put_Line (F, ",");
+                     end if;
+                     First_Row := False;
+                     Put_Line
+                        (F, "          """ & Row.Row.To_String & """: {");
+                     Put_Line (F, "             ""duration"":"
+                        & Row.Timing'Image & ",");
+                     Put_Line (F, "             ""group"":"
+                        & (if Row.Start_Group then "true" else "false")
+                        & ",");
+                     Put_Line (F, "             ""allocated"":"
+                        & Row.Allocated'Image & ",");
+                     Put_Line (F, "             ""allocs"":"
+                        & Row.Allocs'Image & ",");
+                     Put_Line (F, "             ""reallocs"":"
+                        & Row.Reallocs'Image & ",");
+                     Put_Line (F, "             ""frees"":"
+                        & Row.Frees'Image);
+                     Put (F, "        }");
+                  end loop;
+                  New_Line (F);
+                  Put (F, "      }}");
                end loop;
-               New_Line (F);
-               Put (F, "      }}");
             end loop;
-         end loop;
 
-         New_Line (F);
-         Put_Line (F, "   ]");
-         Put_Line (F, "};");
+            New_Line (F);
+            Put_Line (F, "   ]");
+            Put_Line (F, "};");
 
-         Close (F);
-         Put_Line
-            ("Open file://"
-             & Get_Current_Dir & "/../../docs/perfs/index.html");
-      end;
+            Close (F);
+            Put_Line ("Open file://" & Filename);
+         end;
+      end if;
    end Save;
 end Report;

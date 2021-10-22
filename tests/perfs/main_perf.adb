@@ -21,7 +21,6 @@
 
 pragma Ada_2012;
 
-with Ada.Command_Line;
 with Ada.Containers.Bounded_Doubly_Linked_Lists;
 with Ada.Containers.Bounded_Hashed_Maps;
 with Ada.Containers.Bounded_Ordered_Maps;
@@ -35,6 +34,8 @@ with Ada.Containers.Indefinite_Vectors;
 with Ada.Containers.Ordered_Maps;
 with Ada.Containers.Vectors;
 with Ada.Strings.Hash;
+with GNAT.Command_Line;
+with GNATCOLL.Strings;
 with Perf_Support;     use Perf_Support;
 with QGen;             use QGen;
 with Report;           use Report;
@@ -287,9 +288,23 @@ procedure Main_Perf is
       end if;
    end Run_Test;
 
+   Output_File : GNATCOLL.Strings.XString;
 begin
-   for A in 1 .. Ada.Command_Line.Argument_Count loop
-      Filter.Setup (Ada.Command_Line.Argument (1));
+   loop
+      case GNAT.Command_Line.Getopt ("o:") is
+         when 'o' =>
+            Output_File.Set (GNAT.Command_Line.Parameter);
+         when others =>
+            exit;
+      end case;
+   end loop;
+   loop
+      declare
+         S : constant String := GNAT.Command_Line.Get_Argument;
+      begin
+         exit when S'Length = 0;
+         Filter.Setup (S);
+      end;
    end loop;
 
    Run_Test ("int_list_c++", Test_Cpp_Int_List'Access);
@@ -404,5 +419,6 @@ begin
    end if;
 
    Run_All (Stdout, Filter);
-   Stdout.Save;
+
+   Stdout.Save (Output_File.To_String);
 end Main_Perf;

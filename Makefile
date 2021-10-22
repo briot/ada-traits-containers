@@ -56,7 +56,7 @@ test: build
 	@echo "==== Running tests in Production mode ===="
 	tests/obj/Production/main
 	@echo "==== Running performance tests ===="
-	tests/perfs/obj/Production/main_perf
+	tests/perfs/obj/Production/main_perf -o docs/perfs/data.js
 
 clean:
 	-rm -rf tests/perfs/obj/

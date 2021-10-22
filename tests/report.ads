@@ -119,8 +119,9 @@ package Report is
    procedure End_Test_Not_Run (Self : in out Output'Class);
    --  Same as End_Test, but mark the test as "NOT RUN".
 
-   procedure Save (Self : in out Output'Class);
-   --  Outputs the results to a JSON file
+   procedure Save (Self : in out Output'Class; Filename : String);
+   --  Outputs the results to a JSON file (if Filename is not empty) or
+   --  the terminal (otherwise)
 
 private
 
