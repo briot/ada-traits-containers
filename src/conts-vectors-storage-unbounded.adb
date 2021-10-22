@@ -21,12 +21,14 @@
 
 pragma Ada_2012;
 with Ada.Unchecked_Conversion;
+with Ada.Unchecked_Deallocation;
 with System;                   use System;
 with System.Memory;            use System.Memory;
 
 package body Conts.Vectors.Storage.Unbounded with SPARK_Mode => Off is
 
    package body Impl is
+
       pragma Warnings (Off);  --  no aliasing issue
       function Convert is new Ada.Unchecked_Conversion
         (Nodes_Array_Access, System.Address);
@@ -40,6 +42,63 @@ package body Conts.Vectors.Storage.Unbounded with SPARK_Mode => Off is
          Source_From, Source_To : Count_Type;
          Self_From              : Count_Type) with Inline;
       --  Internal version of Copy, directly applying on an array
+
+      function Alloc (Size : Count_Type) return Nodes_Array_Access;
+      procedure Free (A : in out Nodes_Array_Access; Capacity : Count_Type);
+      --  Perform allocation.
+      --  For simple elements, we use low-level C routines so that
+      --  we can ultimately use realloc for performance. But for
+      --  controlled elements, we need to preserve the Ada
+      --  semantics (which initializes all elements);
+
+      -----------
+      -- Alloc --
+      -----------
+
+      function Alloc (Size : Count_Type) return Nodes_Array_Access is
+         S   : size_t;
+      begin
+         if Elements.Movable then
+            S := size_t
+              (Size * Big_Nodes_Array'Component_Size / System.Storage_Unit);
+            return Convert (System.Memory.Alloc (S));
+         else
+            declare
+               type Arr is array (1 .. Size) of aliased Elements.Stored_Type;
+               type Arr_Access is access all Arr;
+               Tmp : Arr_Access := new Arr;
+            begin
+               return Convert (Tmp.all'Address);
+            end;
+         end if;
+      end Alloc;
+
+      ----------
+      -- Free --
+      ----------
+
+      procedure Free (A : in out Nodes_Array_Access; Capacity : Count_Type) is
+      begin
+         if Elements.Movable then
+            System.Memory.Free (Convert (A));
+         else
+            declare
+               type Arr is array (1 .. Capacity)
+                  of aliased Elements.Stored_Type;
+               type Arr_Access is access all Arr;
+               function Convert is new Ada.Unchecked_Conversion
+                 (System.Address, Arr_Access);
+               procedure Unchecked_Free is new Ada.Unchecked_Deallocation
+                  (Arr, Arr_Access);
+               Tmp : Arr_Access;
+            begin
+               Tmp := Convert (A (A'First)'Address);
+               Unchecked_Free (Tmp);
+            end;
+         end if;
+
+         A := null;
+      end Free;
 
       ---------------------
       -- Release_Element --
@@ -135,15 +194,8 @@ package body Conts.Vectors.Storage.Unbounded with SPARK_Mode => Off is
         (Self : in out Container'Class;
          Last : Count_Type)
       is
-         S   : constant size_t := size_t
-           (Last * Big_Nodes_Array'Component_Size
-            / System.Storage_Unit);
-         Tmp : Nodes_Array_Access;
+         Tmp : Nodes_Array_Access := Alloc (Size => Last);
       begin
-         --   ??? Need to initialize controlled elements to preserve
-         --   the Ada semantic here
-         Tmp := Convert (System.Memory.Alloc (S));
-
          Internal_Copy (Tmp, Self.Nodes, Min_Index, Last, Min_Index);
          Self.Nodes := Tmp;
       end Clone;
@@ -188,34 +240,26 @@ package body Conts.Vectors.Storage.Unbounded with SPARK_Mode => Off is
 
          if Size /= Self.Capacity then
             if Size = 0 then
-               System.Memory.Free (Convert (Self.Nodes));
-               Self.Nodes := null;
+               Free (Self.Nodes, Self.Capacity);
             else
-               S := size_t
-                 (Size * Big_Nodes_Array'Component_Size / System.Storage_Unit);
-
                if Self.Nodes = null then
-                  --   ??? Need to initialize controlled elements to preserve
-                  --   the Ada semantic here
-                  Self.Nodes := Convert (System.Memory.Alloc (S));
+                  Self.Nodes := Alloc (Size => Size);
 
                elsif Elements.Movable then
-                  --   ??? Need to initialize controlled elements to preserve
-                  --   the Ada semantic here
+                  S := size_t
+                    (Size * Big_Nodes_Array'Component_Size
+                     / System.Storage_Unit);
                   Self.Nodes := Convert (Realloc (Convert (Self.Nodes), S));
 
                else
-                  Tmp := Convert (System.Memory.Alloc (S));
+                  Tmp := Alloc (Size => Size);
 
                   for J in Min_Index .. Count_Type'Min (Last, New_Size) loop
                      Tmp (J) := Elements.Copy (Self.Nodes (J));
                      Elements.Release (Self.Nodes (J));
                   end loop;
 
-                  --   ??? Need to initialize controlled elements to preserve
-                  --   the Ada semantic here
-
-                  System.Memory.Free (Convert (Self.Nodes));
+                  Free (Self.Nodes, Self.Capacity);
                   Self.Nodes := Tmp;
                end if;
             end if;
@@ -231,8 +275,7 @@ package body Conts.Vectors.Storage.Unbounded with SPARK_Mode => Off is
       procedure Release (Self : in out Container'Class) is
       begin
          if Self.Nodes /= null then
-            System.Memory.Free (Convert (Self.Nodes));
-            Self.Nodes := null;
+            Free (Self.Nodes, Self.Capacity);
             Self.Capacity := 0;
          end if;
       end Release;
