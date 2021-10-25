@@ -21,7 +21,7 @@
 
 pragma Ada_2012;
 with Asserts;
-with Conts.Algorithms;
+with Conts.Algorithms.Count_If;
 with GNAT.Source_Info;
 with GNATCOLL.Strings;     use GNATCOLL.Strings;
 with Report;

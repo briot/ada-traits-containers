@@ -22,7 +22,10 @@
 pragma Ada_2012;
 with Ada.Containers.Vectors;
 with Asserts;           use Asserts;
-with Conts.Algorithms;  use Conts.Algorithms;
+with Conts.Algorithms.Is_Sorted;
+with Conts.Algorithms.Sort.Insertion;
+with Conts.Algorithms.Sort.Shell;
+with Conts.Algorithms.Sort.Quicksort;
 with Conts.Vectors.Definite_Unbounded;
 
 package body Test_Algo_Sort is
@@ -42,29 +45,29 @@ package body Test_Algo_Sort is
       (Index_Type, Integer);
    package Ada_Sort is new Int_Ada_Vecs.Generic_Sorting ("<");
 
-   procedure Insert_Sort is new Conts.Algorithms.Insertion_Sort
+   procedure Insert_Sort is new Conts.Algorithms.Sort.Insertion
       (Cursors => Int_Vecs.Cursors.Random_Access,
        Getters => Int_Vecs.Maps.Element,
        "<"     => "<",
        Swap    => Int_Vecs.Swap);
-   procedure Shell_Ciura_Sort is new Conts.Algorithms.Shell_Sort
+   procedure Shell_Ciura_Sort is new Conts.Algorithms.Sort.Shell
       (Cursors => Int_Vecs.Cursors.Random_Access,
        Getters => Int_Vecs.Maps.Element,
        "<"     => "<",
        Swap    => Int_Vecs.Swap,
-       Gaps    => Ciura_Gaps);
-   procedure Shell_Sedgewick_Sort is new Conts.Algorithms.Shell_Sort
+       Gaps    => Conts.Algorithms.Sort.Ciura_Gaps);
+   procedure Shell_Sedgewick_Sort is new Conts.Algorithms.Sort.Shell
       (Cursors => Int_Vecs.Cursors.Random_Access,
        Getters => Int_Vecs.Maps.Element,
        "<"     => "<",
        Swap    => Int_Vecs.Swap,
-       Gaps    => Sedgewick_Gaps);
-   procedure Quicksort is new Conts.Algorithms.Quicksort
+       Gaps    => Conts.Algorithms.Sort.Sedgewick_Gaps);
+   procedure Quicksort is new Conts.Algorithms.Sort.Quicksort
       (Cursors => Int_Vecs.Cursors.Random_Access,
        Getters => Int_Vecs.Maps.Element,
        "<"     => "<",
        Swap    => Int_Vecs.Swap);
-   procedure Quicksort_Only is new Conts.Algorithms.Quicksort
+   procedure Quicksort_Only is new Conts.Algorithms.Sort.Quicksort
       (Cursors => Int_Vecs.Cursors.Random_Access,
        Getters => Int_Vecs.Maps.Element,
        "<"     => "<",

@@ -21,7 +21,7 @@
 
 pragma Ada_2012;
 with Asserts;
-with Conts.Algorithms;
+with Conts.Algorithms.Count_If;
 with GNATCOLL.Strings;
 with System.Assertions;        use System.Assertions;
 with System.Storage_Elements;  use System.Storage_Elements;

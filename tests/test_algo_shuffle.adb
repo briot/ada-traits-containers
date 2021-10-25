@@ -21,7 +21,8 @@
 
 pragma Ada_2012;
 with Asserts;
-with Conts.Algorithms;
+with Conts.Algorithms.Equals;
+with Conts.Algorithms.Shuffle;
 with Conts.Vectors.Definite_Unbounded;
 
 package body Test_Algo_Shuffle is

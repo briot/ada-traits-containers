@@ -1,5 +1,5 @@
 with Asserts;
-with Conts.Algorithms;
+with Conts.Algorithms.Count_If;
 with GNAT.Source_Info;
 with System.Storage_Elements; use System.Storage_Elements;
 with System.Assertions;       use System.Assertions;

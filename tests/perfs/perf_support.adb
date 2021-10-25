@@ -21,7 +21,7 @@
 
 pragma Ada_2012;
 with Asserts;
-with Conts.Algorithms;
+with Conts.Algorithms.Count_If;
 with Conts.Adaptors;     use Conts.Adaptors;
 with Report;
 with System.Storage_Elements;

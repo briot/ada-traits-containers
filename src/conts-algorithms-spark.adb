@@ -20,6 +20,9 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
+with Conts.Algorithms.Contains;
+with Conts.Algorithms.Equals;
+with Conts.Algorithms.Find;
 
 package body Conts.Algorithms.SPARK is
 
