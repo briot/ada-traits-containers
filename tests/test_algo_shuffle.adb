@@ -21,32 +21,24 @@
 
 pragma Ada_2012;
 with Asserts;
-with Conts.Algorithms.Equals;
 with Conts.Algorithms.Shuffle;
-with Conts.Vectors.Definite_Unbounded;
+with Test_Containers;  use Test_Containers;
 
 package body Test_Algo_Shuffle is
    use Asserts.Booleans;
 
-   subtype Index_Type is Positive;
-
-   package Int_Vecs is new Conts.Vectors.Definite_Unbounded
-      (Index_Type, Integer, Conts.Controlled_Base);
-   use Int_Vecs;
-   package Rand is new Conts.Default_Random (Extended_Index);
+   package Rand is new Conts.Default_Random (Int_Vecs.Extended_Index);
    procedure Shuffle is new Conts.Algorithms.Shuffle
       (Cursors => Int_Vecs.Cursors.Random_Access,
+       Swap    => Int_Vecs.Swap,
        Random  => Rand.Traits);
-   function Equals is new Conts.Algorithms.Equals
-      (Cursors => Int_Vecs.Cursors.Forward,
-       Getters => Int_Vecs.Maps.Element_From_Index);
 
    ----------
    -- Test --
    ----------
 
    procedure Test is
-      V, V2 : Vector;
+      V, V2 : Int_Vecs.Vector;
       G : Rand.Generator;
    begin
       for J in 1 .. 40 loop

@@ -57,6 +57,20 @@ package body Support_Vectors is
       (Cursors   => Vectors.Cursors.Forward,
        Getters   => Vectors.Maps.Constant_Returned);
 
+   -----------
+   -- Image --
+   -----------
+
+   function Image (V : Vectors.Vector) return String is
+      S : GNATCOLL.Strings.XString;
+   begin
+      for E of V loop
+         S.Append (Image (Elements.To_Element (E)));
+         S.Append (',');
+      end loop;
+      return S.To_String;
+   end Image;
+
    -------------------
    -- Assert_Vector --
    -------------------
@@ -66,15 +80,9 @@ package body Support_Vectors is
        Expected : String;
        Msg      : String;
        Location : String := GNAT.Source_Info.Source_Location;
-       Entity   : String := GNAT.Source_Info.Enclosing_Entity)
-   is
-      S : GNATCOLL.Strings.XString;
+       Entity   : String := GNAT.Source_Info.Enclosing_Entity) is
    begin
-      for E of V loop
-         S.Append (Image (Elements.To_Element (E)));
-         S.Append (',');
-      end loop;
-      Assert (S.To_String, Expected, Msg, Location, Entity);
+      Assert (Image (V), Expected, Msg, Location, Entity);
    end Assert_Vector;
 
    ----------

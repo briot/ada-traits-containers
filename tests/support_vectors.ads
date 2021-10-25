@@ -30,18 +30,20 @@ generic
    with package Vectors is new Conts.Vectors.Generics
       (Index_Type => Positive, others => <>);
    with function Image
-      (Self : Vectors.Storage.Elements.Element_Type) return String;
+      (Self : Vectors.Storage.Elements.Element_Type) return String is <>;
    with function Nth
-      (Index : Natural) return Vectors.Storage.Elements.Element_Type;
+      (Index : Natural) return Vectors.Storage.Elements.Element_Type is <>;
    with function Perf_Nth
-      (Index : Natural) return Vectors.Storage.Elements.Element_Type;
+      (Index : Natural) return Vectors.Storage.Elements.Element_Type is <>;
    with function Check_Element
-      (E : Vectors.Storage.Elements.Element_Type) return Boolean;
+      (E : Vectors.Storage.Elements.Element_Type) return Boolean is <>;
    --  Should be True for all elements returned by Nth (and use E)
 
    with function "="
       (L, R : Vectors.Storage.Elements.Element_Type) return Boolean is <>;
 package Support_Vectors is
+
+   function Image (V : Vectors.Vector) return String;
 
    procedure Assert_Vector
       (V        : Vectors.Vector;

@@ -1,6 +1,8 @@
 with Ada.Command_Line;
 with Test_Algo_Equals;
+with Test_Algo_Permutation;
 with Test_Algo_Random;
+with Test_Algo_Reverse;
 with Test_Algo_Shuffle;
 with Test_Algo_Sort;
 with Test_Graph_Adjlist;
@@ -26,6 +28,14 @@ begin
 
    if Filter.Active ("random") then
       Test_Algo_Random.Test;
+   end if;
+
+   if Filter.Active ("reverse") then
+      Test_Algo_Reverse.Test;
+   end if;
+
+   if Filter.Active ("permutation") then
+      Test_Algo_Permutation.Test;
    end if;
 
    if Filter.Active ("shuffle") then
