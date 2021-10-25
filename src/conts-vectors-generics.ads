@@ -290,6 +290,7 @@ package Conts.Vectors.Generics with SPARK_Mode is
          Cursor_Type    => Cursor,
          No_Element     => No_Element,
          First          => First,
+         Last           => Last,
          Has_Element    => Has_Element,
          Next           => Next,
          Previous       => Previous);

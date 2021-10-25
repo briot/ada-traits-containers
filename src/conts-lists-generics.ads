@@ -106,6 +106,8 @@ package Conts.Lists.Generics with SPARK_Mode is
 
    function First (Self : Base_List'Class) return Cursor
      renames Impl.First;
+   function Last (Self : Base_List'Class) return Cursor
+     renames Impl.Last;
    function Element
      (Self : Base_List'Class; Position : Cursor) return Constant_Returned_Type
      renames Impl.Element;
@@ -204,6 +206,7 @@ package Conts.Lists.Generics with SPARK_Mode is
          Cursor_Type    => Cursor,
          No_Element     => No_Element,
          First          => First,
+         Last           => Last,
          Next           => Next,
          Has_Element    => Has_Element,
          Previous       => Previous);

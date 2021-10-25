@@ -67,7 +67,8 @@ package Conts.Adaptors is
             (Container_Type => List'Class,
              Cursor_Type    => Cursor,
              No_Element     => Lists.No_Element,
-             First          => Lists.First);
+             First          => Lists.First,
+             Last           => Lists.Last);
          package Forward renames Bidirectional.Forward;
       end Cursors;
 
@@ -105,7 +106,8 @@ package Conts.Adaptors is
             (Container_Type => List'Class,
              Cursor_Type    => Cursor,
              No_Element     => Lists.No_Element,
-             First          => Lists.First);
+             First          => Lists.First,
+             Last           => Lists.Last);
          package Forward renames Bidirectional.Forward;
       end Cursors;
 
@@ -147,7 +149,8 @@ package Conts.Adaptors is
             (Container_Type => List'Class,
              Cursor_Type    => Cursor,
              No_Element     => Lists.No_Element,
-             First          => Lists.First);
+             First          => Lists.First,
+             Last           => Lists.Last);
          package Forward renames Bidirectional.Forward;
       end Cursors;
 
@@ -199,7 +202,8 @@ package Conts.Adaptors is
             (Container_Type => Vector'Class,
              Cursor_Type    => Cursor,
              No_Element     => Vectors.No_Element,
-             First          => Vectors.First);
+             First          => Vectors.First,
+             Last           => Vectors.Last);
          package Forward renames Bidirectional.Forward;
       end Cursors;
 
@@ -250,7 +254,8 @@ package Conts.Adaptors is
             (Container_Type => Vector'Class,
              Cursor_Type    => Cursor,
              No_Element     => Vectors.No_Element,
-             First          => Vectors.First);
+             First          => Vectors.First,
+             Last           => Vectors.Last);
          package Forward renames Bidirectional.Forward;
       end Cursors;
 
@@ -304,7 +309,8 @@ package Conts.Adaptors is
             (Container_Type => Vector'Class,
              Cursor_Type    => Cursor,
              No_Element     => Vectors.No_Element,
-             First          => Vectors.First);
+             First          => Vectors.First,
+             Last           => Vectors.Last);
          package Forward renames Bidirectional.Forward;
       end Cursors;
 
@@ -423,7 +429,8 @@ package Conts.Adaptors is
             (Container_Type => Map'Class,
              Cursor_Type    => Cursor,
              No_Element     => Ordered_Maps.No_Element,
-             First          => Ordered_Maps.First);
+             First          => Ordered_Maps.First,
+             Last           => Ordered_Maps.Last);
          package Forward renames Bidirectional.Forward;
       end Cursors;
 
@@ -505,7 +512,8 @@ package Conts.Adaptors is
             (Container_Type => Map'Class,
              Cursor_Type    => Cursor,
              No_Element     => Ordered_Maps.No_Element,
-             First          => Ordered_Maps.First);
+             First          => Ordered_Maps.First,
+             Last           => Ordered_Maps.Last);
          package Forward renames Bidirectional.Forward;
       end Cursors;
 

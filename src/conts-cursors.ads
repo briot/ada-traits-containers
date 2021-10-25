@@ -67,6 +67,7 @@ package Conts.Cursors with SPARK_Mode is
       type Cursor_Type is private;
       No_Element : Cursor_Type;
       with function First (Self : Container_Type) return Cursor_Type is <>;
+      with function Last (Self : Container_Type) return Cursor_Type is <>;
       with function Has_Element (Self : Container_Type; Pos : Cursor_Type)
          return Boolean is <>;
       with function Next (Self : Container_Type; Pos : Cursor_Type)
@@ -76,6 +77,18 @@ package Conts.Cursors with SPARK_Mode is
    package Bidirectional_Cursors is
       subtype Container is Container_Type;
       subtype Cursor    is Cursor_Type;
+
+      function First_Cursor (Self : Container_Type) return Cursor_Type
+         renames First;
+      function Last_Cursor (Self : Container_Type) return Cursor_Type
+         renames Last;
+      function Prev
+         (Self : Container_Type; Pos : Cursor_Type) return Cursor_Type
+         renames Previous;
+      function Has_Elem
+         (Self : Container_Type; Pos : Cursor_Type)
+         return Boolean
+         renames Has_Element;
 
       --  A bidirectional cursor is also a forward cursor
       package Forward is new Forward_Cursors (Container, Cursor, No_Element);
