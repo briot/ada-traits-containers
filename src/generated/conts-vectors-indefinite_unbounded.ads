@@ -21,9 +21,10 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
+with Conts.Elements.Indefinite;
+with Conts.Pools;
 with Conts.Properties.SPARK;
 with Conts.Vectors.Generics;
-with Conts.Elements.Indefinite;
 with Conts.Vectors.Storage.Unbounded;
 generic
    type Index_Type is (<>);
@@ -38,7 +39,7 @@ package Conts.Vectors.Indefinite_Unbounded with SPARK_Mode is
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
    package Elements is new Conts.Elements.Indefinite
-      (Element_Type, Free => Free, Pool => Conts.Global_Pool);
+      (Element_Type, Free => Free, Pool => Conts.Pools.Global_Pool);
    package Storage is new Conts.Vectors.Storage.Unbounded
       (Elements            => Elements.Traits,
        Resize_Policy       => Conts.Vectors.Resize_1_5,

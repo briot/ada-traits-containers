@@ -21,10 +21,11 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Properties.SPARK;
-with Conts.Lists.Generics;
 with Conts.Elements.Definite;
+with Conts.Lists.Generics;
 with Conts.Lists.Storage.Unbounded;
+with Conts.Pools;
+with Conts.Properties.SPARK;
 
 generic
    type Element_Type is private;
@@ -38,7 +39,7 @@ package Conts.Lists.Definite_Unbounded_Limited with SPARK_Mode is
       (Element_Type, Free => Free, Movable => True, Copyable => True);
    package Storage is new Conts.Lists.Storage.Unbounded
       (Elements            => Elements.Traits,
-       Pool                => Conts.Global_Pool,
+       Pool                => Conts.Pools.Global_Pool,
        Container_Base_Type => Conts.Limited_Base);
    package Lists is new Conts.Lists.Generics (Storage.Traits);
    package Cursors renames Lists.Cursors;  --  Forward, Bidirectional

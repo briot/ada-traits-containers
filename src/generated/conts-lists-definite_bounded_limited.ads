@@ -21,10 +21,10 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Properties.SPARK;
-with Conts.Lists.Generics;
 with Conts.Elements.Definite;
+with Conts.Lists.Generics;
 with Conts.Lists.Storage.Bounded;
+with Conts.Properties.SPARK;
 
 generic
    type Element_Type is private;

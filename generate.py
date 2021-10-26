@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-from typing import Literal, Sequence, Tuple, List, Optional
+from typing import Literal, Sequence, Tuple, List, Optional, Set
 
 # Generate high-level packages by combining various traits packages
 
@@ -44,24 +44,29 @@ def base_to_str(base: Base) -> str:
 
 
 class Test:
-    withs: Sequence[str]
+    def __init__(self):
+        self.withs: Set[str]
     def code(self, idx: int) -> str: ...
     def test_name(self) -> str: ...
 
 
 class Elements:
-    descr: str
-    withs: str
-    formals: str
-    formals_with_default: str
-    traits: str
-    def equal(self) -> str: ...
+    def __init__(self):
+        self.descr: str
+        self.withs: Set[str]
+        self.formals: str
+        self.formals_with_default: str
+        self.traits: str
+    def equal(self) -> str:
+        ...
 
 
 class Definite_Elements(Elements):
     def __init__(self, name="Element", movable=True, copyable=True):
         self.descr = "Def"
-        self.withs = "with Conts.Elements.Definite;"
+        self.withs = set([
+            "Conts.Elements.Definite"
+        ])
         self.formals = f"   type {name}_Type is private;\n"
         self.formals_with_default = (
             f"   with procedure Free (E : in out {name}_Type) is null;\n"
@@ -80,14 +85,18 @@ class Indefinite_Elements(Elements):
     def __init__(self, name="Element"):
         self.descr = "Indef"
         self.name = name
-        self.withs = "with Conts.Elements.Indefinite;"
+        self.withs = set([
+            "Conts.Elements.Indefinite",
+            "Conts.Pools",
+        ])
         self.formals = f"   type {name}_Type (<>) is private;\n"
         self.formals_with_default = (
             f"   with procedure Free (E : in out {name}_Type) is null;\n"
         )
         self.traits = (
             f"   package {name}s is new Conts.Elements.Indefinite\n"
-            f"      ({name}_Type, Free => Free, Pool => Conts.Global_Pool);"
+            f"      ({name}_Type, Free => Free,"
+            f" Pool => Conts.Pools.Global_Pool);"
         )
 
     def equal(self) -> str:
@@ -102,12 +111,15 @@ class Indefinite_Elements_SPARK(Elements):
     def __init__(self, name="Element"):
         self.descr = "Indef_SPARK"
         self.name = name
-        self.withs = "with Conts.Elements.Indefinite_SPARK;"
+        self.withs = set([
+            "Conts.Elements.Indefinite_SPARK",
+            "Conts.Pools",
+        ])
         self.formals = f"   type {name}_Type (<>) is private;\n"
         self.formals_with_default = ""
         self.traits = (
             f"   package {name}s is new Conts.Elements.Indefinite_SPARK\n"
-            f"      ({name}_Type, Pool => Conts.Global_Pool);"
+            f"      ({name}_Type, Pool => Conts.Pools.Global_Pool);"
         )
 
     def equal(self) -> str:
@@ -122,13 +134,16 @@ class Indefinite_Elements_SPARK(Elements):
 class Array_Elements(Elements):
     def __init__(self, index: str, element: str, array: str):
         self.descr = "Array"
-        self.withs = "with Conts.Elements.Arrays;"
+        self.withs = set([
+            "Conts.Elements.Arrays",
+            "Conts.Pools",
+        ])
         self.array = array
         self.formals = ""
         self.formals_with_default = ""
         self.traits = (
             f"   package Elements is new Conts.Elements.Arrays\n"
-            f"     ({index}, {element}, {array}, Conts.Global_Pool);"
+            f"     ({index}, {element}, {array}, Conts.Pools.Global_Pool);"
         )
 
 
@@ -136,7 +151,9 @@ class Storage:
     def __init__(self, container: str, pkg: Pkg, base: Base, extra_actual=""):
         self.pkg = pkg
         self.base = base
-        self.withs = f"with Conts.{container}s.Storage.{pkg};"
+        self.withs = set([
+            f"Conts.{container}s.Storage.{pkg}"
+        ])
         self.formals = (
             "   type Container_Base_Type is abstract tagged limited private;\n"
             if base == 'Container_Base_Type'
@@ -209,9 +226,12 @@ class Storage_List(Storage):
             extra_actual=(
                 ""
                 if pkg != "Unbounded"
-                else "       Pool                => Conts.Global_Pool,\n"
+                else "       Pool                => Conts.Pools.Global_Pool,\n"
             )
         )
+
+        if pkg == "Unbounded":
+            self.withs.add("Conts.Pools")
 
 
 class Container:
@@ -354,9 +374,11 @@ class Vector_Test(Test):
         self.favorite = ("True" if data[3] else "False")
         self.category_name = data[4] or self.element
         self.container = container
-        self.withs = ["Support_Vectors"]
+        self.withs = set([
+            "Support_Vectors",
+        ])
         if '.' in self.element:
-            self.withs.append(self.element.rsplit('.', 1)[0])
+            self.withs.add(self.element.rsplit('.', 1)[0])
 
     def category(self) -> str:
         return f"{self.category_name} Vector"
@@ -435,12 +457,18 @@ class Vector_Container(Container):
 
     def ads(self) -> str:
         spark_mode = " with SPARK_Mode"
+        withs: Set[str] = set([
+            "Conts.Properties.SPARK",
+            "Conts.Vectors.Generics",
+        ])
+        withs.update(self.elements.withs)
+        withs.update(self.storage.withs)
+
+        withs_str = "\n".join(f"with {t};" for t in sorted(withs))
+
         return (f"""{header}
 pragma Ada_2012;
-with Conts.Properties.SPARK;
-with Conts.Vectors.Generics;
-{self.elements.withs}
-{self.storage.withs}
+{withs_str}
 generic
    type Index_Type is (<>);
 {self.elements.formals}
@@ -514,9 +542,9 @@ class List_Test(Test):
         self.base = data[1]
         self.favorite = ("True" if data[2] else "False")
         self.category_name = data[3] or self.element
-        self.withs = ["Support_Lists"]
+        self.withs: Set[str] = set(["Support_Lists"])
         if '.' in self.element:
-            self.withs.append(self.element.rsplit('.', 1)[0])
+            self.withs.add(self.element.rsplit('.', 1)[0])
 
     def category(self) -> str:
         return f"{self.category_name} List"
@@ -595,12 +623,18 @@ class List_Container(Container):
 
     def ads(self) -> str:
         spark_mode = " with SPARK_Mode"
+
+        withs: Set[str] = set([
+            "Conts.Properties.SPARK",
+            "Conts.Lists.Generics",
+        ])
+        withs.update(self.elements.withs)
+        withs.update(self.storage.withs)
+        withs_str = "\n".join(f"with {t};" for t in sorted(withs))
+
         return (f"""{header}
 pragma Ada_2012;
-with Conts.Properties.SPARK;
-with Conts.Lists.Generics;
-{self.elements.withs}
-{self.storage.withs}
+{withs_str}
 
 generic
 {self.elements.formals}{self.storage.formals}{self.elements.formals_with_default}package {self.pkg_name}{spark_mode} is
@@ -671,11 +705,11 @@ class Map_Test(Test):
         self.base: Optional[Base] = data[2]
         self.favorite = ("True" if data[3] else "False")
         self.container = container
-        self.withs = ["Support_Maps"]
+        self.withs: Set[str] = set(["Support_Maps"])
         if '.' in self.key:
-            self.withs.append(self.key.rsplit('.', 1)[0])
+            self.withs.add(self.key.rsplit('.', 1)[0])
         if '.' in self.element:
-            self.withs.append(self.element.rsplit('.', 1)[0])
+            self.withs.add(self.element.rsplit('.', 1)[0])
 
     def category(self) -> str:
         return f"{self.key}-{self.element} Map"
@@ -753,14 +787,15 @@ class Map_Container(Container):
 
     def ads(self) -> str:
         spark_mode = " with SPARK_Mode"
-        withs = "\n".join(sorted(set([self.elements.withs, self.keys.withs,])))
+        withs: Set[str] = set([
+            "Conts.Pools",
+            "Conts.Maps.Generics",
+        ])
+        withs.update(self.elements.withs)
+        withs.update(self.keys.withs)
 
-        spark_withs = (
-            ""
-            if self.pkg != 'Unbounded_SPARK'
-            else
-            "with Conts.Properties.SPARK;\n"
-        )
+        if self.pkg == "Unbounded_SPARK":
+            withs.add("Conts.Properties.SPARK")
 
         spark = (
             ""
@@ -782,10 +817,11 @@ class Map_Container(Container):
 """
         )
 
+        withs_str = "\n".join(f"with {t};" for t in sorted(withs))
+
         return (f"""{header}
 pragma Ada_2012;
-with Conts.Maps.Generics;
-{spark_withs}{withs}
+{withs_str}
 
 generic
 {self.keys.formals}{self.elements.formals}{self.storage.formals}   with function Hash (Key : Key_Type) return Hash_Type;
@@ -805,7 +841,7 @@ generic
       Hash                => Hash,
       "="                 => "=",
       Probing             => Conts.Maps.Perturbation_Probing,
-      Pool                => Conts.Global_Pool,
+      Pool                => Conts.Pools.Global_Pool,
       Container_Base_Type => {self.base});
 
    subtype Map is Impl.Map;

@@ -21,9 +21,9 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
+with Conts.Elements.Definite;
 with Conts.Properties.SPARK;
 with Conts.Vectors.Generics;
-with Conts.Elements.Definite;
 with Conts.Vectors.Storage.Bounded;
 generic
    type Index_Type is (<>);

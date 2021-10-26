@@ -21,8 +21,9 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Maps.Generics;
 with Conts.Elements.Definite;
+with Conts.Maps.Generics;
+with Conts.Pools;
 
 generic
    type Key_Type is private;
@@ -49,7 +50,7 @@ package Conts.Maps.Def_Def_Unbounded with SPARK_Mode is
       Hash                => Hash,
       "="                 => "=",
       Probing             => Conts.Maps.Perturbation_Probing,
-      Pool                => Conts.Global_Pool,
+      Pool                => Conts.Pools.Global_Pool,
       Container_Base_Type => Container_Base_Type);
 
    subtype Map is Impl.Map;

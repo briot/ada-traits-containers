@@ -21,8 +21,9 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Maps.Generics;
 with Conts.Elements.Indefinite;
+with Conts.Maps.Generics;
+with Conts.Pools;
 
 generic
    type Key_Type (<>) is private;
@@ -38,9 +39,9 @@ package Conts.Maps.Indef_Indef_Unbounded with SPARK_Mode is
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
    package Keys is new Conts.Elements.Indefinite
-      (Key_Type, Free => Free, Pool => Conts.Global_Pool);
+      (Key_Type, Free => Free, Pool => Conts.Pools.Global_Pool);
    package Elements is new Conts.Elements.Indefinite
-      (Element_Type, Free => Free, Pool => Conts.Global_Pool);
+      (Element_Type, Free => Free, Pool => Conts.Pools.Global_Pool);
 
    function "=" (Left : Key_Type; Right : Keys.Traits.Stored) return Boolean
         is (Left = Right.all) with Inline;
@@ -51,7 +52,7 @@ package Conts.Maps.Indef_Indef_Unbounded with SPARK_Mode is
       Hash                => Hash,
       "="                 => "=",
       Probing             => Conts.Maps.Perturbation_Probing,
-      Pool                => Conts.Global_Pool,
+      Pool                => Conts.Pools.Global_Pool,
       Container_Base_Type => Container_Base_Type);
 
    subtype Map is Impl.Map;

@@ -21,10 +21,11 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Properties.SPARK;
-with Conts.Lists.Generics;
 with Conts.Elements.Indefinite_SPARK;
+with Conts.Lists.Generics;
 with Conts.Lists.Storage.Unbounded_SPARK;
+with Conts.Pools;
+with Conts.Properties.SPARK;
 
 generic
    type Element_Type (<>) is private;
@@ -34,7 +35,7 @@ package Conts.Lists.Indefinite_Unbounded_SPARK with SPARK_Mode is
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
    package Elements is new Conts.Elements.Indefinite_SPARK
-      (Element_Type, Pool => Conts.Global_Pool);
+      (Element_Type, Pool => Conts.Pools.Global_Pool);
    package Storage is new Conts.Lists.Storage.Unbounded_SPARK
       (Elements            => Elements.Traits,
        Container_Base_Type => Conts.Limited_Base);
