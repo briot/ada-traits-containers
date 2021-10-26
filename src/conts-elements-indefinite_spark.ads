@@ -26,11 +26,12 @@
 --  conts-elements-indefinite.ads)
 
 pragma Ada_2012;
+with Conts.Pools;
 
 generic
    type Element_Type (<>) is private;
 
-   with package Pool is new Conts.Pools (<>);
+   with package Pool is new Conts.Pools.Pools (<>);
    --  The storage pool used for Elements.
 
 package Conts.Elements.Indefinite_SPARK with SPARK_Mode => On is

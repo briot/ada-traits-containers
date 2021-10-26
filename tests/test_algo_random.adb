@@ -20,13 +20,13 @@
 ------------------------------------------------------------------------------
 
 with Asserts;
-with Conts;
+with Conts.Algorithms.Random;
 
 package body Test_Algo_Random is
    use Asserts.Long_Floats;
 
    type My_Subtype is new Integer range 10 .. 20;
-   package Rand is new Conts.Default_Random (My_Subtype);
+   package Rand is new Conts.Algorithms.Random.Default_Random (My_Subtype);
 
    ----------
    -- Test --
@@ -56,7 +56,8 @@ package body Test_Algo_Random is
          "standard random numbers, unexpected mean");
 
       declare
-         procedure Ranged is new Conts.Ranged_Random (Rand.Traits, 12, 14);
+         procedure Ranged is new Conts.Algorithms.Random.Ranged_Random
+            (Rand.Traits, 12, 14);
       begin
          Total := 0.0;
          for Count in 1 .. Items_Count loop

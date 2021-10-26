@@ -1,8 +1,9 @@
 with Conts.Cursors;
+with Conts.Algorithms.Random;
 
 generic
    with package Cursors is new Conts.Cursors.Random_Access_Cursors (<>);
-   with package Random is new Conts.Uniform_Random_Traits
+   with package Random is new Conts.Algorithms.Random.Uniform_Random_Traits
       (Discrete_Type => Cursors.Index, others => <>);
    with procedure Swap
       (Self        : in out Cursors.Container;

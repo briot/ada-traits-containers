@@ -27,6 +27,7 @@
 --  and avoids copying potentially large elements.
 
 pragma Ada_2012;
+with Conts.Pools;
 
 generic
    type Element_Type (<>) is private;
@@ -35,7 +36,7 @@ generic
    --  This procedure is called when the element is removed from its
    --  container.
 
-   with package Pool is new Conts.Pools (<>);
+   with package Pool is new Conts.Pools.Pools (<>);
 
 package Conts.Elements.Indefinite is
 

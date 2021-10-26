@@ -12,7 +12,7 @@ generic
      (Self        : in out Cursors.Container;
       Left, Right : Cursors.Index) is <>;
 procedure Conts.Algorithms.Sort.Insertion (Self : in out Cursors.Container)
-  with Global => null;
+  with Pure, Global => null;
 --  Sort the container.
 --  This is an algorithm only suitable for small containers (up to say 100
 --  elements for instance), for which it is fast since it has low overhead.

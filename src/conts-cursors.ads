@@ -36,6 +36,8 @@ pragma Ada_2012;
 
 package Conts.Cursors with SPARK_Mode is
 
+   pragma Pure;
+
    ---------------------
    -- Forward_Cursors --
    ---------------------

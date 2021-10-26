@@ -13,7 +13,7 @@ generic
       Left, Right : Cursors.Index) is <>;
    Threshold  : Integer := 20;
 procedure Conts.Algorithms.Sort.Quicksort (Self : in out Cursors.Container)
-  with Global => null;
+  with Pure, Global => null;
 --  Sort the container.
 --  When there are fewer than Threshold elements in a sequence, a simpler
 --  sort is used instead to avoid a lot of recursions.

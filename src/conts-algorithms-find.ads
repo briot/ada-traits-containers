@@ -12,6 +12,6 @@ function Conts.Algorithms.Find
   (Self      : Cursors.Container;
    E         : Getters.Element)
   return Cursors.Cursor
-  with Global => null;
+  with Pure, Global => null;
 --  Return the location of E within Self, or No_Element if it could not be
 --  found.

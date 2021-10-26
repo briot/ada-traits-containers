@@ -12,5 +12,5 @@ function Conts.Algorithms.Contains
   (Self      : Cursors.Container;
    E         : Getters.Element)
   return Boolean
-  with Global => null;
+  with Pure, Global => null;
 --  True if E is found in Self

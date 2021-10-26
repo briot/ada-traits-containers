@@ -14,7 +14,7 @@ generic
    Gaps : Conts.Algorithms.Sort.Shell_Sort_Gaps := Sedgewick_Gaps;
 procedure Conts.Algorithms.Sort.Shell
   (Self : in out Cursors.Container)
-  with Global => null;
+  with Pure, Global => null;
 --  Sort the container.
 --  This is an improvement over Insertion_Sort. It does several iterations
 --  of Insertion_Sort, each looking at elements apart from each other

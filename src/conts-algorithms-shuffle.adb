@@ -16,7 +16,8 @@ begin
       declare
          --  The cost of the instance is limited (just a few instructions)
          --  thanks to inlining.
-         procedure Rand is new Conts.Ranged_Random (Random, First, C);
+         procedure Rand is new Conts.Algorithms.Random.Ranged_Random
+            (Random, First, C);
       begin
          Rand (Gen, Result => G);
          Swap (Self, G, C);

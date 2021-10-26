@@ -1,5 +1,7 @@
 package Conts.Algorithms.Sort is
 
+   pragma Pure;
+
    type Shell_Sort_Gaps is array (Natural range <>) of Integer;
    Ciura_Gaps : constant Shell_Sort_Gaps :=
      (1, 4, 10, 23, 57, 132, 301, 701);

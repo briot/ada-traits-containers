@@ -10,5 +10,5 @@ generic
    with function "=" (K1, K2 : Getters.Element) return Boolean is <>;
 function Conts.Algorithms.Equals
    (Left, Right  : Cursors.Container) return Boolean
-   with Global => null;
+   with Pure, Global => null;
 --  True if Left and Right contain the same elements, in the same order.

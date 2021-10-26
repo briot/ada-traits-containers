@@ -11,5 +11,5 @@ function Conts.Algorithms.Count_If
   (Self      : Cursors.Container;
    Predicate : not null access function (E : Getters.Element) return Boolean)
   return Natural
-  with Global => null;
+  with Pure, Global => null;
 --  Count the number of elements in the container that match the predicate

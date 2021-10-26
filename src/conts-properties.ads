@@ -73,6 +73,8 @@ pragma Ada_2012;
 
 package Conts.Properties is
 
+   pragma Pure;
+
    -----------------------------
    -- Read-only property maps --
    -----------------------------

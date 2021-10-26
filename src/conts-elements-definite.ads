@@ -43,6 +43,9 @@ generic
    Copyable : Boolean := True;    --  should be False for controlled types
 
 package Conts.Elements.Definite with SPARK_Mode is
+
+   pragma Pure;
+
 --   pragma Compile_Time_Error
 --      (Copyable and Element_Type'Finalization_Size /= 0,
 --       "Copyable should be False for controlled types");

@@ -28,6 +28,7 @@ pragma Ada_2012;
 with Conts.Elements;
 with Conts.Functional.Sequences;
 with Conts.Functional.Maps;
+with Conts.Pools;
 
 generic
    with package Keys is new Conts.Elements.Traits (<>);
@@ -35,7 +36,7 @@ generic
    type Container_Base_Type is abstract tagged limited private;
    with function Hash (Key : Keys.Element_Type) return Hash_Type;
    type Probing is new Probing_Strategy with private;
-   with package Pool is new Conts.Pools (<>);
+   with package Pool is new Conts.Pools.Pools (<>);
    with function "="
      (Left  : Keys.Element_Type;
       Right : Keys.Stored_Type) return Boolean is <>;

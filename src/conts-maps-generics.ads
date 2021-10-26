@@ -22,6 +22,7 @@
 pragma Ada_2012;
 with Conts.Cursors;
 with Conts.Elements;
+with Conts.Pools;
 with Conts.Properties;
 with Conts.Maps.Impl;
 
@@ -34,7 +35,7 @@ generic
 
    type Probing is new Probing_Strategy with private;
 
-   with package Pool is new Conts.Pools (<>);
+   with package Pool is new Conts.Pools.Pools (<>);
    --  The storage pool used to allocate the buckets
 
    with function "="

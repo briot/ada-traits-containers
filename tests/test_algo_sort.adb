@@ -23,6 +23,7 @@ pragma Ada_2012;
 with Ada.Containers.Vectors;
 with Asserts;           use Asserts;
 with Conts.Algorithms.Is_Sorted;
+with Conts.Algorithms.Random;
 with Conts.Algorithms.Sort.Insertion;
 with Conts.Algorithms.Sort.Shell;
 with Conts.Algorithms.Sort.Quicksort;
@@ -39,7 +40,7 @@ package body Test_Algo_Sort is
       (Index_Type, Integer, Conts.Controlled_Base);
    use Int_Vecs;
 
-   package Rand is new Conts.Default_Random (Extended_Index);
+   package Rand is new Conts.Algorithms.Random.Default_Random (Extended_Index);
 
    package Int_Ada_Vecs is new Ada.Containers.Vectors
       (Index_Type, Integer);

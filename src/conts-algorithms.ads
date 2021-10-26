@@ -25,6 +25,8 @@ with Conts.Properties;
 
 package Conts.Algorithms is
 
+   pragma Pure;
+
    -------------
    -- Subsets --
    -------------

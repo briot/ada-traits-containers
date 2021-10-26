@@ -28,6 +28,8 @@ pragma Ada_2012;
 
 package Conts.Elements with SPARK_Mode is
 
+   pragma Pure;
+
    generic
       type Element_Type (<>) is private;
       --  The element type visible to the user (in parameter to Append for

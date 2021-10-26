@@ -29,6 +29,7 @@
 --  when we end up allocating memory.
 
 pragma Ada_2012;
+with Conts.Pools;
 
 generic
    type Index_Type is new Integer;
@@ -38,7 +39,7 @@ generic
    type Element_Type is private;
    type Array_Type is array (Index_Type range <>) of Element_Type;
 
-   with package Pool is new Conts.Pools (<>);
+   with package Pool is new Conts.Pools.Pools (<>);
    --  Storage pool used to allocate memory
 
    Short_Size : Natural := Standard'Address_Size / Element_Type'Object_Size;

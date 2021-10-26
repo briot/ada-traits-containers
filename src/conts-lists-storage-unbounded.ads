@@ -24,6 +24,7 @@
 
 pragma Ada_2012;
 with Conts.Elements;
+with Conts.Pools;
 
 generic
    with package Elements is new Conts.Elements.Traits (<>);
@@ -31,7 +32,7 @@ generic
    type Container_Base_Type is abstract tagged limited private;
    --  The base type for these unbounded list.
 
-   with package Pool is new Conts.Pools (<>);
+   with package Pool is new Conts.Pools.Pools (<>);
    --  The storage pool used for nodes.
 
 package Conts.Lists.Storage.Unbounded with SPARK_Mode => Off is
