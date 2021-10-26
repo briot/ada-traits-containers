@@ -12,7 +12,7 @@
 --       S : constant String = "ABCD";
 --    begin
 --       loop
---          Put_Line (S (1 .. 2));
+--          Put_Line (S (S'First .. S'First + 1));
 --          exit when not
 --             Permutations.Next_Partial_Permutation (S, S'First + 1);
 --       end loop;
@@ -69,5 +69,18 @@ package Conts.Algorithms.Permutations is
    --
    --  Example:
    --    "ABCD", 2  ->  AB AC AD BA BC BD CA CB CD DA DB DC
+
+   function Next_Combination
+      (Self    : in out Cursors.Container;
+       K       : Cursors.Cursor_Type)
+      return Boolean;
+   --  Permutes self to return the next combination, so that elements from
+   --  [Self.First, K] are that combination.
+   --  A combination of size k of a range of size n is a sorted subsequence of
+   --  size k of the total range, i.e., the ordered (possibly multi-)set of the
+   --  elements at k positions among the n positions in Self.
+   --
+   --  Example:
+   --    "ABCD", 2  ->  AB AC AD BC BD CD
 
 end Conts.Algorithms.Permutations;

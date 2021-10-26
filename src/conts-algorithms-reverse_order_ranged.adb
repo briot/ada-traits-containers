@@ -6,8 +6,7 @@ is
    F : Cursors.Cursor_Type := First;
    L : Cursors.Cursor_Type := Last;
 begin
-   loop
-      exit when F = L;
+   while F /= L loop
       Swap (Self, F, L);
       L := Cursors.Previous (Self, L);
       exit when F = L;
