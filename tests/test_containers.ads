@@ -1,9 +1,17 @@
+with Conts.Adaptors;
 with Conts.Algorithms.Equals;
 with Conts.Vectors.Definite_Unbounded;
 with Support_Vectors;
 with Test_Support;   use Test_Support;
 
 package Test_Containers is
+
+   ---------------------
+   -- String adaptors --
+   ---------------------
+
+   package String_Adaptors is new Conts.Adaptors.Array_Adaptors
+      (Positive, Character, String);
 
    ---------------------
    -- Integer vectors --
