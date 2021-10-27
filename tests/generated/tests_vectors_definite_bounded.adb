@@ -21,9 +21,11 @@ package body Tests_Vectors_Definite_Bounded is
       Tests0.Test (V);
    end Test0;
 
-   procedure Test_Perf0 (Result : in out Report.Output'Class) is
+   procedure Test_Perf0
+      (Result : in out Report.Output'Class; Favorite : Boolean)
+   is
       V1, V2 : Vecs0.Vector (Test_Support.Items_Count);
    begin
-      Tests0.Test_Perf (Result, V1, V2, Favorite => False);
+      Tests0.Test_Perf (Result, V1, V2, Favorite => Favorite);
    end Test_Perf0;
 end Tests_Vectors_Definite_Bounded;

@@ -230,7 +230,10 @@ package body Test_Algo_Sort is
    -- Test_Perf --
    ---------------
 
-   procedure Test_Perf (Result : in out Report.Output'Class) is
+   procedure Test_Perf
+      (Result : in out Report.Output'Class; Favorite : Boolean)
+   is
+      pragma Unreferenced (Favorite);
       Category : constant String := "Sorting";
 
       generic

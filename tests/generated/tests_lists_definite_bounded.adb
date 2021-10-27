@@ -20,9 +20,11 @@ package body Tests_Lists_Definite_Bounded is
       Tests0.Test_Correctness (L1, L2);
    end Test0;
 
-   procedure Test_Perf0 (Result : in out Report.Output'Class) is
+   procedure Test_Perf0
+      (Result : in out Report.Output'Class; Favorite : Boolean)
+   is
       L1, L2 : Lists0.List (Test_Support.Items_Count);
    begin
-      Tests0.Test_Perf (Result, L1, L2, Favorite => False);
+      Tests0.Test_Perf (Result, L1, L2, Favorite => Favorite);
    end Test_Perf0;
 end Tests_Lists_Definite_Bounded;

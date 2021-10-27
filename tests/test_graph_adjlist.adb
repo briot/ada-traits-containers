@@ -90,7 +90,9 @@ package body Test_Graph_Adjlist is
    -- Test_Perf_Adjacency_List --
    ------------------------------
 
-   procedure Test_Perf_Adjacency_List (Stdout : in out Output'Class) is
+   procedure Test_Perf_Adjacency_List
+      (Stdout : in out Output'Class; Favorite : Boolean)
+   is
       Container : constant String := "adjacency list";
 
       package Graphs is new GAL.Graphs.Adjacency_List
@@ -165,7 +167,7 @@ package body Test_Graph_Adjlist is
 
    begin
       Stdout.Set_Column
-         (Category, Container, G'Size / 8, Favorite => True);
+         (Category, Container, G'Size / 8, Favorite => Favorite);
 
       Time_Fill (Stdout, Category, Container, "fill", Start_Group => True);
 
@@ -190,7 +192,9 @@ package body Test_Graph_Adjlist is
    -- Test_Perf_Custom --
    ----------------------
 
-   procedure Test_Perf_Custom (Stdout : in out Output'Class) is
+   procedure Test_Perf_Custom
+      (Stdout : in out Output'Class; Favorite : Boolean)
+   is
       Container : constant String := "custom graph";
 
       procedure Search is new Graph1_Support.DFS.Search (My_Visitors);
@@ -226,8 +230,8 @@ package body Test_Graph_Adjlist is
       procedure Time_Recursive is new Report.Timeit (Do_Recursive);
 
    begin
-      Stdout.Set_Column (Category, Container, G'Size / 8);
-
+      Stdout.Set_Column
+         (Category, Container, G'Size / 8, Favorite => Favorite);
       Time_Search1 (Stdout, Category, Container, "dfs, no visitor");
       Time_Search2 (Stdout, Category, Container, "dfs, visitor");
       Time_Recursive (Stdout, Category, Container, "dfs-recursive, visitor");

@@ -34,7 +34,9 @@ package body Perf_Support is
    -- Test_Arrays_Int --
    ---------------------
 
-   procedure Test_Arrays_Int (Stdout : in out Output'Class) is
+   procedure Test_Arrays_Int
+      (Stdout : in out Output'Class; Favorite : Boolean)
+   is
       Category  : constant String := "Integer Vector";
       Container : constant String := "Ada Array";
 
@@ -101,7 +103,8 @@ package body Perf_Support is
       Stdout.Set_Column
          (Category  => Category,
           Column    => Container,
-          Size      => V'Size / 8);
+          Size      => V'Size / 8,
+          Favorite  => Favorite);
 
       Time_Fill
          (Stdout,

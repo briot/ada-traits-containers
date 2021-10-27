@@ -21,10 +21,12 @@ package body Tests_Vectors_Indefinite_Unbounded_SPARK is
       Tests0.Test (V);
    end Test0;
 
-   procedure Test_Perf0 (Result : in out Report.Output'Class) is
+   procedure Test_Perf0
+      (Result : in out Report.Output'Class; Favorite : Boolean)
+   is
       V1, V2 : Vecs0.Vector;
    begin
-      Tests0.Test_Perf (Result, V1, V2, Favorite => False);
+      Tests0.Test_Perf (Result, V1, V2, Favorite => Favorite);
    end Test_Perf0;
 
    package Vecs1 is new GAL.Vectors.Indefinite_Unbounded_SPARK
@@ -45,9 +47,11 @@ package body Tests_Vectors_Indefinite_Unbounded_SPARK is
       Tests1.Test (V);
    end Test1;
 
-   procedure Test_Perf1 (Result : in out Report.Output'Class) is
+   procedure Test_Perf1
+      (Result : in out Report.Output'Class; Favorite : Boolean)
+   is
       V1, V2 : Vecs1.Vector;
    begin
-      Tests1.Test_Perf (Result, V1, V2, Favorite => False);
+      Tests1.Test_Perf (Result, V1, V2, Favorite => Favorite);
    end Test_Perf1;
 end Tests_Vectors_Indefinite_Unbounded_SPARK;

@@ -24,10 +24,12 @@ package body Tests_Maps_Indef_Def_Unbounded is
       Tests0.Test (M1, M2);
    end Test0;
 
-   procedure Test_Perf0 (Result : in out Report.Output'Class) is
+   procedure Test_Perf0
+      (Result : in out Report.Output'Class; Favorite : Boolean)
+   is
       M1, M2 : Maps0.Map;
    begin
-      Tests0.Test_Perf (Result, M1, M2, Favorite => False);
+      Tests0.Test_Perf (Result, M1, M2, Favorite => Favorite);
    end Test_Perf0;
 
    package Maps1 is new GAL.Maps.Indef_Def_Unbounded
@@ -51,9 +53,11 @@ package body Tests_Maps_Indef_Def_Unbounded is
       Tests1.Test (M1, M2);
    end Test1;
 
-   procedure Test_Perf1 (Result : in out Report.Output'Class) is
+   procedure Test_Perf1
+      (Result : in out Report.Output'Class; Favorite : Boolean)
+   is
       M1, M2 : Maps1.Map;
    begin
-      Tests1.Test_Perf (Result, M1, M2, Favorite => True);
+      Tests1.Test_Perf (Result, M1, M2, Favorite => Favorite);
    end Test_Perf1;
 end Tests_Maps_Indef_Def_Unbounded;

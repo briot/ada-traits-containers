@@ -46,6 +46,7 @@ def base_to_str(base: Base) -> str:
 class Test:
     def __init__(self):
         self.withs: Set[str]
+        self.favorite: bool
     def code(self, idx: int) -> str: ...
     def test_name(self) -> str: ...
 
@@ -283,7 +284,8 @@ class Container:
                     f.write(f"   procedure Test{idx};\n")
                     f.write(
                         f"   procedure Test_Perf{idx}"
-                        f"      (Result : in out Report.Output'Class);\n"
+                        f"      (Result   : in out Report.Output'Class;\n"
+                        f"       Favorite : Boolean);\n"
                     )
                 f.write(f"end {self.test_pkg};")
 
@@ -304,45 +306,22 @@ class Container:
 
     @classmethod
     def write_main_driver(cls) -> None:
-        with open("tests/generated/main_driver.adb", "w") as f:
+        with open("tests/generated/main-run_all.adb", "w") as f:
             f.write('pragma Style_Checks (Off);\n')
             for cont in cls.all_tests:
                 if cont.tests:
                     f.write(f"with {cont.test_pkg};\n")
             f.write("with Test_Support;\n")
-            f.write("procedure Main_Driver (F : Test_Support.Test_Filter) is\nbegin\n")
+            f.write("separate (Main)\n")
+            f.write("procedure Run_All is\nbegin\n")
             for cont in cls.all_tests:
                 for idx, t in enumerate(cont.tests):
                     f.write(
-                        f'   if F.Active ("{t.test_name()}") then\n'
-                        f"      {cont.test_pkg}.Test{idx};\n"
-                        f"   end if;\n"
-                    )
-            f.write("""end Main_Driver;""")
-
-        try:
-            os.mkdir("tests/perfs/generated")
-        except OSError:
-            pass
-
-        with open("tests/perfs/generated/run_all.adb", "w") as f:
-            f.write('pragma Style_Checks (Off);\n')
-            for cont in cls.all_tests:
-                if cont.tests:
-                    f.write(f"with {cont.test_pkg};\n")
-            f.write("with Test_Support;\n")
-            f.write("with Report;\n")
-            f.write("procedure Run_All\n"
-                    "   (Result : in out Report.Output'Class;\n"
-                    "    Filter : Test_Support.Test_Filter)\n"
-                    "is\n"
-                    "begin\n")
-            for cont in cls.all_tests:
-                for idx, t in enumerate(cont.tests):
-                    f.write(
-                        f'   if Filter.Active ("{t.test_name()}") then\n'
-                        f"      {cont.test_pkg}.Test_Perf{idx} (Result);\n"
-                        f"   end if;\n"
+                        f"   Run_Test\n"
+                        f'     ("{t.test_name()}",\n'
+                        f"      {cont.test_pkg}.Test{idx}'Access,\n"
+                        f"      {cont.test_pkg}.Test_Perf{idx}'Access,\n"
+                        f"      Favorite => {t.favorite});\n"
                     )
             f.write("""end Run_All;""")
 
@@ -432,10 +411,12 @@ class Vector_Test(Test):
       Tests{idx}.Test (V);
    end Test{idx};
 
-   procedure Test_Perf{idx} (Result : in out Report.Output'Class) is
+   procedure Test_Perf{idx}
+      (Result : in out Report.Output'Class; Favorite : Boolean)
+   is
       V1, V2 : Vecs{idx}.Vector{self.container.storage.bounds_for_perf_test};
    begin
-      Tests{idx}.Test_Perf (Result, V1, V2, Favorite => {self.favorite});
+      Tests{idx}.Test_Perf (Result, V1, V2, Favorite => Favorite);
    end Test_Perf{idx};
 """
 
@@ -598,10 +579,12 @@ class List_Test(Test):
       Tests{idx}.Test_Correctness (L1, L2);
    end Test{idx};
 
-   procedure Test_Perf{idx} (Result : in out Report.Output'Class) is
+   procedure Test_Perf{idx}
+      (Result : in out Report.Output'Class; Favorite : Boolean)
+   is
       L1, L2 : Lists{idx}.List{self.container.storage.bounds_for_perf_test};
    begin
-      Tests{idx}.Test_Perf (Result, L1, L2, Favorite => {self.favorite});
+      Tests{idx}.Test_Perf (Result, L1, L2, Favorite => Favorite);
    end Test_Perf{idx};
 """
 
@@ -762,10 +745,12 @@ class Map_Test(Test):
       Tests{idx}.Test (M1, M2);
    end Test{idx};
 
-   procedure Test_Perf{idx} (Result : in out Report.Output'Class) is
+   procedure Test_Perf{idx}
+      (Result : in out Report.Output'Class; Favorite : Boolean)
+   is
       M1, M2 : Maps{idx}.Map{self.container.storage.bounds_for_test};
    begin
-      Tests{idx}.Test_Perf (Result, M1, M2, Favorite => {self.favorite});
+      Tests{idx}.Test_Perf (Result, M1, M2, Favorite => Favorite);
    end Test_Perf{idx};
 """
 

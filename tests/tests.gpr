@@ -5,11 +5,26 @@ project Tests is
    for Main use ("main.adb");
    for Source_Dirs use ("generated", ".");
    for Object_Dir use "obj/" & GAL_Shared.Mode;
-   for Languages use ("Ada", "C");
+   for Languages use ("Ada", "C++");
+
+   BOOST := external("BOOST", "/usr/include");
+   --  Can be used to indicate the location of the Boost library
+   --  on the system.
+
+   Boost_Include := ("-I" & BOOST,
+                     "-I/opt/local/include");   --  OSX, macports
+   --  Install directory for Boost (for tests only)
+   --  It should contain all possible standard directories
+
    package Compiler extends GAL_Shared.Compiler is
-      for Switches ("utils.c") use ("-O0");
+      for Switches ("s-memory.adb") use ("-gnatg")
+         & Compiler'Switches ("Ada");
+      for Switches ("C++") use Boost_Include & Compiler'Switches ("C++");
    end Compiler;
-   package Builder renames GAL_Shared.Builder;
+   package Builder extends GAL_Shared.Builder is
+      for Global_Configuration_Pragmas use "gnat.adc";
+   end Builder;
    package Binder renames GAL_Shared.Binder;
    package Linker renames GAL_Shared.Linker;
+   package Naming renames GAL_Shared.Naming;
 end Tests;

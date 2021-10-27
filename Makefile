@@ -29,8 +29,7 @@ GPRINSTALL=gprinstall -p -m ${RBD} ${GPRBUILD_OPTIONS} \
 
 .PHONY: docs all build install ada_test clean
 
-all:  build generate docs ada_test
-
+all:  build generate docs test
 
 generate: ./generate.py
 	-python3 ./generate.py
@@ -40,14 +39,12 @@ build: generate
 
 build_test_debug: generate
 	${GPRBUILD} -XBUILD=Debug tests/tests.gpr
-	${GPRBUILD} -XBUILD=Debug tests/perfs/tests_perfs.gpr
 
 build_test_production: generate
 	${GPRBUILD} -XBUILD=Production tests/tests.gpr
-	${GPRBUILD} -XBUILD=Production tests/perfs/tests_perfs.gpr
 
 docs:
-	cd docs_src; ${MAKE} html
+	${MAKE} -C docs_src SPHINXOPTS=-q html
 
 install:
 	${GPRINSTALL} -P${GPR_CONTS} --prefix=${PREFIX}
@@ -55,7 +52,7 @@ install:
 test: build build_test_debug build_test_production
 	tests/obj/Debug/main
 	tests/obj/Production/main
-	tests/perfs/obj/Production/main_perf -o docs/perfs/data.js
+	tests/obj/Production/main -perf -o docs/perfs/data.js
 
 clean:
 	-rm -rf tests/perfs/obj/
@@ -66,4 +63,3 @@ clean:
 	-rm -f docs/perfs/data.js
 	-rm -rf src/generated
 	-rm -rf tests/generated
-	-rm -rf tests/perfs/generated
