@@ -122,7 +122,9 @@ package GAL.Cursors with SPARK_Mode is
 
       with function "+"
         (Left : Index_Type; N : Integer) return Index_Type is <>;
-      --  Move Left forward or backward by a number of position.
+      --  Move Left forward or backward by a number of position. It may
+      --  return an index outside of the container's bounds (which it doesn't
+      --  know anyway).
 
    package Random_Access_Cursors is
       subtype Container is Container_Type;
@@ -143,12 +145,12 @@ package GAL.Cursors with SPARK_Mode is
         is (Left + (-N)) with Inline;
 
       function Next
-        (Self_Ignored : Container_Type; Idx : Index_Type) return Index_Type
-        is (Idx + 1) with Inline;
-
+        (Self : Container_Type; Idx : Index_Type) return Index_Type
+        with Inline;
       function Previous
-        (Self_Ignored : Container_Type; Idx : Index_Type) return Index_Type
-        is (Idx - 1) with Inline;
+        (Self : Container_Type; Idx : Index_Type) return Index_Type
+        with Inline;
+      --  Returns No_Element when moving out of the container's bounds
 
       function Has_Element
         (Self : Container_Type; Idx : Index_Type) return Boolean

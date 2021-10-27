@@ -73,8 +73,11 @@ package body GAL.Algo.Permutations is
       --  See  "combinations, with and without repetitions", Hervé Brönnimann
       --  https://citeseerx.ist.psu.edu/viewdoc/
       --     download?doi=10.1.1.353.930&rep=rep1&type=pdf
+      N : constant Cursors.Cursor_Type := Cursors.Next (Self, K);
    begin
-      Reverse_Order (Self, Cursors.Next (Self, K), Cursors.Last_Cursor (Self));
+      if Cursors.Has_Element (Self, N) then
+         Reverse_Order (Self, N, Cursors.Last_Cursor (Self));
+      end if;
       return Next_Permutation (Self);
    end Next_Partial_Permutation;
 

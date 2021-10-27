@@ -552,7 +552,7 @@ package GAL.Adaptors is
          is (Index_Type'Pos (Left) - Index_Type'Pos (Right)) with Inline;
       function "+"
         (Left : Index_Type; N : Integer) return Index_Type
-         is (Index_Type'Val (Index_Type'Pos (Left) + N)) with Inline;
+         is (Index_Type'Val (Index_Type'Pos (Left) + N));
 
       procedure Swap (Self : in out Array_Type; Left, Right : Index_Type);
       --  Swap the two elements
