@@ -7,7 +7,7 @@ with Test_Support;     use Test_Support;
 package body Test_Algo_Permutation is
    use type GAL.Count_Type;
 
-   package Permutations is new GAL.Algo.Permutations
+   package Vec_Permutations is new GAL.Algo.Permutations
       (Cursors => Int_Vecs.Cursors.Bidirectional,
        Getters => Int_Vecs.Maps.Element_From_Index,
        Swap    => Int_Vecs.Swap);
@@ -22,7 +22,7 @@ package body Test_Algo_Permutation is
    begin
       --  Empty vector
       Asserts.Booleans.Assert
-         (Permutations.Next_Permutation (V), False, "empty vector");
+         (Vec_Permutations.Next_Permutation (V), False, "empty vector");
 
       --  Even number of elements
       for J in 1 .. 3 loop
@@ -32,13 +32,15 @@ package body Test_Algo_Permutation is
       Count := 0;
       loop
          Count := Count + 1;
-         exit when not Permutations.Next_Permutation (V);
+         exit when not Vec_Permutations.Next_Permutation (V);
       end loop;
       Asserts.Integers.Assert (Count, 6);
 
-      --  ??? Should check that V is now sorted
+      Asserts.Booleans.Assert
+         (Is_Sorted (V), True, "should be sorted after permutations");
 
       declare
+         use Vec_Permutations;
          Size : constant := 10;
       begin
          V.Clear;
@@ -57,11 +59,12 @@ package body Test_Algo_Permutation is
             Asserts.Booleans.Assert
                (V (1) = A, True,
                 "Expecting permutation" & A'Image
-                & " got " & Support.Image (V));
-            exit Test_Permut_1
-               when not Permutations.Next_Partial_Permutation (V, 1);
+                & " got " & Int_Vecs_Support.Image (V));
+            exit Test_Permut_1 when not Next_Partial_Permutation (V, 1);
          end loop Test_Permut_1;
          Asserts.Integers.Assert (Count, Integer (V.Length));
+         Asserts.Booleans.Assert
+            (Is_Sorted (V), True, "should be sorted after permutations");
 
          ---------------------------
          -- Permutations length 2 --
@@ -76,13 +79,14 @@ package body Test_Algo_Permutation is
                   Asserts.Booleans.Assert
                      (V (1) = A and V (2) = B, True,
                       "Expecting permutation" & A'Image & B'Image
-                      & " got " & Support.Image (V));
-                  exit Test_Permut_2
-                     when not Permutations.Next_Partial_Permutation (V, 2);
+                      & " got " & Int_Vecs_Support.Image (V));
+                  exit Test_Permut_2 when not Next_Partial_Permutation (V, 2);
                end if;
             end loop;
          end loop Test_Permut_2;
          Asserts.Integers.Assert (Count, Integer (V.Length * (V.Length - 1)));
+         Asserts.Booleans.Assert
+            (Is_Sorted (V), True, "should be sorted after permutations");
 
          ---------------------------
          -- Permutations length 3 --
@@ -98,15 +102,17 @@ package body Test_Algo_Permutation is
                      Asserts.Booleans.Assert
                         (V (1) = A and V (2) = B and V (3) = C, True,
                          "Expecting permutation" & A'Image & B'Image & C'Image
-                         & " got " & Support.Image (V));
+                         & " got " & Int_Vecs_Support.Image (V));
                      exit Test_Permut_3
-                        when not Permutations.Next_Partial_Permutation (V, 3);
+                        when not Next_Partial_Permutation (V, 3);
                   end if;
                end loop;
             end loop;
          end loop Test_Permut_3;
          Asserts.Integers.Assert
             (Count, Integer (V.Length * (V.Length - 1) * (V.Length - 2)));
+         Asserts.Booleans.Assert
+            (Is_Sorted (V), True, "should be sorted after permutations");
 
          ---------------------------
          -- Combinations length 1 --
@@ -118,10 +124,12 @@ package body Test_Algo_Permutation is
             Count := Count + 1;
             Asserts.Booleans.Assert
                (V (1) = A, True,
-                "Expecting" & A'Image & " got " & Support.Image (V));
-            exit Test_Combi_1 when not Permutations.Next_Combination (V, 1);
+                "Expecting" & A'Image & " got " & Int_Vecs_Support.Image (V));
+            exit Test_Combi_1 when not Next_Combination (V, 1);
          end loop Test_Combi_1;
          Asserts.Integers.Assert (Count, Integer (V.Length));
+         Asserts.Booleans.Assert
+            (Is_Sorted (V), True, "should be sorted after combinations");
 
          ---------------------------
          -- Combinations length 2 --
@@ -135,12 +143,14 @@ package body Test_Algo_Permutation is
                Asserts.Booleans.Assert
                   (V (1) = A and V (2) = B, True,
                    "Expecting" & A'Image & B'Image
-                   & " got " & Support.Image (V));
-               exit Test_Combi_2 when not Permutations.Next_Combination (V, 2);
+                   & " got " & Int_Vecs_Support.Image (V));
+               exit Test_Combi_2 when not Next_Combination (V, 2);
             end loop;
          end loop Test_Combi_2;
          Asserts.Integers.Assert
             (Count, Integer (V.Length * (V.Length - 1) / 2));
+         Asserts.Booleans.Assert
+            (Is_Sorted (V), True, "should be sorted after combinations");
 
          ---------------------------
          -- Combinations length 3 --

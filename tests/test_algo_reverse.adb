@@ -18,17 +18,17 @@ package body Test_Algo_Reverse is
    begin
       --  Empty vector
       Reverse_Order (V);
-      Support.Assert_Vector (V, "", "empty vector");
+      Int_Vecs_Support.Assert_Vector (V, "", "empty vector");
 
       --  Even number of elements
       for J in 1 .. 10 loop
          V.Append (Nth (J));
       end loop;
 
-      Support.Assert_Vector
+      Int_Vecs_Support.Assert_Vector
          (V, " 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,", "before reverse");
       Reverse_Order (V);
-      Support.Assert_Vector
+      Int_Vecs_Support.Assert_Vector
          (V, " 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,", "after reverse");
 
       --  Odd number of elements
@@ -37,10 +37,10 @@ package body Test_Algo_Reverse is
          V.Append (Nth (J));
       end loop;
 
-      Support.Assert_Vector
+      Int_Vecs_Support.Assert_Vector
          (V, " 1, 2, 3, 4, 5, 6, 7, 8, 9,", "before reverse");
       Reverse_Order (V);
-      Support.Assert_Vector
+      Int_Vecs_Support.Assert_Vector
          (V, " 9, 8, 7, 6, 5, 4, 3, 2, 1,", "after reverse");
    end Test;
 

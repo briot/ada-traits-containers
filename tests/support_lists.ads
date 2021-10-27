@@ -29,26 +29,26 @@ generic
    Container_Name : String;  --  which column
    with package Lists is new GAL.Lists.Generics (<>);
    with function Image
-      (Self : Lists.Storage.Elements.Element_Type) return String;
+      (Self : Lists.Storage.Elements.Element_Type) return String is <>;
 
    with function Nth
-      (Index : Natural) return Lists.Storage.Elements.Element_Type;
+      (Index : Natural) return Lists.Storage.Elements.Element_Type is <>;
    --  What to insert in the list for correctness tests. Should all be
    --  different.
 
    with function Perf_Nth
-      (Index : Natural) return Lists.Storage.Elements.Element_Type;
+      (Index : Natural) return Lists.Storage.Elements.Element_Type is <>;
    --  What to insert in the list for performance tests.
 
    with function Check_Element
-      (E : Lists.Storage.Elements.Element_Type) return Boolean;
+      (E : Lists.Storage.Elements.Element_Type) return Boolean is <>;
    --  Should be True for all elements returned by Nth (and use E)
 
    with function "="
       (L, R : Lists.Storage.Elements.Element_Type) return Boolean is <>;
 package Support_Lists is
 
-   package Elements renames Lists.Storage.Elements;
+   function Image (L : Lists.List) return String;
 
    procedure Assert_List
       (L        : Lists.List;

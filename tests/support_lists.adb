@@ -42,6 +42,7 @@ package body Support_Lists is
       is (Category & '-' & Container_Name & ": " & S);
    --  Create error messages for failed tests
 
+   package Elements renames Lists.Storage.Elements;
    package Element_Asserts is new Asserts.Asserts.Equals
       (Elements.Element_Type, Image, "=" => "=");
    use Element_Asserts;
@@ -61,6 +62,20 @@ package body Support_Lists is
       (Cursors   => Lists.Cursors.Forward,
        Getters   => Lists.Maps.Constant_Returned);
 
+   -----------
+   -- Image --
+   -----------
+
+   function Image (L : Lists.List) return String is
+      S : XString;
+   begin
+      for E of L loop
+         S.Append (Image (Elements.To_Element (E)));
+         S.Append (',');
+      end loop;
+      return S.To_String;
+   end Image;
+
    -----------------
    -- Assert_List --
    -----------------
@@ -72,15 +87,9 @@ package body Support_Lists is
        Location : String := GNAT.Source_Info.Source_Location;
        Entity   : String := GNAT.Source_Info.Enclosing_Entity)
    is
-      S : XString;
    begin
-      for E of L loop
-         S.Append (Image (Elements.To_Element (E)));
-         S.Append (',');
-      end loop;
-
       Assert
-         (S.To_String, Expected, Msg, Location => Location, Entity => Entity);
+         (Image (L), Expected, Msg, Location => Location, Entity => Entity);
    end Assert_List;
 
    ----------------------
