@@ -36,8 +36,7 @@ package body GAL.Algo.SPARK is
       return Cursors.Cursor
      with SPARK_Mode => Off
    is
-      function Find_Impl is
-        new GAL.Algo.Find (Cursors, Getters, "=");
+      function Find_Impl is new GAL.Algo.Find (Cursors, Getters, "=");
    begin
       return Find_Impl (Self, E);
    end Find;
@@ -52,8 +51,7 @@ package body GAL.Algo.SPARK is
       return Boolean
      with SPARK_Mode => Off
    is
-      function Contains_Impl is
-        new GAL.Algo.Contains (Cursors, Getters, "=");
+      function Contains_Impl is new GAL.Algo.Contains (Cursors, Getters, "=");
    begin
       return Contains_Impl (Self, E);
    end Contains;
@@ -65,8 +63,7 @@ package body GAL.Algo.SPARK is
    function Equals (Left, Right  : Cursors.Container) return Boolean
      with SPARK_Mode => Off
    is
-      function Equals_Impl is
-        new GAL.Algo.Equals (Cursors, Getters, "=");
+      function Equals_Impl is new GAL.Algo.Equals (Cursors, Getters, "=");
    begin
       return Equals_Impl (Left, Right);
    end Equals;

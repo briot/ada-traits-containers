@@ -21,7 +21,7 @@
 
 --  This package provides wrappers around SPARK compatible algorithms of
 --  GAL.Algo providing postconditions.
---  They should be instanciated with appropriate models
+--  They should be instantiated with appropriate models
 --  of the container. More precisely, for every container Self, the
 --  result of Content.Model (Self) must be such that Content.Get (Content.Model
 --  (Self), Content.First + I) is always the element returned by

@@ -1,8 +1,7 @@
 with GAL.Algo.Sort.Shell;
 
 procedure GAL.Algo.Sort.Quicksort (Self : in out Cursors.Container) is
-   package Ranges is new Ranged_Random_Access_Cursors
-     (Cursors, Getters, Swap);
+   package Ranges is new Ranged_Random_Access_Cursors (Cursors, Getters, Swap);
    procedure Shell is new GAL.Algo.Sort.Shell
      (Ranges.Cursors, Ranges.Getters, "<", Ranges.Swap);
 
