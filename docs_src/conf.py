@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Generic Ada Library for Algorithms and Containers (GALAC) documentation build configuration file, created by
+# GAL documentation build configuration file, created by
 # sphinx-quickstart on Mon Jan 18 13:53:46 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -48,7 +48,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Generic Ada Library for Algorithms and Containers'
+project = u'Generic Ada Library (GAL)'
 copyright = u'2016, AdaCore'
 author = u'AdaCore'
 
@@ -204,7 +204,7 @@ html_show_sphinx = False
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'GenericAdaLibraryforAlgorithmsandContainersGALACdoc'
+htmlhelp_basename = 'GALdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -226,7 +226,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'GenericAdaLibraryforAlgorithmsandContainersGALAC.tex', u'Generic Ada Library for Algorithms and Containers (GALAC) Documentation',
+  (master_doc, 'GAL.tex', u'Generic Ada Library (GAL) Documentation',
    u'AdaCore', 'manual'),
 ]
 
@@ -256,7 +256,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'genericadalibraryforalgorithmsandcontainersgalac', u'Generic Ada Library for Algorithms and Containers (GALAC) Documentation',
+    (master_doc, 'genericadalibrary', u'Generic Ada Library (GAL) Documentation',
      [author], 1)
 ]
 
@@ -270,8 +270,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'GenericAdaLibraryforAlgorithmsandContainersGALAC', u'Generic Ada Library for Algorithms and Containers (GALAC) Documentation',
-   author, 'GenericAdaLibraryforAlgorithmsandContainersGALAC', 'One line description of project.',
+  (master_doc, 'GenericAdaLibrary', u'Generic Ada Library (GAL) Documentation',
+   author, 'GAL', 'One line description of project.',
    'Miscellaneous'),
 ]
 

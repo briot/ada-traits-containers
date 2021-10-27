@@ -21,8 +21,8 @@
 
 pragma Ada_2012;
 with Asserts;
-with Conts.Algorithms.Count_If;
-with Conts.Adaptors;     use Conts.Adaptors;
+with GAL.Algo.Count_If;
+with GAL.Adaptors;     use GAL.Adaptors;
 with Report;
 with System.Storage_Elements;
 with Test_Support;       use Test_Support;
@@ -43,7 +43,7 @@ package body Perf_Support is
          (Index_Type   => Natural,
           Element_Type => Integer,
           Array_Type   => Int_Array);
-      function Count_If is new Conts.Algorithms.Count_If
+      function Count_If is new GAL.Algo.Count_If
          (Adaptors.Cursors.Forward, Adaptors.Maps.Element);
 
       V : Int_Array (1 .. Items_Count);

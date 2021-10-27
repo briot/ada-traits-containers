@@ -1,13 +1,13 @@
-with Conts.Maps.Def_Def_Unbounded;
+with GAL.Maps.Def_Def_Unbounded;
 with Support_Maps;
 with Test_Support;
 package body Tests_Maps_Def_Def_Unbounded is
 
-   package Maps0 is new Conts.Maps.Def_Def_Unbounded
+   package Maps0 is new GAL.Maps.Def_Def_Unbounded
       (Integer,
        Element_Type => Integer,
        Hash => Test_Support.Hash,
-       Container_Base_Type => Conts.Controlled_Base);
+       Container_Base_Type => GAL.Controlled_Base);
    package Tests0 is new Support_Maps
       (Category         => "Integer-Integer Map",
        Container_Name   => "Def-Def Unbounded",

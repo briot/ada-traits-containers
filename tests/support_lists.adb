@@ -21,7 +21,7 @@
 
 pragma Ada_2012;
 with Asserts;
-with Conts.Algorithms.Count_If;
+with GAL.Algo.Count_If;
 with GNAT.Source_Info;
 with GNATCOLL.Strings;     use GNATCOLL.Strings;
 with Report;
@@ -57,7 +57,7 @@ package body Support_Lists is
       return Boolean
       is (Check_Element (Lists.Storage.Elements.To_Element (E)));
 
-   function Count_If is new Conts.Algorithms.Count_If
+   function Count_If is new GAL.Algo.Count_If
       (Cursors   => Lists.Cursors.Forward,
        Getters   => Lists.Maps.Constant_Returned);
 

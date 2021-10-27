@@ -1,5 +1,5 @@
-Generic Ada Library for Algorithms and Containers
-=================================================
+Generic Ada Library
+===================
 
 Contents:
 

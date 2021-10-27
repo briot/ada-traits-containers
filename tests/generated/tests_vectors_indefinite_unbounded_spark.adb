@@ -1,9 +1,9 @@
-with Conts.Vectors.Indefinite_Unbounded_SPARK;
+with GAL.Vectors.Indefinite_Unbounded_SPARK;
 with Support_Vectors;
 with Test_Support;
 package body Tests_Vectors_Indefinite_Unbounded_SPARK is
 
-   package Vecs0 is new Conts.Vectors.Indefinite_Unbounded_SPARK
+   package Vecs0 is new GAL.Vectors.Indefinite_Unbounded_SPARK
       (Positive,
        Integer);
    package Tests0 is new Support_Vectors
@@ -27,7 +27,7 @@ package body Tests_Vectors_Indefinite_Unbounded_SPARK is
       Tests0.Test_Perf (Result, V1, V2, Favorite => False);
    end Test_Perf0;
 
-   package Vecs1 is new Conts.Vectors.Indefinite_Unbounded_SPARK
+   package Vecs1 is new GAL.Vectors.Indefinite_Unbounded_SPARK
       (Positive,
        String);
    package Tests1 is new Support_Vectors

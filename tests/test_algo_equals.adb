@@ -21,8 +21,8 @@
 
 pragma Ada_2012;
 with Asserts;
-with Conts.Algorithms.Equals;
-with Conts.Vectors.Definite_Unbounded;
+with GAL.Algo.Equals;
+with GAL.Vectors.Definite_Unbounded;
 
 package body Test_Algo_Equals is
    use Asserts.Booleans;
@@ -30,10 +30,10 @@ package body Test_Algo_Equals is
    procedure Test is
       subtype Index_Type is Positive;
 
-      package Int_Vecs is new Conts.Vectors.Definite_Unbounded
-         (Index_Type, Integer, Conts.Controlled_Base);
+      package Int_Vecs is new GAL.Vectors.Definite_Unbounded
+         (Index_Type, Integer, GAL.Controlled_Base);
       use Int_Vecs;
-      function Equals is new Conts.Algorithms.Equals
+      function Equals is new GAL.Algo.Equals
          (Cursors => Int_Vecs.Cursors.Forward,
           Getters => Int_Vecs.Maps.Element_From_Index);
 

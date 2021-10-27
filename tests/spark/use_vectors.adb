@@ -1,5 +1,5 @@
 pragma Ada_2012;
-with Conts;         use Conts;
+with GAL;         use GAL;
 
 package body Use_Vectors with SPARK_Mode is
    pragma Unevaluated_Use_Of_Old (Allow);

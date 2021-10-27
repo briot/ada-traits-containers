@@ -1,9 +1,9 @@
-with Conts.Lists.Indefinite_Bounded;
+with GAL.Lists.Indefinite_Bounded;
 with Support_Lists;
 with Test_Support;
 package body Tests_Lists_Indefinite_Bounded is
 
-   package Lists0 is new Conts.Lists.Indefinite_Bounded
+   package Lists0 is new GAL.Lists.Indefinite_Bounded
       (Integer);
    package Tests0 is new Support_Lists
       (Category       => "Integer List",
@@ -26,7 +26,7 @@ package body Tests_Lists_Indefinite_Bounded is
       Tests0.Test_Perf (Result, L1, L2, Favorite => False);
    end Test_Perf0;
 
-   package Lists1 is new Conts.Lists.Indefinite_Bounded
+   package Lists1 is new GAL.Lists.Indefinite_Bounded
       (String);
    package Tests1 is new Support_Lists
       (Category       => "String List",

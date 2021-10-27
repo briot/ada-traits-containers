@@ -1,0 +1,14 @@
+with "gal_shared";
+library project GAL is
+   for Object_Dir use "obj/" & GAL_Shared.Mode;
+   for Source_Dirs use ("generated", ".");
+
+   for Library_Name use "gal";
+   for Library_Dir use "lib/" & GAL_Shared.Mode;
+   for Library_Kind use GAL_Shared.Library_Kind;
+
+   package Naming renames GAL_Shared.Naming;
+   package Builder renames GAL_Shared.Builder;
+   package Compiler renames GAL_Shared.Compiler;
+   package Binder renames GAL_Shared.Binder;
+end GAL;

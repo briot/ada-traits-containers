@@ -16,8 +16,8 @@ consistency.
      parameters. Although they require extra instantiations in the application
      code, they simplify the overall API.
 
-     examples: ``Conts.Elements.Traits``,
-     ``Conts.Cursors.Constant_Forward_Traits``
+     examples: ``GAL.Elements.Traits``,
+     ``GAL.Cursors.Constant_Forward_Traits``
 
   ``_Type``
 
@@ -87,5 +87,5 @@ consistency.
 
      Containers are not systematically controlled though, since this is not
      supported for the SPARK language. In such a case, the containers will
-     instead extend the ``Conts.Limited_Base``, which makes them limited
+     instead extend the ``GAL.Limited_Base``, which makes them limited
      types.

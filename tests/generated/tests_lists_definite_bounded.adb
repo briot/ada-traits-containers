@@ -1,9 +1,9 @@
-with Conts.Lists.Definite_Bounded;
+with GAL.Lists.Definite_Bounded;
 with Support_Lists;
 with Test_Support;
 package body Tests_Lists_Definite_Bounded is
 
-   package Lists0 is new Conts.Lists.Definite_Bounded
+   package Lists0 is new GAL.Lists.Definite_Bounded
       (Integer);
    package Tests0 is new Support_Lists
       (Category       => "Integer List",

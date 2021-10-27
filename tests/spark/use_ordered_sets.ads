@@ -1,5 +1,5 @@
 pragma Ada_2012;
-with Conts;       use Conts;
+with GAL;       use GAL;
 with Formal_Ordered_Sets;
 pragma Elaborate_All (Formal_Ordered_Sets);
 

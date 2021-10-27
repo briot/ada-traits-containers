@@ -1,14 +1,14 @@
 pragma Ada_2012;
-with Conts; use Conts;
-with Conts.Maps.Indef_Indef_Unbounded_SPARK;
-with Conts.Algorithms.SPARK;
-pragma Elaborate_All (Conts.Maps.Indef_Indef_Unbounded_SPARK);
+with GAL; use GAL;
+with GAL.Maps.Indef_Indef_Unbounded_SPARK;
+with GAL.Algo.SPARK;
+pragma Elaborate_All (GAL.Maps.Indef_Indef_Unbounded_SPARK);
 
 package Use_Maps with SPARK_Mode is
 
    function Hash (Id : Natural) return Hash_Type is (Hash_Type (Id));
 
-   package My_Maps is new Conts.Maps.Indef_Indef_Unbounded_SPARK
+   package My_Maps is new GAL.Maps.Indef_Indef_Unbounded_SPARK
      (Element_Type => Integer,
       Key_Type     => Positive,
       Hash         => Hash);
@@ -21,7 +21,7 @@ package Use_Maps with SPARK_Mode is
 
    pragma Unevaluated_Use_Of_Old (Allow);
 
-   function Find is new Conts.Algorithms.SPARK.Find
+   function Find is new GAL.Algo.SPARK.Find
      (Cursors => My_Maps.Cursors.Forward,
       Getters => My_Maps.Maps.Constant_Returned_Key,
       "="     => "=",

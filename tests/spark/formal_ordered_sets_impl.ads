@@ -1,8 +1,8 @@
 pragma Ada_2012;
-with Conts.Functional.Sequences;
-with Conts.Functional.Maps;
-with Conts.Functional.Sets;
-with Conts;                 use Conts;
+with GAL.Functional.Sequences;
+with GAL.Functional.Maps;
+with GAL.Functional.Sets;
+with GAL;                 use GAL;
 
 generic
    type Element_Type (<>) is private;
@@ -52,10 +52,10 @@ package Formal_Ordered_Sets_Impl with SPARK_Mode is
 
    pragma Annotate (GNATprove, Iterable_For_Proof, "Contains", P_Mem);
 
-   package E is new Conts.Functional.Sequences
+   package E is new GAL.Functional.Sequences
      (Index_Type   => Positive_Count_Type,
       Element_Type => Element_Type);
-   package M is new Conts.Functional.Sets
+   package M is new GAL.Functional.Sets
      (Element_Type => Element_Type);
 
    function Model (Self : Base_Set'Class) return M.Set with
@@ -203,7 +203,7 @@ package Formal_Ordered_Sets_Impl with SPARK_Mode is
    --  Insert an element Element in Self if Element is not already in present.
 
      Import,
-     Pre            => Length (Self) < Conts.Count_Type'Last - 1
+     Pre            => Length (Self) < GAL.Count_Type'Last - 1
      or else Contains (Self, Element),
      Contract_Cases =>
 
@@ -331,7 +331,7 @@ package Formal_Ordered_Sets_Impl with SPARK_Mode is
    --  Include in Self all the elements of Source
 
      Import,
-     Pre  => Length (Source) < Conts.Count_Type'Last - Length (Self),
+     Pre  => Length (Source) < GAL.Count_Type'Last - Length (Self),
      Post => Capacity (Self) >= Capacity (Self)'Old
 
      --  The model of Self is the union of the previous model of Self and the
@@ -430,7 +430,7 @@ private
    type Base_Set is tagged limited null record;
    No_Element : constant Cursor := (I => 0);
 
-   package P is new Conts.Functional.Maps
+   package P is new GAL.Functional.Maps
      (Element_Type => Positive_Count_Type,
       Key_Type     => Cursor);
    --  This instance should be ghost but it is not currently allowed by the RM.

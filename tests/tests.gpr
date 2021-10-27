@@ -1,15 +1,15 @@
 with "gnatcoll.gpr";
-with "../src/containers.gpr";
-with "../src/containers_shared";
+with "../src/gal.gpr";
+with "../src/gal_shared.gpr";
 project Tests is
    for Main use ("main.adb");
    for Source_Dirs use ("generated", ".");
-   for Object_Dir use "obj/" & Containers_Shared.Mode;
+   for Object_Dir use "obj/" & GAL_Shared.Mode;
    for Languages use ("Ada", "C");
-   package Compiler extends Containers_Shared.Compiler is
+   package Compiler extends GAL_Shared.Compiler is
       for Switches ("utils.c") use ("-O0");
    end Compiler;
-   package Builder renames Containers_Shared.Builder;
-   package Binder renames Containers_Shared.Binder;
-   package Linker renames Containers_Shared.Linker;
+   package Builder renames GAL_Shared.Builder;
+   package Binder renames GAL_Shared.Binder;
+   package Linker renames GAL_Shared.Linker;
 end Tests;

@@ -1,5 +1,5 @@
 pragma Ada_2012;
-with Conts;     use Conts;
+with GAL;     use GAL;
 with Formal_Hashed_Sets;
 pragma Elaborate_All (Formal_Hashed_Sets);
 

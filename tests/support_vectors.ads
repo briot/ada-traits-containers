@@ -20,14 +20,14 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Vectors.Generics;
+with GAL.Vectors.Generics;
 with GNAT.Source_Info;
 with Report;
 
 generic
    Category       : String;  --  which table we want to show results in
    Container_Name : String;  --  which column
-   with package Vectors is new Conts.Vectors.Generics
+   with package Vectors is new GAL.Vectors.Generics
       (Index_Type => Positive, others => <>);
    with function Image
       (Self : Vectors.Storage.Elements.Element_Type) return String is <>;

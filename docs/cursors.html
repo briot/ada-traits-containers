@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cursors and Properties &#8212; Generic Ada Library for Algorithms and Containers 0.1 documentation</title>
+    <title>Cursors and Properties &#8212; Generic Ada Library (GAL) 0.1 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -112,7 +112,7 @@ algorithm, which receives a cursors and returns the element. The simplest
 approach would be to pass an access-to-subprogram, for instance:</p>
 <div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
    <span class="kn">with</span> <span class="nn">package</span> <span class="n">Elements</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Element_Traits</span> <span class="p">(&lt;&gt;);</span>
-   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Cursors</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Conts</span><span class="p">.</span><span class="n">Cursors</span><span class="p">.</span><span class="n">Forward_Cursors</span> <span class="p">(&lt;&gt;);</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Cursors</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">GAL</span><span class="p">.</span><span class="n">Cursors</span><span class="p">.</span><span class="n">Forward_Cursors</span> <span class="p">(&lt;&gt;);</span>
    <span class="kn">with</span> <span class="nn">function</span> <span class="n">Get</span>
       <span class="p">(</span><span class="n">C</span> <span class="p">:</span> <span class="n">Cursors</span><span class="p">.</span><span class="n">Container</span><span class="p">;</span> <span class="n">C</span> <span class="p">:</span> <span class="n">Cursors</span><span class="p">.</span><span class="n">Cursor_Type</span><span class="p">)</span>
       <span class="kr">return</span> <span class="n">Element_Type</span><span class="p">;</span>
@@ -125,8 +125,8 @@ enough to retrieve the element we are interested in (likely true in a large
 majority of cases, but not all).</p>
 <p>So we would instead write it as:</p>
 <div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
-   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Cursors</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Conts</span><span class="p">.</span><span class="n">Cursors</span><span class="p">.</span><span class="n">Forward_Cursors</span> <span class="p">(&lt;&gt;);</span>
-   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Maps</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Conts</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">Read_Only_Maps</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Cursors</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">GAL</span><span class="p">.</span><span class="n">Cursors</span><span class="p">.</span><span class="n">Forward_Cursors</span> <span class="p">(&lt;&gt;);</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Maps</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">GAL</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">Read_Only_Maps</span>
       <span class="p">(</span><span class="n">Key_Type</span> <span class="p">=&gt;</span> <span class="n">Cursors</span><span class="p">.</span><span class="n">Cursor_Type</span><span class="p">,</span> <span class="kr">others</span> <span class="p">=&gt;</span> <span class="p">&lt;&gt;);</span>
 <span class="kd">procedure</span> <span class="nf">My_Algorithm</span>
    <span class="p">(</span><span class="nv">C</span>   <span class="p">: </span><span class="nv">Cursors</span><span class="p">.</span><span class="nv">Container</span><span class="p">;</span>
@@ -143,8 +143,8 @@ the container itself, only stored in a separate map object.</p>
 the library would also provide a simpler version of the algorithm
 as:</p>
 <div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
-   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Cursors</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Conts</span><span class="p">.</span><span class="n">Cursors</span><span class="p">.</span><span class="n">Forward_Cursors</span> <span class="p">(&lt;&gt;);</span>
-   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Maps</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Conts</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">Read_Only_Maps</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Cursors</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">GAL</span><span class="p">.</span><span class="n">Cursors</span><span class="p">.</span><span class="n">Forward_Cursors</span> <span class="p">(&lt;&gt;);</span>
+   <span class="kn">with</span> <span class="nn">package</span> <span class="n">Maps</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">GAL</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">Read_Only_Maps</span>
       <span class="p">(</span><span class="n">Key_Type</span> <span class="p">=&gt;</span> <span class="n">Cursors</span><span class="p">.</span><span class="n">Cursor_Type</span><span class="p">,</span>
        <span class="n">Map_Type</span> <span class="p">=&gt;</span> <span class="n">Cursors</span><span class="p">.</span><span class="n">Container</span><span class="p">,</span>
        <span class="kr">others</span> <span class="p">=&gt;</span> <span class="p">&lt;&gt;);</span>
@@ -177,7 +177,7 @@ need to look up those properties in a separate container.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">Generic Ada Library for Algorithms and Containers</a></h1>
+<h1 class="logo"><a href="index.html">Generic Ada Library (GAL)</a></h1>
 
 
 

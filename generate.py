@@ -31,14 +31,14 @@ header = """
 
 
 Base = Literal[
-    'Conts.Controlled_Base', 'Conts.Limited_Base', 'Container_Base_Type']
+    'GAL.Controlled_Base', 'GAL.Limited_Base', 'Container_Base_Type']
 Pkg = Literal['Unbounded', 'Bounded', 'Unbounded_SPARK']
 
 
 def base_to_str(base: Base) -> str:
-    if base == 'Conts.Controlled_Base':
+    if base == 'GAL.Controlled_Base':
         return ''
-    elif base == 'Conts.Limited_Base':
+    elif base == 'GAL.Limited_Base':
         return ' limited'
     raise Exception("unknown base %s" % base)
 
@@ -65,14 +65,14 @@ class Definite_Elements(Elements):
     def __init__(self, name="Element", movable=True, copyable=True):
         self.descr = "Def"
         self.withs = set([
-            "Conts.Elements.Definite"
+            "GAL.Elements.Definite"
         ])
         self.formals = f"   type {name}_Type is private;\n"
         self.formals_with_default = (
             f"   with procedure Free (E : in out {name}_Type) is null;\n"
         )
         self.traits = (
-            f"   package {name}s is new Conts.Elements.Definite\n"
+            f"   package {name}s is new GAL.Elements.Definite\n"
             f"      ({name}_Type, Free => Free, Movable => {movable},"
             f" Copyable => {copyable});"
         )
@@ -86,17 +86,17 @@ class Indefinite_Elements(Elements):
         self.descr = "Indef"
         self.name = name
         self.withs = set([
-            "Conts.Elements.Indefinite",
-            "Conts.Pools",
+            "GAL.Elements.Indefinite",
+            "GAL.Pools",
         ])
         self.formals = f"   type {name}_Type (<>) is private;\n"
         self.formals_with_default = (
             f"   with procedure Free (E : in out {name}_Type) is null;\n"
         )
         self.traits = (
-            f"   package {name}s is new Conts.Elements.Indefinite\n"
+            f"   package {name}s is new GAL.Elements.Indefinite\n"
             f"      ({name}_Type, Free => Free,"
-            f" Pool => Conts.Pools.Global_Pool);"
+            f" Pool => GAL.Pools.Global_Pool);"
         )
 
     def equal(self) -> str:
@@ -112,14 +112,14 @@ class Indefinite_Elements_SPARK(Elements):
         self.descr = "Indef_SPARK"
         self.name = name
         self.withs = set([
-            "Conts.Elements.Indefinite_SPARK",
-            "Conts.Pools",
+            "GAL.Elements.Indefinite_SPARK",
+            "GAL.Pools",
         ])
         self.formals = f"   type {name}_Type (<>) is private;\n"
         self.formals_with_default = ""
         self.traits = (
-            f"   package {name}s is new Conts.Elements.Indefinite_SPARK\n"
-            f"      ({name}_Type, Pool => Conts.Pools.Global_Pool);"
+            f"   package {name}s is new GAL.Elements.Indefinite_SPARK\n"
+            f"      ({name}_Type, Pool => GAL.Pools.Global_Pool);"
         )
 
     def equal(self) -> str:
@@ -135,15 +135,15 @@ class Array_Elements(Elements):
     def __init__(self, index: str, element: str, array: str):
         self.descr = "Array"
         self.withs = set([
-            "Conts.Elements.Arrays",
-            "Conts.Pools",
+            "GAL.Elements.Arrays",
+            "GAL.Pools",
         ])
         self.array = array
         self.formals = ""
         self.formals_with_default = ""
         self.traits = (
-            f"   package Elements is new Conts.Elements.Arrays\n"
-            f"     ({index}, {element}, {array}, Conts.Pools.Global_Pool);"
+            f"   package Elements is new GAL.Elements.Arrays\n"
+            f"     ({index}, {element}, {array}, GAL.Pools.Global_Pool);"
         )
 
 
@@ -152,7 +152,7 @@ class Storage:
         self.pkg = pkg
         self.base = base
         self.withs = set([
-            f"Conts.{container}s.Storage.{pkg}"
+            f"GAL.{container}s.Storage.{pkg}"
         ])
         self.formals = (
             "   type Container_Base_Type is abstract tagged limited private;\n"
@@ -161,7 +161,7 @@ class Storage:
         )
         self.subprograms = (
             ""
-            if base != 'Conts.Limited_Base'
+            if base != 'GAL.Limited_Base'
             else
             "\n"
             f"   function Copy (Self : {container}'Class) return {container}'Class;\n"
@@ -175,7 +175,7 @@ class Storage:
         )
         self.body = (
             ""
-            if base != 'Conts.Limited_Base'
+            if base != 'GAL.Limited_Base'
             else
             f"""
    function Copy (Self : {container}'Class) return {container}'Class is
@@ -186,7 +186,7 @@ class Storage:
    end Copy;"""
         )
         self.traits = (
-            f"   package Storage is new Conts.{container}s.Storage.{pkg}\n"
+            f"   package Storage is new GAL.{container}s.Storage.{pkg}\n"
             f"      (Elements            => Elements.Traits,\n"
             f"{extra_actual}"
             f"       Container_Base_Type => {base});"
@@ -212,7 +212,7 @@ class Storage_Vector(Storage):
             extra_actual=(
                 ""
                 if pkg == 'Bounded'
-                else "       Resize_Policy       => Conts.Vectors.Resize_1_5,\n"
+                else "       Resize_Policy       => GAL.Vectors.Resize_1_5,\n"
             )
         )
 
@@ -226,12 +226,12 @@ class Storage_List(Storage):
             extra_actual=(
                 ""
                 if pkg != "Unbounded"
-                else "       Pool                => Conts.Pools.Global_Pool,\n"
+                else "       Pool                => GAL.Pools.Global_Pool,\n"
             )
         )
 
         if pkg == "Unbounded":
-            self.withs.add("Conts.Pools")
+            self.withs.add("GAL.Pools")
 
 
 class Container:
@@ -245,7 +245,7 @@ class Container:
         Container.all_tests.append(self)
 
         self.pkg_name = pkg_name
-        self.test_pkg = pkg_name.replace("Conts.", "Tests_").replace(".", "_")
+        self.test_pkg = pkg_name.replace("GAL.", "Tests_").replace(".", "_")
         self.tests = tests
 
     def write_files(self) -> None:
@@ -458,8 +458,8 @@ class Vector_Container(Container):
     def ads(self) -> str:
         spark_mode = " with SPARK_Mode"
         withs: Set[str] = set([
-            "Conts.Properties.SPARK",
-            "Conts.Vectors.Generics",
+            "GAL.Properties.SPARK",
+            "GAL.Vectors.Generics",
         ])
         withs.update(self.elements.withs)
         withs.update(self.storage.withs)
@@ -480,7 +480,7 @@ generic
 
 {self.elements.traits}
 {self.storage.traits}
-   package Vectors is new Conts.Vectors.Generics (Index_Type, Storage.Traits);
+   package Vectors is new GAL.Vectors.Generics (Index_Type, Storage.Traits);
    package Cursors renames Vectors.Cursors;  --  Forward, Bidirectional, Random
    package Maps renames Vectors.Maps;
 
@@ -498,7 +498,7 @@ generic
       renames Vectors.Swap;
 {self.storage.subprograms}
    subtype Element_Sequence is Vectors.Impl.M.Sequence with Ghost;
-   package Content_Models is new Conts.Properties.SPARK.Content_Models
+   package Content_Models is new GAL.Properties.SPARK.Content_Models
         (Map_Type     => Vectors.Base_Vector'Class,
          Element_Type => Elements.Traits.Element,
          Model_Type   => Element_Sequence,
@@ -625,8 +625,8 @@ class List_Container(Container):
         spark_mode = " with SPARK_Mode"
 
         withs: Set[str] = set([
-            "Conts.Properties.SPARK",
-            "Conts.Lists.Generics",
+            "GAL.Properties.SPARK",
+            "GAL.Lists.Generics",
         ])
         withs.update(self.elements.withs)
         withs.update(self.storage.withs)
@@ -644,7 +644,7 @@ generic
 
 {self.elements.traits}
 {self.storage.traits}
-   package Lists is new Conts.Lists.Generics (Storage.Traits);
+   package Lists is new GAL.Lists.Generics (Storage.Traits);
    package Cursors renames Lists.Cursors;  --  Forward, Bidirectional
    package Maps renames Lists.Maps;
 
@@ -656,7 +656,7 @@ generic
 {self.storage.subprograms}
    subtype Element_Sequence is Lists.Impl.M.Sequence with Ghost;
    subtype Cursor_Position_Map is Lists.Impl.P_Map with Ghost;
-   package Content_Models is new Conts.Properties.SPARK.Content_Models
+   package Content_Models is new GAL.Properties.SPARK.Content_Models
         (Map_Type     => Lists.Base_List'Class,
          Element_Type => Elements.Traits.Element,
          Model_Type   => Element_Sequence,
@@ -788,14 +788,14 @@ class Map_Container(Container):
     def ads(self) -> str:
         spark_mode = " with SPARK_Mode"
         withs: Set[str] = set([
-            "Conts.Pools",
-            "Conts.Maps.Generics",
+            "GAL.Pools",
+            "GAL.Maps.Generics",
         ])
         withs.update(self.elements.withs)
         withs.update(self.keys.withs)
 
         if self.pkg == "Unbounded_SPARK":
-            withs.add("Conts.Properties.SPARK")
+            withs.add("GAL.Properties.SPARK")
 
         spark = (
             ""
@@ -804,7 +804,7 @@ class Map_Container(Container):
             """   subtype Model_Map is Impl.Impl.M.Map with Ghost;
    subtype Key_Sequence is Impl.Impl.K.Sequence with Ghost;
    subtype Cursor_Position_Map is Impl.Impl.P_Map with Ghost;
-   package Content_Models is new Conts.Properties.SPARK.Content_Models
+   package Content_Models is new GAL.Properties.SPARK.Content_Models
         (Map_Type     => Impl.Base_Map'Class,
          Element_Type => Key_Type,
          Model_Type   => Key_Sequence,
@@ -835,13 +835,13 @@ generic
 {self.elements.traits}
 {self.keys.equal()}
 
-   package Impl is new Conts.Maps.Generics
+   package Impl is new GAL.Maps.Generics
      (Keys                => Keys.Traits,
       Elements            => Elements.Traits,
       Hash                => Hash,
       "="                 => "=",
-      Probing             => Conts.Maps.Perturbation_Probing,
-      Pool                => Conts.Pools.Global_Pool,
+      Probing             => GAL.Maps.Perturbation_Probing,
+      Pool                => GAL.Pools.Global_Pool,
       Container_Base_Type => {self.base});
 
    subtype Map is Impl.Map;
@@ -876,164 +876,164 @@ end {self.pkg_name};
 
 containers = [
     Vector_Container(
-        pkg_name="Conts.Vectors.Definite_Bounded",
+        pkg_name="GAL.Vectors.Definite_Bounded",
         elements=Definite_Elements(),
-        storage=Storage_Vector(pkg='Bounded', base='Conts.Controlled_Base'),
+        storage=Storage_Vector(pkg='Bounded', base='GAL.Controlled_Base'),
         tests=[("Positive", "Integer", None, False, "Integer")],
     ),
     Vector_Container(
-        pkg_name="Conts.Vectors.Definite_Unbounded",
+        pkg_name="GAL.Vectors.Definite_Unbounded",
         elements=Definite_Elements(),
         storage=Storage_Vector(pkg='Unbounded'),
         tests=[
-            ("Positive", "Integer", "Conts.Controlled_Base", True, "Integer"),
+            ("Positive", "Integer", "GAL.Controlled_Base", True, "Integer"),
         ],
     ),
     Vector_Container(
-        pkg_name="Conts.Vectors.Unmovable_Definite_Unbounded",
+        pkg_name="GAL.Vectors.Unmovable_Definite_Unbounded",
         elements=Definite_Elements(movable=False, copyable=False),
         storage=Storage_Vector(pkg='Unbounded'),
         tests=[
-            ("Positive", "GNATCOLL.Strings.XString", "Conts.Controlled_Base",
+            ("Positive", "GNATCOLL.Strings.XString", "GAL.Controlled_Base",
              True, "String"),
         ],
     ),
     Vector_Container(
-        pkg_name="Conts.Vectors.Indefinite_Bounded",
+        pkg_name="GAL.Vectors.Indefinite_Bounded",
         elements=Indefinite_Elements(),
-        storage=Storage_Vector(pkg='Bounded', base='Conts.Controlled_Base'),
+        storage=Storage_Vector(pkg='Bounded', base='GAL.Controlled_Base'),
         tests=[
             ("Positive", "Integer", None, False, "Integer"),
             ("Positive", "String", None, False, "String"),
         ],
     ),
     Vector_Container(
-        pkg_name="Conts.Vectors.Indefinite_Unbounded",
+        pkg_name="GAL.Vectors.Indefinite_Unbounded",
         elements=Indefinite_Elements(),
         storage=Storage_Vector(pkg='Unbounded'),
         tests=[
-            ("Positive", "Integer", "Conts.Controlled_Base", False, "Integer"),
-            ("Positive", "String", "Conts.Controlled_Base", True, "String"),
-            ("Positive", "GNATCOLL.Strings.XString", "Conts.Controlled_Base",
+            ("Positive", "Integer", "GAL.Controlled_Base", False, "Integer"),
+            ("Positive", "String", "GAL.Controlled_Base", True, "String"),
+            ("Positive", "GNATCOLL.Strings.XString", "GAL.Controlled_Base",
              True, "String"),
         ],
     ),
     Vector_Container(
-        pkg_name="Conts.Vectors.Indefinite_Unbounded_SPARK",
+        pkg_name="GAL.Vectors.Indefinite_Unbounded_SPARK",
         elements=Indefinite_Elements_SPARK(),
-        storage=Storage_Vector(pkg='Unbounded', base="Conts.Limited_Base"),
+        storage=Storage_Vector(pkg='Unbounded', base="GAL.Limited_Base"),
         tests=[
             ("Positive", "Integer", None, False, "Integer"),
             ("Positive", "String", None, False, "String"),
         ],
     ),
 #    Vector_Container(
-#        pkg_name='Conts.Vectors.Strings',
+#        pkg_name='GAL.Vectors.Strings',
 #        elements=Array_Elements('Positive', 'Character', 'String'),
-#        storage=Storage_Vector(pkg='Unbounded', base='Conts.Controlled_Base'),
+#        storage=Storage_Vector(pkg='Unbounded', base='GAL.Controlled_Base'),
 #    ),
     List_Container(
-        pkg_name="Conts.Lists.Definite_Bounded",
+        pkg_name="GAL.Lists.Definite_Bounded",
         elements=Definite_Elements(),
-        storage=Storage_List(pkg='Bounded', base='Conts.Controlled_Base'),
+        storage=Storage_List(pkg='Bounded', base='GAL.Controlled_Base'),
         tests=[("Integer", None, False, "Integer")],
     ),
     List_Container(
-        pkg_name="Conts.Lists.Definite_Bounded_Limited",
+        pkg_name="GAL.Lists.Definite_Bounded_Limited",
         elements=Definite_Elements(),
-        storage=Storage_List(pkg='Bounded', base='Conts.Limited_Base'),
+        storage=Storage_List(pkg='Bounded', base='GAL.Limited_Base'),
         tests=[("Integer", None, False, "Integer")],
     ),
     List_Container(
-        pkg_name="Conts.Lists.Definite_Unbounded",
+        pkg_name="GAL.Lists.Definite_Unbounded",
         elements=Definite_Elements(),
         storage=Storage_List(pkg='Unbounded'),
-        tests=[("Integer", "Conts.Controlled_Base", True, "Integer")],
+        tests=[("Integer", "GAL.Controlled_Base", True, "Integer")],
     ),
     List_Container(
-        pkg_name="Conts.Lists.Definite_Unbounded_Limited",
+        pkg_name="GAL.Lists.Definite_Unbounded_Limited",
         elements=Definite_Elements(),
-        storage=Storage_List(pkg='Unbounded', base='Conts.Limited_Base'),
+        storage=Storage_List(pkg='Unbounded', base='GAL.Limited_Base'),
         tests=[("Integer", None, False, "Integer")],
     ),
     List_Container(
-        pkg_name="Conts.Lists.Indefinite_Bounded",
+        pkg_name="GAL.Lists.Indefinite_Bounded",
         elements=Indefinite_Elements(),
-        storage=Storage_List(pkg='Bounded', base='Conts.Controlled_Base'),
+        storage=Storage_List(pkg='Bounded', base='GAL.Controlled_Base'),
         tests=[
             ("Integer", None, False, "Integer"),
             ("String", None, False, "String"),
         ],
     ),
     List_Container(
-        pkg_name="Conts.Lists.Indefinite_Unbounded",
+        pkg_name="GAL.Lists.Indefinite_Unbounded",
         elements=Indefinite_Elements(),
         storage=Storage_List(pkg='Unbounded'),
         tests=[
-            ("Integer", "Conts.Controlled_Base", False, "Integer"),
-            ("String", "Conts.Controlled_Base", True, "String"),
+            ("Integer", "GAL.Controlled_Base", False, "Integer"),
+            ("String", "GAL.Controlled_Base", True, "String"),
         ],
     ),
     List_Container(
-        pkg_name="Conts.Lists.Indefinite_Unbounded_SPARK",
+        pkg_name="GAL.Lists.Indefinite_Unbounded_SPARK",
         elements=Indefinite_Elements_SPARK(),
-        storage=Storage_List(base="Conts.Limited_Base", pkg="Unbounded_SPARK"),
+        storage=Storage_List(base="GAL.Limited_Base", pkg="Unbounded_SPARK"),
         tests=[
             ("Integer", None, False, "Integer"),
             ("String", None, False, "String"),
         ],
     ),
     List_Container(
-        pkg_name="Conts.Lists.Unmovable_Definite_Unbounded",
+        pkg_name="GAL.Lists.Unmovable_Definite_Unbounded",
         elements=Definite_Elements(movable=False, copyable=False),
         storage=Storage_List(pkg='Unbounded'),
         tests=[
             ("GNATCOLL.Strings.XString",
-             "Conts.Controlled_Base",
+             "GAL.Controlled_Base",
              True, "String"),
         ],
     ),
 #    List_Container(
-#        pkg_name='Conts.Lists.Strings',
+#        pkg_name='GAL.Lists.Strings',
 #        elements=Array_Elements('Positive', 'Character', 'String'),
-#        storage=Storage_List(pkg='Unbounded', base='Conts.Controlled_Base'),
+#        storage=Storage_List(pkg='Unbounded', base='GAL.Controlled_Base'),
 #        tests=["String"],
 #    ),
     Map_Container(
-        pkg_name="Conts.Maps.Def_Def_Unbounded",
+        pkg_name="GAL.Maps.Def_Def_Unbounded",
         pkg='Unbounded',
         keys=Definite_Elements(name='Key'),
         elements=Definite_Elements(),
         tests=[
-            ("Integer", "Integer", "Conts.Controlled_Base", True),
+            ("Integer", "Integer", "GAL.Controlled_Base", True),
         ],
     ),
     Map_Container(
-        pkg_name="Conts.Maps.Indef_Def_Unbounded",
+        pkg_name="GAL.Maps.Indef_Def_Unbounded",
         pkg='Unbounded',
         keys=Indefinite_Elements(name='Key'),
         elements=Definite_Elements(),
         tests=[
-            ("Integer", "Integer", "Conts.Controlled_Base", False),
-            ("String", "Integer", "Conts.Controlled_Base", True),
+            ("Integer", "Integer", "GAL.Controlled_Base", False),
+            ("String", "Integer", "GAL.Controlled_Base", True),
         ],
     ),
     Map_Container(
-        pkg_name="Conts.Maps.Indef_Indef_Unbounded",
+        pkg_name="GAL.Maps.Indef_Indef_Unbounded",
         pkg='Unbounded',
         keys=Indefinite_Elements(name='Key'),
         elements=Indefinite_Elements(),
         tests=[
-            ("Integer", "Integer", "Conts.Controlled_Base", False),
-            ("String", "String", "Conts.Controlled_Base", True),
+            ("Integer", "Integer", "GAL.Controlled_Base", False),
+            ("String", "String", "GAL.Controlled_Base", True),
         ],
     ),
     Map_Container(
-        pkg_name="Conts.Maps.Indef_Indef_Unbounded_SPARK",
+        pkg_name="GAL.Maps.Indef_Indef_Unbounded_SPARK",
         pkg='Unbounded_SPARK',
         keys=Indefinite_Elements_SPARK(name='Key'),
         elements=Indefinite_Elements_SPARK(),
-        base='Conts.Limited_Base',
+        base='GAL.Limited_Base',
         tests=[
             ("Integer", "Integer", None, False),
             ("String", "String", None, False),

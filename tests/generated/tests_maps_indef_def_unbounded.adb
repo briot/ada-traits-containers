@@ -1,13 +1,13 @@
-with Conts.Maps.Indef_Def_Unbounded;
+with GAL.Maps.Indef_Def_Unbounded;
 with Support_Maps;
 with Test_Support;
 package body Tests_Maps_Indef_Def_Unbounded is
 
-   package Maps0 is new Conts.Maps.Indef_Def_Unbounded
+   package Maps0 is new GAL.Maps.Indef_Def_Unbounded
       (Integer,
        Element_Type => Integer,
        Hash => Test_Support.Hash,
-       Container_Base_Type => Conts.Controlled_Base);
+       Container_Base_Type => GAL.Controlled_Base);
    package Tests0 is new Support_Maps
       (Category         => "Integer-Integer Map",
        Container_Name   => "Indef-Def Unbounded",
@@ -30,11 +30,11 @@ package body Tests_Maps_Indef_Def_Unbounded is
       Tests0.Test_Perf (Result, M1, M2, Favorite => False);
    end Test_Perf0;
 
-   package Maps1 is new Conts.Maps.Indef_Def_Unbounded
+   package Maps1 is new GAL.Maps.Indef_Def_Unbounded
       (String,
        Element_Type => Integer,
        Hash => Test_Support.Hash,
-       Container_Base_Type => Conts.Controlled_Base);
+       Container_Base_Type => GAL.Controlled_Base);
    package Tests1 is new Support_Maps
       (Category         => "String-Integer Map",
        Container_Name   => "Indef-Def Unbounded",

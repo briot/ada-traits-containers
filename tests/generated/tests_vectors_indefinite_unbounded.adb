@@ -1,13 +1,13 @@
-with Conts.Vectors.Indefinite_Unbounded;
+with GAL.Vectors.Indefinite_Unbounded;
 with GNATCOLL.Strings;
 with Support_Vectors;
 with Test_Support;
 package body Tests_Vectors_Indefinite_Unbounded is
 
-   package Vecs0 is new Conts.Vectors.Indefinite_Unbounded
+   package Vecs0 is new GAL.Vectors.Indefinite_Unbounded
       (Positive,
        Integer,
-       Container_Base_Type => Conts.Controlled_Base);
+       Container_Base_Type => GAL.Controlled_Base);
    package Tests0 is new Support_Vectors
       (Category       => "Integer Vector",
        Container_Name => "Indef Unbounded",
@@ -29,10 +29,10 @@ package body Tests_Vectors_Indefinite_Unbounded is
       Tests0.Test_Perf (Result, V1, V2, Favorite => False);
    end Test_Perf0;
 
-   package Vecs1 is new Conts.Vectors.Indefinite_Unbounded
+   package Vecs1 is new GAL.Vectors.Indefinite_Unbounded
       (Positive,
        String,
-       Container_Base_Type => Conts.Controlled_Base);
+       Container_Base_Type => GAL.Controlled_Base);
    package Tests1 is new Support_Vectors
       (Category       => "String Vector",
        Container_Name => "Indef Unbounded",
@@ -54,10 +54,10 @@ package body Tests_Vectors_Indefinite_Unbounded is
       Tests1.Test_Perf (Result, V1, V2, Favorite => True);
    end Test_Perf1;
 
-   package Vecs2 is new Conts.Vectors.Indefinite_Unbounded
+   package Vecs2 is new GAL.Vectors.Indefinite_Unbounded
       (Positive,
        GNATCOLL.Strings.XString,
-       Container_Base_Type => Conts.Controlled_Base);
+       Container_Base_Type => GAL.Controlled_Base);
    package Tests2 is new Support_Vectors
       (Category       => "String Vector",
        Container_Name => "Indef Unbounded (XString)",

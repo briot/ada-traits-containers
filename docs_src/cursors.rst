@@ -96,7 +96,7 @@ approach would be to pass an access-to-subprogram, for instance::
 
     generic
        with package Elements is new Element_Traits (<>);
-       with package Cursors is new Conts.Cursors.Forward_Cursors (<>);
+       with package Cursors is new GAL.Cursors.Forward_Cursors (<>);
        with function Get
           (C : Cursors.Container; C : Cursors.Cursor_Type)
           return Element_Type;
@@ -110,8 +110,8 @@ majority of cases, but not all).
 So we would instead write it as::
 
     generic
-       with package Cursors is new Conts.Cursors.Forward_Cursors (<>);
-       with package Maps is new Conts.Properties.Read_Only_Maps
+       with package Cursors is new GAL.Cursors.Forward_Cursors (<>);
+       with package Maps is new GAL.Properties.Read_Only_Maps
           (Key_Type => Cursors.Cursor_Type, others => <>);
     procedure My_Algorithm
        (C   : Cursors.Container;
@@ -129,8 +129,8 @@ the library would also provide a simpler version of the algorithm
 as::
 
     generic
-       with package Cursors is new Conts.Cursors.Forward_Cursors (<>);
-       with package Maps is new Conts.Properties.Read_Only_Maps
+       with package Cursors is new GAL.Cursors.Forward_Cursors (<>);
+       with package Maps is new GAL.Properties.Read_Only_Maps
           (Key_Type => Cursors.Cursor_Type,
            Map_Type => Cursors.Container,
            others => <>);

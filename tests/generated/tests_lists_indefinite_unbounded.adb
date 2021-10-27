@@ -1,10 +1,10 @@
-with Conts.Lists.Indefinite_Unbounded;
+with GAL.Lists.Indefinite_Unbounded;
 with Support_Lists;
 with Test_Support;
 package body Tests_Lists_Indefinite_Unbounded is
 
-   package Lists0 is new Conts.Lists.Indefinite_Unbounded
-      (Integer, Container_Base_Type => Conts.Controlled_Base);
+   package Lists0 is new GAL.Lists.Indefinite_Unbounded
+      (Integer, Container_Base_Type => GAL.Controlled_Base);
    package Tests0 is new Support_Lists
       (Category       => "Integer List",
        Container_Name => "Indef Unbounded",
@@ -26,8 +26,8 @@ package body Tests_Lists_Indefinite_Unbounded is
       Tests0.Test_Perf (Result, L1, L2, Favorite => False);
    end Test_Perf0;
 
-   package Lists1 is new Conts.Lists.Indefinite_Unbounded
-      (String, Container_Base_Type => Conts.Controlled_Base);
+   package Lists1 is new GAL.Lists.Indefinite_Unbounded
+      (String, Container_Base_Type => GAL.Controlled_Base);
    package Tests1 is new Support_Lists
       (Category       => "String List",
        Container_Name => "Indef Unbounded",

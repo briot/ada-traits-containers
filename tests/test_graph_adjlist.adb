@@ -21,10 +21,10 @@
 
 pragma Ada_2012;
 with Asserts;
-with Conts.Elements.Null_Elements;  use Conts.Elements.Null_Elements;
-with Conts.Graphs.Adjacency_List;
-with Conts.Graphs.DFS;
-with Conts;                         use Conts;
+with GAL.Elements.Null_Elements;  use GAL.Elements.Null_Elements;
+with GAL.Graphs.Adjacency_List;
+with GAL.Graphs.DFS;
+with GAL;                         use GAL;
 with Graph1_Support;                use Graph1_Support;
 with Report;                        use Report;
 with System.Storage_Elements;       use System.Storage_Elements;
@@ -39,11 +39,11 @@ package body Test_Graph_Adjlist is
    pragma Unreferenced (Null_V);
    subtype Vertex is Vertex_With_Null range A .. Vertex_With_Null'Last;
 
-   package Enum_Graphs is new Conts.Graphs.Adjacency_List
+   package Enum_Graphs is new GAL.Graphs.Adjacency_List
      (Vertex_Type         => Vertex,
-      Vertex_Properties   => Conts.Elements.Null_Elements.Traits,
-      Edge_Properties     => Conts.Elements.Null_Elements.Traits,
-      Container_Base_Type => Conts.Controlled_Base);
+      Vertex_Properties   => GAL.Elements.Null_Elements.Traits,
+      Edge_Properties     => GAL.Elements.Null_Elements.Traits,
+      Container_Base_Type => GAL.Controlled_Base);
 
    ----------
    -- Test --
@@ -93,11 +93,11 @@ package body Test_Graph_Adjlist is
    procedure Test_Perf_Adjacency_List (Stdout : in out Output'Class) is
       Container : constant String := "adjacency list";
 
-      package Graphs is new Conts.Graphs.Adjacency_List
+      package Graphs is new GAL.Graphs.Adjacency_List
         (Vertex_Type         => Positive,
-         Vertex_Properties   => Conts.Elements.Null_Elements.Traits,
-         Edge_Properties     => Conts.Elements.Null_Elements.Traits,
-         Container_Base_Type => Conts.Controlled_Base);
+         Vertex_Properties   => GAL.Elements.Null_Elements.Traits,
+         Edge_Properties     => GAL.Elements.Null_Elements.Traits,
+         Container_Base_Type => GAL.Controlled_Base);
 
       type My_Visit is null record;
       procedure Finish_Vertex (Ignored : in out My_Visit; V : Graphs.Vertex);
@@ -106,7 +106,7 @@ package body Test_Graph_Adjlist is
          null;
       end Finish_Vertex;
 
-      package Visitors is new Conts.Graphs.DFS.DFS_Visitor_Traits
+      package Visitors is new GAL.Graphs.DFS.DFS_Visitor_Traits
          (Graphs        => Graphs.Traits,
           Visitor_Type  => My_Visit,
           Finish_Vertex => Finish_Vertex);

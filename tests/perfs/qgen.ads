@@ -20,10 +20,10 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
-with Conts.Elements.Indefinite;
-with Conts.Lists.Storage.Unbounded;
-with Conts.Lists.Generics;
-with Conts.Pools;
+with GAL.Elements.Indefinite;
+with GAL.Lists.Storage.Unbounded;
+with GAL.Lists.Generics;
+with GAL.Pools;
 
 package QGen is
 
@@ -42,15 +42,15 @@ package QGen is
    type Sum is new Block with null record;
 
    --  We do our own instances (not the ones in
-   --  Conts.Lists.Indefinite_Unbounded) for better sharing of code.
+   --  GAL.Lists.Indefinite_Unbounded) for better sharing of code.
 
-   package Elements is new Conts.Elements.Indefinite
-      (EObject'Class, Pool => Conts.Pools.Global_Pool);
-   package Storage is new Conts.Lists.Storage.Unbounded
+   package Elements is new GAL.Elements.Indefinite
+      (EObject'Class, Pool => GAL.Pools.Global_Pool);
+   package Storage is new GAL.Lists.Storage.Unbounded
       (Elements.Traits,
-       Container_Base_Type => Conts.Controlled_Base,
-       Pool                => Conts.Pools.Global_Pool);
-   package Lists is new Conts.Lists.Generics (Storage.Traits);
+       Container_Base_Type => GAL.Controlled_Base,
+       Pool                => GAL.Pools.Global_Pool);
+   package Lists is new GAL.Lists.Generics (Storage.Traits);
 
    type EObject_List is new Lists.List with null record
       with Iterable => (First       => First_Primitive,

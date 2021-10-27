@@ -1,12 +1,12 @@
-with Conts.Vectors.Definite_Unbounded;
+with GAL.Vectors.Definite_Unbounded;
 with Support_Vectors;
 with Test_Support;
 package body Tests_Vectors_Definite_Unbounded is
 
-   package Vecs0 is new Conts.Vectors.Definite_Unbounded
+   package Vecs0 is new GAL.Vectors.Definite_Unbounded
       (Positive,
        Integer,
-       Container_Base_Type => Conts.Controlled_Base);
+       Container_Base_Type => GAL.Controlled_Base);
    package Tests0 is new Support_Vectors
       (Category       => "Integer Vector",
        Container_Name => "Def Unbounded",

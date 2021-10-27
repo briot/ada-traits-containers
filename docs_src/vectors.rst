@@ -20,7 +20,7 @@ copied.
 Vector nodes
 ------------
 
-The ``Conts.Vectors.Storage`` package is a generic package that provides
+The ``GAL.Vectors.Storage`` package is a generic package that provides
 the low-level implementation of vectors. It is used to instantiate an
 actual vector, but not meant to be used directly by applications.
 
@@ -63,9 +63,9 @@ generic:
      A vector is always implemented as a :ref:`tagged type
      <tagged_and_controlled_types>`. But sometimes applications will want them
      as controlled types with automatic memory deallocation (set the
-     ``Container_Base_Type`` to ``Conts.Controlled_Base``), whereas in
+     ``Container_Base_Type`` to ``GAL.Controlled_Base``), whereas in
      other cases we want the container to simply be a limited type (set the
-     ``Container_Base_Type`` to ``Conts.Limited_Base``).
+     ``Container_Base_Type`` to ``GAL.Limited_Base``).
 
      Other combinations are of course possible. You could chose to have all
      your containers derive from a common base type for instance.

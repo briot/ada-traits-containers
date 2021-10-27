@@ -22,59 +22,59 @@
 pragma Ada_2012;
 with Ada.Containers.Vectors;
 with Asserts;           use Asserts;
-with Conts.Algorithms.Is_Sorted;
-with Conts.Algorithms.Random;
-with Conts.Algorithms.Sort.Insertion;
-with Conts.Algorithms.Sort.Shell;
-with Conts.Algorithms.Sort.Quicksort;
-with Conts.Vectors.Definite_Unbounded;
+with GAL.Algo.Is_Sorted;
+with GAL.Algo.Random;
+with GAL.Algo.Sort.Insertion;
+with GAL.Algo.Sort.Shell;
+with GAL.Algo.Sort.Quicksort;
+with GAL.Vectors.Definite_Unbounded;
 
 package body Test_Algo_Sort is
 
    use Asserts.Booleans;
-   use Conts;
+   use GAL;
 
    subtype Index_Type is Positive;
 
-   package Int_Vecs is new Conts.Vectors.Definite_Unbounded
-      (Index_Type, Integer, Conts.Controlled_Base);
+   package Int_Vecs is new GAL.Vectors.Definite_Unbounded
+      (Index_Type, Integer, GAL.Controlled_Base);
    use Int_Vecs;
 
-   package Rand is new Conts.Algorithms.Random.Default_Random (Extended_Index);
+   package Rand is new GAL.Algo.Random.Default_Random (Extended_Index);
 
    package Int_Ada_Vecs is new Ada.Containers.Vectors
       (Index_Type, Integer);
    package Ada_Sort is new Int_Ada_Vecs.Generic_Sorting ("<");
 
-   procedure Insert_Sort is new Conts.Algorithms.Sort.Insertion
+   procedure Insert_Sort is new GAL.Algo.Sort.Insertion
       (Cursors => Int_Vecs.Cursors.Random_Access,
        Getters => Int_Vecs.Maps.Element,
        "<"     => "<",
        Swap    => Int_Vecs.Swap);
-   procedure Shell_Ciura_Sort is new Conts.Algorithms.Sort.Shell
+   procedure Shell_Ciura_Sort is new GAL.Algo.Sort.Shell
       (Cursors => Int_Vecs.Cursors.Random_Access,
        Getters => Int_Vecs.Maps.Element,
        "<"     => "<",
        Swap    => Int_Vecs.Swap,
-       Gaps    => Conts.Algorithms.Sort.Ciura_Gaps);
-   procedure Shell_Sedgewick_Sort is new Conts.Algorithms.Sort.Shell
+       Gaps    => GAL.Algo.Sort.Ciura_Gaps);
+   procedure Shell_Sedgewick_Sort is new GAL.Algo.Sort.Shell
       (Cursors => Int_Vecs.Cursors.Random_Access,
        Getters => Int_Vecs.Maps.Element,
        "<"     => "<",
        Swap    => Int_Vecs.Swap,
-       Gaps    => Conts.Algorithms.Sort.Sedgewick_Gaps);
-   procedure Quicksort is new Conts.Algorithms.Sort.Quicksort
+       Gaps    => GAL.Algo.Sort.Sedgewick_Gaps);
+   procedure Quicksort is new GAL.Algo.Sort.Quicksort
       (Cursors => Int_Vecs.Cursors.Random_Access,
        Getters => Int_Vecs.Maps.Element,
        "<"     => "<",
        Swap    => Int_Vecs.Swap);
-   procedure Quicksort_Only is new Conts.Algorithms.Sort.Quicksort
+   procedure Quicksort_Only is new GAL.Algo.Sort.Quicksort
       (Cursors => Int_Vecs.Cursors.Random_Access,
        Getters => Int_Vecs.Maps.Element,
        "<"     => "<",
        Threshold => 0,
        Swap    => Int_Vecs.Swap);
-   function Is_Sorted is new Conts.Algorithms.Is_Sorted
+   function Is_Sorted is new GAL.Algo.Is_Sorted
       (Cursors => Int_Vecs.Cursors.Forward,
        Getters => Int_Vecs.Maps.Element,
        "<"     => "<");

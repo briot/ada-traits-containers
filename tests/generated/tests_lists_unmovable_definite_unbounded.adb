@@ -1,11 +1,11 @@
-with Conts.Lists.Unmovable_Definite_Unbounded;
+with GAL.Lists.Unmovable_Definite_Unbounded;
 with GNATCOLL.Strings;
 with Support_Lists;
 with Test_Support;
 package body Tests_Lists_Unmovable_Definite_Unbounded is
 
-   package Lists0 is new Conts.Lists.Unmovable_Definite_Unbounded
-      (GNATCOLL.Strings.XString, Container_Base_Type => Conts.Controlled_Base);
+   package Lists0 is new GAL.Lists.Unmovable_Definite_Unbounded
+      (GNATCOLL.Strings.XString, Container_Base_Type => GAL.Controlled_Base);
    package Tests0 is new Support_Lists
       (Category       => "String List",
        Container_Name => "Def Unbounded (XString)",

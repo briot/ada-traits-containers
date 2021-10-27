@@ -87,9 +87,9 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/GenericAdaLibraryforAlgorithmsandContainersGALAC.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/GAL.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/GenericAdaLibraryforAlgorithmsandContainersGALAC.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/GAL.qhc"
 
 applehelp:
 	$(SPHINXBUILD) -b applehelp $(ALLSPHINXOPTS) $(BUILDDIR)/applehelp
@@ -104,8 +104,8 @@ devhelp:
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/GenericAdaLibraryforAlgorithmsandContainersGALAC"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/GenericAdaLibraryforAlgorithmsandContainersGALAC"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/GAL"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/GAL"
 	@echo "# devhelp"
 
 epub:

@@ -1,9 +1,9 @@
-with Conts.Vectors.Definite_Bounded;
+with GAL.Vectors.Definite_Bounded;
 with Support_Vectors;
 with Test_Support;
 package body Tests_Vectors_Definite_Bounded is
 
-   package Vecs0 is new Conts.Vectors.Definite_Bounded
+   package Vecs0 is new GAL.Vectors.Definite_Bounded
       (Positive,
        Integer);
    package Tests0 is new Support_Vectors

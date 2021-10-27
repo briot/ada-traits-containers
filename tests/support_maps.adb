@@ -1,5 +1,5 @@
 with Asserts;
-with Conts.Algorithms.Count_If;
+with GAL.Algo.Count_If;
 with GNAT.Source_Info;
 with System.Storage_Elements; use System.Storage_Elements;
 with System.Assertions;       use System.Assertions;
@@ -35,7 +35,7 @@ package body Support_Maps is
       return Boolean
       is (Check_Element (Maps.Elements.To_Element (E)));
 
-   function Count_If is new Conts.Algorithms.Count_If
+   function Count_If is new GAL.Algo.Count_If
       (Cursors   => Maps.Cursors.Forward,
        Getters   => Maps.Maps.Constant_Returned);
 

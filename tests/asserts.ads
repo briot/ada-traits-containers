@@ -19,7 +19,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with Conts;              use Conts;
+with GAL;              use GAL;
 with GNATCOLL.Asserts;
 with GNAT.Source_Info;
 

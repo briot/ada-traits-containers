@@ -21,7 +21,7 @@
 
 pragma Ada_2012;
 with Asserts;
-with Conts.Algorithms.Count_If;
+with GAL.Algo.Count_If;
 with GNATCOLL.Strings;
 with System.Assertions;        use System.Assertions;
 with System.Storage_Elements;  use System.Storage_Elements;
@@ -53,7 +53,7 @@ package body Support_Vectors is
       return Boolean
       is (Check_Element (Vectors.Storage.Elements.To_Element (E)));
 
-   function Count_If is new Conts.Algorithms.Count_If
+   function Count_If is new GAL.Algo.Count_If
       (Cursors   => Vectors.Cursors.Forward,
        Getters   => Vectors.Maps.Constant_Returned);
 

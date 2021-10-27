@@ -1,9 +1,9 @@
 pragma Ada_2012;
-with Conts.Vectors.Indefinite_Unbounded_SPARK;
-with Conts.Vectors.Definite_Bounded;
-with Conts;              use Conts;
-with Conts.Algorithms.SPARK;
-pragma Elaborate_All (Conts.Vectors.Indefinite_Unbounded_SPARK);
+with GAL.Vectors.Indefinite_Unbounded_SPARK;
+with GAL.Vectors.Definite_Bounded;
+with GAL;              use GAL;
+with GAL.Algo.SPARK;
+pragma Elaborate_All (GAL.Vectors.Indefinite_Unbounded_SPARK);
 
 package Use_Vectors with SPARK_Mode is
    package Nested is
@@ -23,11 +23,11 @@ package Use_Vectors with SPARK_Mode is
 
    type Element_Type is new Integer;
    package My_Vectors is new
-     Conts.Vectors.Indefinite_Unbounded_SPARK
+     GAL.Vectors.Indefinite_Unbounded_SPARK
        (Index_Type => Index_Type,
         Element_Type => Element_Type);
    package My_Bounded_Vectors is new
-     Conts.Vectors.Definite_Bounded
+     GAL.Vectors.Definite_Bounded
        (Index_Type => Index_Type,
         Element_Type => Element_Type);
    use type My_Vectors.Cursor;
@@ -39,7 +39,7 @@ package Use_Vectors with SPARK_Mode is
 
    pragma Unevaluated_Use_Of_Old (Allow);
 
-   function Find is new Conts.Algorithms.SPARK.Find
+   function Find is new GAL.Algo.SPARK.Find
      (Cursors => My_Vectors.Cursors.Forward,
       Getters => My_Vectors.Maps.Constant_Returned,
       "="     => "=",
@@ -123,7 +123,7 @@ package Use_Vectors with SPARK_Mode is
    subtype My_Enum is My_Enum_Base range One .. Three;
 
    package Enum_Vectors is new
-     Conts.Vectors.Indefinite_Unbounded_SPARK
+     GAL.Vectors.Indefinite_Unbounded_SPARK
        (Index_Type => My_Enum, Element_Type => Integer);
 
    --  Test links between high level, position based model of a container and

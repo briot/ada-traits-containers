@@ -266,7 +266,7 @@ makes the instantiation of our various packages more difficult for the end
 user. For instance, a number of packages that need memory allocations take
 a `Storage_Pool` package to control how the allocations are performed.
 Since we cannot set a default value for these, the user will always have
-to specify `Conts.Global_Pool` explicitly.
+to specify `GAL.Global_Pool` explicitly.
 
 We could also simplify the library a code a bit if the default value for
 formal subprograms could be defined as an expression function, rather than

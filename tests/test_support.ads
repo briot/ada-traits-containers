@@ -1,5 +1,5 @@
 with Ada.Strings.Hash;
-with Conts;
+with GAL;
 with GNATCOLL.Strings;
 
 package Test_Support is
@@ -30,11 +30,11 @@ package Test_Support is
    function Image (Value : GNATCOLL.Strings.XString) return String
       is (Value.To_String);
 
-   function Hash (Value : Integer) return Conts.Hash_Type
-      is (Conts.Hash_Type (Value));
-   function Hash (Value : String) return Conts.Hash_Type
+   function Hash (Value : Integer) return GAL.Hash_Type
+      is (GAL.Hash_Type (Value));
+   function Hash (Value : String) return GAL.Hash_Type
       is (Ada.Strings.Hash (Value));
-   function Hash (Value : GNATCOLL.Strings.XString) return Conts.Hash_Type
+   function Hash (Value : GNATCOLL.Strings.XString) return GAL.Hash_Type
       is (GNATCOLL.Strings.Hash (Value));
 
    function Check_Element (Value : Integer) return Boolean;

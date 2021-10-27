@@ -1,9 +1,9 @@
-with Conts.Maps.Indef_Indef_Unbounded_SPARK;
+with GAL.Maps.Indef_Indef_Unbounded_SPARK;
 with Support_Maps;
 with Test_Support;
 package body Tests_Maps_Indef_Indef_Unbounded_SPARK is
 
-   package Maps0 is new Conts.Maps.Indef_Indef_Unbounded_SPARK
+   package Maps0 is new GAL.Maps.Indef_Indef_Unbounded_SPARK
       (Integer,
        Element_Type => Integer,
        Hash => Test_Support.Hash);
@@ -29,7 +29,7 @@ package body Tests_Maps_Indef_Indef_Unbounded_SPARK is
       Tests0.Test_Perf (Result, M1, M2, Favorite => False);
    end Test_Perf0;
 
-   package Maps1 is new Conts.Maps.Indef_Indef_Unbounded_SPARK
+   package Maps1 is new GAL.Maps.Indef_Indef_Unbounded_SPARK
       (String,
        Element_Type => String,
        Hash => Test_Support.Hash);

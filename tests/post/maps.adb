@@ -21,13 +21,13 @@
 
 pragma Ignore_Pragma (Assertion_Policy);
 
-with Conts; use Conts;
-with Conts.Maps.Indef_Indef_Unbounded_SPARK;
+with GAL; use GAL;
+with GAL.Maps.Indef_Indef_Unbounded_SPARK;
 with Ada.Strings.Hash;
 
 procedure Maps is
    package My_Maps is new
-     Conts.Maps.Indef_Indef_Unbounded_SPARK
+     GAL.Maps.Indef_Indef_Unbounded_SPARK
        (Key_Type     => String,
         Element_Type => Integer,
         Hash         => Ada.Strings.Hash);

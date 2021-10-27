@@ -1,9 +1,9 @@
-with Conts.Vectors.Indefinite_Bounded;
+with GAL.Vectors.Indefinite_Bounded;
 with Support_Vectors;
 with Test_Support;
 package body Tests_Vectors_Indefinite_Bounded is
 
-   package Vecs0 is new Conts.Vectors.Indefinite_Bounded
+   package Vecs0 is new GAL.Vectors.Indefinite_Bounded
       (Positive,
        Integer);
    package Tests0 is new Support_Vectors
@@ -27,7 +27,7 @@ package body Tests_Vectors_Indefinite_Bounded is
       Tests0.Test_Perf (Result, V1, V2, Favorite => False);
    end Test_Perf0;
 
-   package Vecs1 is new Conts.Vectors.Indefinite_Bounded
+   package Vecs1 is new GAL.Vectors.Indefinite_Bounded
       (Positive,
        String);
    package Tests1 is new Support_Vectors

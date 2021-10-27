@@ -1,13 +1,13 @@
-with Conts.Vectors.Unmovable_Definite_Unbounded;
+with GAL.Vectors.Unmovable_Definite_Unbounded;
 with GNATCOLL.Strings;
 with Support_Vectors;
 with Test_Support;
 package body Tests_Vectors_Unmovable_Definite_Unbounded is
 
-   package Vecs0 is new Conts.Vectors.Unmovable_Definite_Unbounded
+   package Vecs0 is new GAL.Vectors.Unmovable_Definite_Unbounded
       (Positive,
        GNATCOLL.Strings.XString,
-       Container_Base_Type => Conts.Controlled_Base);
+       Container_Base_Type => GAL.Controlled_Base);
    package Tests0 is new Support_Vectors
       (Category       => "String Vector",
        Container_Name => "Def Unbounded (XString)",

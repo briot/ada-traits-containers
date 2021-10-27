@@ -21,9 +21,9 @@
 
 pragma Ignore_Pragma (Assertion_Policy);
 
-with Conts; use Conts;
-with Conts.Vectors.Indefinite_Unbounded_SPARK;
-with Conts.Vectors.Definite_Bounded;
+with GAL; use GAL;
+with GAL.Vectors.Indefinite_Unbounded_SPARK;
+with GAL.Vectors.Definite_Bounded;
 procedure Vectors is
 
    procedure Test_Bounded;
@@ -34,7 +34,7 @@ procedure Vectors is
 
    procedure Test_Bounded is
       package My_Vectors is new
-        Conts.Vectors.Definite_Bounded
+        GAL.Vectors.Definite_Bounded
           (Index_Type   => Positive,
            Element_Type => Integer);
       use My_Vectors;
@@ -98,7 +98,7 @@ procedure Vectors is
 
    procedure Test_Unbounded is
       package My_Vectors is new
-        Conts.Vectors.Indefinite_Unbounded_SPARK
+        GAL.Vectors.Indefinite_Unbounded_SPARK
           (Index_Type   => Positive,
            Element_Type => Integer);
       use My_Vectors;

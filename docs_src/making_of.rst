@@ -197,7 +197,7 @@ safe.
 Instantiating the `Elements_Policy` package needs to be done once for each type
 of element that you intend to store, whatever the number or types of containers
 they will be stored in. As a helper, this library provides a
-`Conts.Elements.Definite` and a `Conts.Elements.Indefinite` packages, which are
+`GAL.Elements.Definite` and a `GAL.Elements.Indefinite` packages, which are
 trivial to instantiate.
 
 Node Policies
@@ -415,7 +415,7 @@ once for each type of data structure. In fact, when you are using the data
 structures provided in this library, they already provide the necessary
 `Cursors` packages, so that you can easily use them with any of the algorithms.
 
-This library also provides a `Conts.Cursors.Adaptors` which has a number of
+This library also provides a `GAL.Cursors.Adaptors` which has a number of
 nested package that will provide cursors policies for the standard Ada
 containers. It is thus relatively easy to also reuse the library's algorithms
 with the standard Ada containers.

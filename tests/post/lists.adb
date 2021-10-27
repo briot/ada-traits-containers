@@ -21,9 +21,9 @@
 
 pragma Ignore_Pragma (Assertion_Policy);
 
-with Conts; use Conts;
-with Conts.Lists.Definite_Bounded;
-with Conts.Lists.Indefinite_Unbounded_SPARK;
+with GAL; use GAL;
+with GAL.Lists.Definite_Bounded;
+with GAL.Lists.Indefinite_Unbounded_SPARK;
 procedure Lists is
 
    procedure Test_Bounded;
@@ -34,7 +34,7 @@ procedure Lists is
 
    procedure Test_Bounded is
       package My_Bounded_Lists is new
-        Conts.Lists.Definite_Bounded
+        GAL.Lists.Definite_Bounded
           (Element_Type => Integer);
       use My_Bounded_Lists;
 
@@ -88,7 +88,7 @@ procedure Lists is
 
    procedure Test_Unbounded is
       package My_Lists is new
-        Conts.Lists.Indefinite_Unbounded_SPARK
+        GAL.Lists.Indefinite_Unbounded_SPARK
           (Element_Type => Integer);
       use My_Lists;
 

@@ -21,16 +21,16 @@
 
 pragma Ada_2012;
 with Asserts;
-with Conts.Algorithms.Random;
-with Conts.Algorithms.Shuffle;
+with GAL.Algo.Random;
+with GAL.Algo.Shuffle;
 with Test_Containers;  use Test_Containers;
 
 package body Test_Algo_Shuffle is
    use Asserts.Booleans;
 
-   package Rand is new Conts.Algorithms.Random.Default_Random
+   package Rand is new GAL.Algo.Random.Default_Random
       (Int_Vecs.Extended_Index);
-   procedure Shuffle is new Conts.Algorithms.Shuffle
+   procedure Shuffle is new GAL.Algo.Shuffle
       (Cursors => Int_Vecs.Cursors.Random_Access,
        Swap    => Int_Vecs.Swap,
        Random  => Rand.Traits);

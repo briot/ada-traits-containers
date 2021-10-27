@@ -1,11 +1,11 @@
 pragma Ada_2012;
-with Conts.Algorithms.Reverse_Order;
+with GAL.Algo.Reverse_Order;
 with Test_Containers;  use Test_Containers;
 with Test_Support;     use Test_Support;
 
 package body Test_Algo_Reverse is
 
-   procedure Reverse_Order is new Conts.Algorithms.Reverse_Order
+   procedure Reverse_Order is new GAL.Algo.Reverse_Order
       (Cursors => Int_Vecs.Cursors.Bidirectional,
        Swap    => Int_Vecs.Swap);
 

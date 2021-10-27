@@ -1,9 +1,9 @@
-with Conts.Lists.Indefinite_Unbounded_SPARK;
+with GAL.Lists.Indefinite_Unbounded_SPARK;
 with Support_Lists;
 with Test_Support;
 package body Tests_Lists_Indefinite_Unbounded_SPARK is
 
-   package Lists0 is new Conts.Lists.Indefinite_Unbounded_SPARK
+   package Lists0 is new GAL.Lists.Indefinite_Unbounded_SPARK
       (Integer);
    package Tests0 is new Support_Lists
       (Category       => "Integer List",
@@ -26,7 +26,7 @@ package body Tests_Lists_Indefinite_Unbounded_SPARK is
       Tests0.Test_Perf (Result, L1, L2, Favorite => False);
    end Test_Perf0;
 
-   package Lists1 is new Conts.Lists.Indefinite_Unbounded_SPARK
+   package Lists1 is new GAL.Lists.Indefinite_Unbounded_SPARK
       (String);
    package Tests1 is new Support_Lists
       (Category       => "String List",

@@ -1,11 +1,11 @@
-with "../../src/containers.gpr";
-with "../../src/containers_shared.gpr";
+with "../../src/gal.gpr";
+with "../../src/gal_shared.gpr";
 with "../tests.gpr";
 with "gnatcoll.gpr";
 
 project Tests_Perfs is
    for Source_Dirs use ("generated", ".");
-   for Object_Dir use "obj/" & Containers_Shared.Mode;
+   for Object_Dir use "obj/" & GAL_Shared.Mode;
    for Languages use ("Ada", "C++");
    for Main use ("main_perf.adb");
 
@@ -17,15 +17,15 @@ project Tests_Perfs is
    --  Install directory for Boost (for tests only)
    --  It should contain all possible standard directories
 
-   package Compiler extends Containers_Shared.Compiler is
+   package Compiler extends GAL_Shared.Compiler is
       for Switches ("s-memory.adb") use ("-gnatg")
          & Compiler'Switches ("Ada");
       for Switches ("C++") use Boost_Include & Compiler'Switches ("C++");
    end Compiler;
-   package Builder extends Containers_Shared.Builder is
+   package Builder extends GAL_Shared.Builder is
       for Global_Configuration_Pragmas use "gnat.adc";
    end Builder;
-   package Naming renames Containers_Shared.Naming;
-   package Binder renames Containers_Shared.Binder;
-   package Linker renames Containers_Shared.Linker;
+   package Naming renames GAL_Shared.Naming;
+   package Binder renames GAL_Shared.Binder;
+   package Linker renames GAL_Shared.Linker;
 end Tests_Perfs;

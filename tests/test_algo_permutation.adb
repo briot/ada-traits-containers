@@ -1,13 +1,13 @@
 pragma Ada_2012;
 with Asserts;
-with Conts.Algorithms.Permutations;
+with GAL.Algo.Permutations;
 with Test_Containers;  use Test_Containers;
 with Test_Support;     use Test_Support;
 
 package body Test_Algo_Permutation is
-   use type Conts.Count_Type;
+   use type GAL.Count_Type;
 
-   package Permutations is new Conts.Algorithms.Permutations
+   package Permutations is new GAL.Algo.Permutations
       (Cursors => Int_Vecs.Cursors.Bidirectional,
        Getters => Int_Vecs.Maps.Element_From_Index,
        Swap    => Int_Vecs.Swap);

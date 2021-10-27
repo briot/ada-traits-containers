@@ -1,10 +1,10 @@
-with Conts.Lists.Definite_Unbounded;
+with GAL.Lists.Definite_Unbounded;
 with Support_Lists;
 with Test_Support;
 package body Tests_Lists_Definite_Unbounded is
 
-   package Lists0 is new Conts.Lists.Definite_Unbounded
-      (Integer, Container_Base_Type => Conts.Controlled_Base);
+   package Lists0 is new GAL.Lists.Definite_Unbounded
+      (Integer, Container_Base_Type => GAL.Controlled_Base);
    package Tests0 is new Support_Lists
       (Category       => "Integer List",
        Container_Name => "Def Unbounded",

@@ -1,16 +1,16 @@
 pragma Ada_2012;
-with  Conts.Lists.Indefinite_Unbounded_SPARK;
-with  Conts.Lists.Definite_Bounded;
-with Conts.Algorithms.SPARK;
-pragma Elaborate_All (Conts.Lists.Indefinite_Unbounded_SPARK);
-with Conts; use Conts;
+with  GAL.Lists.Indefinite_Unbounded_SPARK;
+with  GAL.Lists.Definite_Bounded;
+with GAL.Algo.SPARK;
+pragma Elaborate_All (GAL.Lists.Indefinite_Unbounded_SPARK);
+with GAL; use GAL;
 
 package Use_Lists with SPARK_Mode is
    type Element_Type is new Integer;
    package My_Lists is new
-     Conts.Lists.Indefinite_Unbounded_SPARK (Element_Type => Element_Type);
+     GAL.Lists.Indefinite_Unbounded_SPARK (Element_Type => Element_Type);
    package My_Bounded_Lists is new
-     Conts.Lists.Definite_Bounded (Element_Type => Element_Type);
+     GAL.Lists.Definite_Bounded (Element_Type => Element_Type);
 
    use My_Lists.Lists;
    use type My_Lists.Element_Sequence;
@@ -21,7 +21,7 @@ package Use_Lists with SPARK_Mode is
 
    pragma Unevaluated_Use_Of_Old (Allow);
 
-   function Find is new Conts.Algorithms.SPARK.Find
+   function Find is new GAL.Algo.SPARK.Find
      (Cursors => My_Lists.Cursors.Forward,
       Getters => My_Lists.Maps.Constant_Returned,
       "="     => "=",

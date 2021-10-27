@@ -1,11 +1,11 @@
 pragma Ada_2012;
-with Conts.Maps.Generics;
+with GAL.Maps.Generics;
 with Report;
 
 generic
    Category       : String;  --  which table we want to show results in
    Container_Name : String;  --  which column
-   with package Maps is new Conts.Maps.Generics (<>);
+   with package Maps is new GAL.Maps.Generics (<>);
    with function Image_Element
       (Self : Maps.Elements.Element_Type) return String;
    with function Nth_Key (Index : Natural) return Maps.Keys.Element_Type;
