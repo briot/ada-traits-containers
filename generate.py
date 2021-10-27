@@ -653,6 +653,11 @@ generic
    subtype Constant_Returned is Elements.Traits.Constant_Returned;
 
    No_Element : Cursor renames Lists.No_Element;
+
+   procedure Swap
+      (Self : in out Cursors.Forward.Container;
+       Left, Right : Cursor)
+      renames Lists.Swap;
 {self.storage.subprograms}
    subtype Element_Sequence is Lists.Impl.M.Sequence with Ghost;
    subtype Cursor_Position_Map is Lists.Impl.P_Map with Ghost;

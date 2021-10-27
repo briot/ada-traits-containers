@@ -109,6 +109,11 @@ package GAL.Lists.Storage with SPARK_Mode is
       --  Replace all nodes in Nodes with a copy of the nodes in Source.
       --  The elements themselves need to be copied (via Elements.Copy).
 
+      with procedure Swap_In_Storage
+        (Self        : in out Container'Class;
+         Left, Right : Node_Access) is <>;
+      --  Swap the two elements stored at Left and Right
+
    package Traits with SPARK_Mode is
    end Traits;
 

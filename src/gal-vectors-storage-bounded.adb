@@ -108,6 +108,7 @@ package body GAL.Vectors.Storage.Bounded with SPARK_Mode => Off is
             end;
          else
             declare
+               --   ??? should we systematically copy
                Tmp : constant Elements.Stored_Type :=
                   Elements.Copy (Self.Nodes (Right));
             begin

@@ -247,6 +247,11 @@ package GAL.Lists.Impl with SPARK_Mode is
           Storage.Elements.To_Element (Element'Result) =
           Element (Model (Self), P_Get (Positions (Self), Position));
 
+   procedure Swap
+     (Self        : in out Base_List'Class;
+      Left, Right : Cursor)
+     with Global => null;
+
    procedure Clear (Self : in out Base_List'Class)
    --  See documentation in conts-lists-generics.ads
      with

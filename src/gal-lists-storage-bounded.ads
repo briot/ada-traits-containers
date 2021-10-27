@@ -75,6 +75,7 @@ package GAL.Lists.Storage.Bounded with SPARK_Mode => Off is
          return not null access Elements.Stored_Type with Inline;
       function Capacity (Self : Impl.Container'Class) return Count_Type
          is (Self.Capacity) with Inline;
+      procedure Swap (Nodes : in out Container'Class; L, R : Node_Access);
       procedure Assign
          (Nodes    : in out Impl.Container'Class;
           Source   : Impl.Container'Class;
@@ -106,10 +107,11 @@ package GAL.Lists.Storage.Bounded with SPARK_Mode => Off is
 
    use Impl;
    package Traits is new GAL.Lists.Storage.Traits
-      (Elements     => Elements,
-       Container    => Impl.Container,
-       Node_Access  => Impl.Node_Access,
-       Null_Access  => Impl.Null_Node_Access,
-       Allocate     => Allocate,
-       Release      => Release);
+      (Elements        => Elements,
+       Container       => Impl.Container,
+       Node_Access     => Impl.Node_Access,
+       Null_Access     => Impl.Null_Node_Access,
+       Allocate        => Allocate,
+       Release         => Release,
+       Swap_In_Storage => Impl.Swap);
 end GAL.Lists.Storage.Bounded;

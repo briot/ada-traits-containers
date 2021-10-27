@@ -86,13 +86,16 @@ package GAL.Lists.Storage.Unbounded with SPARK_Mode => Off is
        Old_Head : Node_Access;
        New_Tail : out Node_Access;
        Old_Tail : Node_Access);
+   procedure Swap (Nodes : in out Nodes_Container'Class; L, R : Node_Access)
+      with Inline;
 
    package Traits is new GAL.Lists.Storage.Traits
-      (Elements       => Elements,
-       Container      => Nodes_Container,
-       Node_Access    => Node_Access,
-       Null_Access    => null,
-       Allocate       => Allocate,
-       Release_Node   => Release_Node);
+      (Elements        => Elements,
+       Container       => Nodes_Container,
+       Node_Access     => Node_Access,
+       Null_Access     => null,
+       Allocate        => Allocate,
+       Release_Node    => Release_Node,
+       Swap_In_Storage => Swap);
 
 end GAL.Lists.Storage.Unbounded;

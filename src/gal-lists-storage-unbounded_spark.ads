@@ -84,6 +84,7 @@ package GAL.Lists.Storage.Unbounded_SPARK with SPARK_Mode is
          Old_Head : Node_Access;
          New_Tail : out Node_Access;
          Old_Tail : Node_Access);
+      procedure Swap (Nodes : in out Nodes_List'Class; L, R : Node_Access);
    private
       pragma SPARK_Mode (Off);
       type Nodes_Array_Access is access Big_Nodes_Array;
@@ -109,11 +110,12 @@ package GAL.Lists.Storage.Unbounded_SPARK with SPARK_Mode is
    use Private_Nodes_List;
 
    package Traits is new GAL.Lists.Storage.Traits
-     (Elements     => Elements,
-      Container    => Nodes_List,
-      Node_Access  => Node_Access,
-      Null_Access  => Null_Node_Access,
-      Allocate     => Allocate,
-      Release      => Release);
+     (Elements        => Elements,
+      Container       => Nodes_List,
+      Node_Access     => Node_Access,
+      Null_Access     => Null_Node_Access,
+      Allocate        => Allocate,
+      Release         => Release,
+      Swap_In_Storage => Swap);
 
 end GAL.Lists.Storage.Unbounded_SPARK;

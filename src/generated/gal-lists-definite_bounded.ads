@@ -49,6 +49,11 @@ package GAL.Lists.Definite_Bounded with SPARK_Mode is
 
    No_Element : Cursor renames Lists.No_Element;
 
+   procedure Swap
+      (Self : in out Cursors.Forward.Container;
+       Left, Right : Cursor)
+      renames Lists.Swap;
+
    subtype Element_Sequence is Lists.Impl.M.Sequence with Ghost;
    subtype Cursor_Position_Map is Lists.Impl.P_Map with Ghost;
    package Content_Models is new GAL.Properties.SPARK.Content_Models

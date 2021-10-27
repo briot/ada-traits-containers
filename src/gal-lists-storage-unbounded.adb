@@ -177,4 +177,34 @@ package body GAL.Lists.Storage.Unbounded with SPARK_Mode => Off is
       New_Tail := N;
    end Assign;
 
+   ----------
+   -- Swap --
+   ----------
+
+   procedure Swap (Nodes : in out Nodes_Container'Class; L, R : Node_Access) is
+      pragma Unreferenced (Nodes);
+   begin
+      --  We cannot just change the node's previous and next. Although this
+      --  would be way more efficient, it also changes the position of the node
+      --  in the list, and algorithms do not expect that in general.
+
+      if Elements.Movable then
+         declare
+            Tmp : constant Elements.Stored_Type := L.Element;
+         begin
+            L.Element := R.Element;
+            R.Element := Tmp;
+         end;
+      else
+         declare
+            Tmp : constant Elements.Stored_Type := Elements.Copy (L.Element);
+         begin
+            Elements.Release (L.Element);
+            L.Element := R.Element;
+            Elements.Release (R.Element);
+            R.Element := Tmp;
+         end;
+      end if;
+   end Swap;
+
 end GAL.Lists.Storage.Unbounded;

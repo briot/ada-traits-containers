@@ -374,4 +374,14 @@ package body GAL.Lists.Impl with SPARK_Mode => Off is
       Self.Size := Source.Size;
    end Assign;
 
+   ----------
+   -- Swap --
+   ----------
+
+   procedure Swap
+     (Self        : in out Base_List'Class; Left, Right : Cursor) is
+   begin
+      Storage.Swap_In_Storage (Self, Left.Current, Right.Current);
+   end Swap;
+
 end GAL.Lists.Impl;

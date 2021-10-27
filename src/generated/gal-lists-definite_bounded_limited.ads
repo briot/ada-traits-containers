@@ -49,6 +49,11 @@ package GAL.Lists.Definite_Bounded_Limited with SPARK_Mode is
 
    No_Element : Cursor renames Lists.No_Element;
 
+   procedure Swap
+      (Self : in out Cursors.Forward.Container;
+       Left, Right : Cursor)
+      renames Lists.Swap;
+
    function Copy (Self : List'Class) return List'Class;
    --  Return a deep copy of Self
 

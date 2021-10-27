@@ -554,6 +554,9 @@ package GAL.Adaptors is
         (Left : Index_Type; N : Integer) return Index_Type
          is (Index_Type'Val (Index_Type'Pos (Left) + N)) with Inline;
 
+      procedure Swap (Self : in out Array_Type; Left, Right : Index_Type);
+      --  Swap the two elements
+
       package Cursors is
          package Random_Access is new Random_Access_Cursors
            (Container_Type => Array_Type,

@@ -198,6 +198,35 @@ package body GAL.Lists.Storage.Unbounded_SPARK with SPARK_Mode is
          return Self.Nodes (Count_Type (Pos)).Element'Access;
       end Get_RW_Stored;
 
+      ----------
+      -- Swap --
+      ----------
+
+      procedure Swap (Nodes : in out Nodes_List'Class; L, R : Node_Access) is
+         LC : constant Count_Type := Count_Type (L);
+         RC : constant Count_Type := Count_Type (R);
+      begin
+         if Elements.Movable then
+            declare
+               Tmp : constant Elements.Stored_Type := Nodes.Nodes (LC).Element;
+            begin
+               Nodes.Nodes (LC).Element := Nodes.Nodes (RC).Element;
+               Nodes.Nodes (RC).Element := Tmp;
+            end;
+         else
+            declare
+               Tmp : constant Elements.Stored_Type :=
+                  Elements.Copy (Nodes.Nodes (RC).Element);
+            begin
+               Elements.Release (Nodes.Nodes (RC).Element);
+               Nodes.Nodes (RC).Element :=
+                  Elements.Copy (Nodes.Nodes (LC).Element);
+               Elements.Release (Nodes.Nodes (LC).Element);
+               Nodes.Nodes (LC).Element := Tmp;
+            end;
+         end if;
+      end Swap;
+
    end Private_Nodes_List;
 
 end GAL.Lists.Storage.Unbounded_SPARK;

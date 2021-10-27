@@ -165,6 +165,15 @@ package GAL.Lists.Generics with SPARK_Mode is
    --  just use the standard assignment operator, so providing Copy is not
    --  needed (only when base type is limited)
 
+   procedure Swap
+     (Self        : in out Base_List'Class;
+      Left, Right : Cursor)
+     renames Impl.Swap;
+   --  Efficiently swap the elements at the two positions.
+   --  For large elements, this will be more efficient than retrieving them
+   --  and storing them again (which might involve the secondary stack, or
+   --  allocating and freeing elements).
+
    ------------------
    -- for-of loops --
    ------------------
