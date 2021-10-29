@@ -12,58 +12,71 @@
 #include <boost/graph/strong_components.hpp>
 #include <creport.h>
 
-extern "C"
-void test_cpp_graph(void* output) {
+// create a typedef for the Graph type
+typedef boost::adjacency_list<
+   boost::vecS,
+   boost::vecS,
+   boost::bidirectionalS
+   > Graph;
+
+void fill_chain(Graph & g) {
+   for (int i = 0; i < items_count - 1; i++) {
+      add_edge(i, i + 1, g);
+   }
+   add_edge(items_count / 10, 3, g);
+   add_edge(2 * items_count / 10, items_count - 1, g);
+}
+
+void fill_complete(Graph &g) {
+  for (int v = 0; v < 10000 - 1; v++) {
+
+     //  ??? for a non-directed graph, we should use "int u = v+1"
+     for (int u = 0; u < 10000 - 1; u++) {
+        if (u != v) {
+           add_edge(v, u, g);
+        }
+     }
+  }
+}
+
+void run_test(
+      void* output,
+      const char* category,
+      const char* container,
+      void (*filler)(Graph& g)
+   )
+{
   using namespace boost;
-
-  const char* category = "Integer Graph";
-  const char* container = "C++ Boost";
-
-  // create a typedef for the Graph type
-  typedef adjacency_list<vecS, vecS, bidirectionalS> Graph;
-
-  const int num_vertices = items_count;
-
   set_column (output, category, container, sizeof(Graph), FAVORITE);
-  
+
   mem_start_test (output, category, container, "fill", START_GROUP);
   {
-     Graph g(num_vertices);
-     for (int i = 0; i < num_vertices - 1; i++) {
-        add_edge(i, i + 1, g);
-     }
+     Graph g;
+     filler(g);
      stop_time (output);
   }
   mem_end_test (output);
 
   {
-     Graph g(num_vertices);
-     for (int i = 0; i < num_vertices - 1; i++) {
-        add_edge(i, i + 1, g);
-     }
+     Graph g;
+     filler(g);
 
      mem_start_test
-        (output, category, container, "dfs, no visitor", START_GROUP);
+        (output, category, container, "dfs", START_GROUP);
      default_dfs_visitor vis;
      depth_first_search (g, visitor (vis));
      mem_end_test (output);
-  
-     add_edge(num_vertices / 10, 3, g);
-     add_edge(2 * num_vertices / 10, num_vertices - 1, g);
-  
-     mem_start_test (output, category, container,  "dfs, visitor", SAME_GROUP);
-     end_test_not_run (output);
-  
+
      mem_start_test
-        (output, category, container, "dfs-recursive, visitor", SAME_GROUP);
+        (output, category, container, "dfs-recursive", SAME_GROUP);
      end_test_not_run (output);
-  
+
      mem_start_test (output, category, container, "is_acyclic", SAME_GROUP);
      end_test_not_run (output);
-  
+
      {
         mem_start_test (output, category, container, "scc", START_GROUP);
-        std::vector<int> c(num_vertices);
+        std::vector<int> c(items_count);
         int num = strong_components(
               g,
               make_iterator_property_map(c.begin(), get(vertex_index, g)));
@@ -71,4 +84,12 @@ void test_cpp_graph(void* output) {
      }
      mem_end_test (output);
   }
+}
+
+
+extern "C"
+void test_cpp_graph(void* output) {
+   run_test(output, "Integer Graph (chain)",    "Boost", &fill_chain);
+   run_test(
+      output, "Integer Graph (complete, small)", "Boost", &fill_complete);
 }

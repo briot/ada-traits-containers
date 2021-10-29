@@ -74,6 +74,7 @@ package GAL.Graphs is
    generic
       type Graph_Type (<>) is limited private;
       type Vertex_Type is private;  --  always a definite type
+
       with package Vertices is new GAL.Elements.Traits
          (Element_Type => Vertex_Type, others => <>);
       Null_Vertex : Vertices.Element;

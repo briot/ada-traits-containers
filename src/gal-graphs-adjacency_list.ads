@@ -209,17 +209,23 @@ package GAL.Graphs.Adjacency_List is
          is (Vertex_Index (V));
    end Impl;
 
-   use all type Impl.Vertex_Cursor;
-
    subtype Graph is Impl.Graph;
    subtype Vertex is Impl.Vertex;
    subtype Edge is Impl.Edge;
    subtype Vertex_Cursor is Impl.Vertex_Cursor;
    subtype Vertex_Edges_Cursor is Impl.Vertex_Cursor;
 
-   function Identity (V : Vertex) return Vertex is (V) with Inline;
-   function Identity (V : not null access Vertex) return Vertex
-      is (V.all) with Inline;
+   use all type Graph;
+   use all type Impl.Vertex_Cursor;
+   use all type Impl.Vertex_Edges_Cursor;
+
+   procedure Clear (Self : in out Graph)
+      renames Impl.Clear;
+   procedure Add_Vertices (Self : in out Graph; Count : Count_Type)
+      renames Impl.Add_Vertices;
+   procedure Add_Edge (Self : in out Graph; From, To : Vertex)
+      renames Impl.Add_Edge;
+   --  ??? Shouldn't these be made visible via "use all type Graph"
 
    package Vertices is new GAL.Elements.Definite (Vertex);
 

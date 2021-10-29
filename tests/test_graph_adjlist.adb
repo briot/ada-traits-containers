@@ -24,6 +24,7 @@ with Asserts;
 with GAL.Elements.Null_Elements;
 with GAL.Graphs.Adjacency_List;
 with GAL.Graphs.DFS;
+with GAL.Graphs.Generators;
 with GAL;                           use GAL;
 with Graph1_Support;                use Graph1_Support;
 with Report;                        use Report;
@@ -34,12 +35,25 @@ package body Test_Graph_Adjlist is
    use Asserts.Integers;
    use type GAL.Graphs.Vertex_Index;
 
-   Category  : constant String := "Integer Graph";
-
    package Graphs is new GAL.Graphs.Adjacency_List
      (Vertex_Properties   => GAL.Elements.Null_Elements.Traits,
       Edge_Properties     => GAL.Elements.Null_Elements.Traits,
       Container_Base_Type => GAL.Controlled_Base);
+   package Generators is new GAL.Graphs.Generators
+     (Graph               => Graphs.Traits,
+      Clear               => Graphs.Clear,
+      Add_Vertices        => Graphs.Add_Vertices,
+      Add_Edge            => Graphs.Add_Edge);
+
+   generic
+      Category  : String;
+      Container : String;
+      with package Graphs is new GAL.Graphs.Adjacency_List (<>);
+      with procedure Fill (G : in out Graphs.Graph);
+   procedure Generic_Test_Perf
+      (Stdout            : in out Output'Class;
+       Favorite          : Boolean;
+       Expected_Acyclic  : Boolean);
 
    ----------
    -- Test --
@@ -86,15 +100,15 @@ package body Test_Graph_Adjlist is
       Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (8)), 4);
    end Test;
 
-   ------------------------------
-   -- Test_Perf_Adjacency_List --
-   ------------------------------
+   -----------------------
+   -- Generic_Test_Perf --
+   -----------------------
 
-   procedure Test_Perf_Adjacency_List
-      (Stdout : in out Output'Class; Favorite : Boolean)
+   procedure Generic_Test_Perf
+      (Stdout            : in out Output'Class;
+       Favorite          : Boolean;
+       Expected_Acyclic  : Boolean)
    is
-      Container : constant String := "adjacency list";
-
       type My_Visit is null record;
       procedure Finish_Vertex (Ignored : in out My_Visit; V : Graphs.Vertex);
       procedure Finish_Vertex (Ignored : in out My_Visit; V : Graphs.Vertex) is
@@ -107,9 +121,16 @@ package body Test_Graph_Adjlist is
           Visitor_Type  => My_Visit,
           Finish_Vertex => Finish_Vertex);
       procedure DFS is new Graphs.DFS.Search (Visitors);
+      procedure DFS_Recursive is new Graphs.DFS.Search_Recursive (Visitors);
 
       G : Graphs.Graph;
       Acyclic : Boolean;
+
+      procedure Do_Fill;
+      procedure Do_Fill is
+      begin
+         Fill (G);
+      end Do_Fill;
 
       procedure Do_Clear;
       procedure Do_Clear is
@@ -117,8 +138,68 @@ package body Test_Graph_Adjlist is
          G.Clear;
       end Do_Clear;
 
-      procedure Do_Fill;
-      procedure Do_Fill is
+      procedure Do_DFS;
+      procedure Do_DFS is
+         Vis : My_Visit;
+      begin
+         DFS (G, Vis);
+      end Do_DFS;
+
+      procedure Do_DFS_Recursive;
+      procedure Do_DFS_Recursive is
+         Vis : My_Visit;
+      begin
+         DFS_Recursive (G, Vis);
+      end Do_DFS_Recursive;
+
+      procedure Do_Is_Acyclic;
+      procedure Do_Is_Acyclic is
+      begin
+         Acyclic := Graphs.DFS.Is_Acyclic (G);
+      end Do_Is_Acyclic;
+
+      procedure Do_SCC;
+      procedure Do_SCC is
+         M : Graphs.Integer_Maps.Map;
+         Count : Integer;
+      begin
+         Graphs.Strongly_Connected_Components.Compute
+            (G, M, Components_Count => Count);
+      end Do_SCC;
+
+      procedure Time_Fill is new Report.Timeit
+         (Run => Do_Fill, Cleanup => Do_Clear);
+      procedure Time_DFS is new Report.Timeit (Do_DFS);
+      procedure Time_DFS_Recursive is new Report.Timeit (Do_DFS_Recursive);
+      procedure Time_Acyclic is new Report.Timeit (Do_Is_Acyclic);
+      procedure Time_SCC is new Report.Timeit (Do_SCC);
+
+   begin
+      Stdout.Set_Column
+         (Category, Container, G'Size / 8, Favorite => Favorite);
+
+      Time_Fill (Stdout, Category, Container, "fill", Start_Group => True);
+
+      G.Clear;  --  after Time_Fill, the graph is empty
+      Fill (G);
+
+      Time_DFS (Stdout, Category, Container, "dfs", Start_Group => True);
+      Time_DFS_Recursive (Stdout, Category, Container, "dfs-recursive");
+      Time_Acyclic (Stdout, Category, Container, "is_acyclic");
+      Asserts.Booleans.Assert (Acyclic, Expected_Acyclic);
+
+      Time_SCC (Stdout, Category, Container, "scc", Start_Group => True);
+   end Generic_Test_Perf;
+
+   ------------------------------
+   -- Test_Perf_Adjacency_List --
+   ------------------------------
+
+   procedure Test_Perf_Adjacency_List
+      (Stdout : in out Output'Class; Favorite : Boolean)
+   is
+      procedure Fill_Chain (G : in out Graphs.Graph);
+      procedure Fill_Chain (G : in out Graphs.Graph) is
          V, V2 : Graphs.Vertex_Cursor;
       begin
          G.Add_Vertices (Count => Items_Count);
@@ -130,58 +211,27 @@ package body Test_Graph_Adjlist is
             G.Add_Edge (G.Element (V), G.Element (V2));
             V := V2;
          end loop;
-      end Do_Fill;
 
-      procedure Do_DFS_No_Visit;
-      procedure Do_DFS_No_Visit is
-         Vis : My_Visit;
+         G.Add_Edge (G.From_Index (Items_Count / 10 + 1), G.From_Index (4));
+         G.Add_Edge
+            (G.From_Index (2 * Items_Count / 10 + 1),
+             G.From_Index (Items_Count));
+      end Fill_Chain;
+
+      procedure Fill_Complete (G : in out Graphs.Graph);
+      procedure Fill_Complete (G : in out Graphs.Graph) is
       begin
-         DFS (G, Vis);
-      end Do_DFS_No_Visit;
+         Generators.Complete (G, N => 10_000);
+      end Fill_Complete;
 
-      procedure Do_Is_Acyclic;
-      procedure Do_Is_Acyclic is
-      begin
-         Acyclic := Graphs.DFS.Is_Acyclic (G);
-      end Do_Is_Acyclic;
-
-      procedure Do_SCC;
-      procedure Do_SCC is
-         M : Graphs.Integer_Maps.Map; -- := Graphs.Integer_Maps.Create_Map (G);
-         Count : Integer;
-      begin
-         Graphs.Strongly_Connected_Components.Compute
-            (G, M, Components_Count => Count);
-      end Do_SCC;
-
-      procedure Time_Fill is new Report.Timeit
-         (Run => Do_Fill, Cleanup => Do_Clear);
-      procedure Time_DFS_No_Visit is new Report.Timeit (Do_DFS_No_Visit);
-      procedure Time_Acyclic is new Report.Timeit (Do_Is_Acyclic);
-      procedure Time_SCC is new Report.Timeit (Do_SCC);
-
+      procedure Gen_Test_Chain is new Generic_Test_Perf
+         ("Integer Graph (chain)", "adjacency list", Graphs, Fill_Chain);
+      procedure Gen_Test_Complete is new Generic_Test_Perf
+         ("Integer Graph (complete, small)",
+          "adjacency list", Graphs, Fill_Complete);
    begin
-      Stdout.Set_Column
-         (Category, Container, G'Size / 8, Favorite => Favorite);
-
-      Time_Fill (Stdout, Category, Container, "fill", Start_Group => True);
-
-      Do_Clear;
-      Do_Fill;
-      Time_DFS_No_Visit
-         (Stdout, Category, Container, "dfs, no visitor", Start_Group => True);
-
-      Do_Clear;
-      Do_Fill;
-      Time_Acyclic (Stdout, Category, Container, "is_acyclic");
-      Asserts.Booleans.Assert (Acyclic, True);
-
-      Do_Clear;
-      Do_Fill;
-      G.Add_Edge (G.From_Index (Items_Count / 10 + 1), G.From_Index (4));
-      G.Add_Edge
-         (G.From_Index (2 * Items_Count / 10 + 1), G.From_Index (Items_Count));
-      Time_SCC (Stdout, Category, Container, "scc", Start_Group => True);
+      Gen_Test_Chain    (Stdout, Favorite, Expected_Acyclic => False);
+      Gen_Test_Complete (Stdout, Favorite, Expected_Acyclic => False);
    end Test_Perf_Adjacency_List;
 
    ----------------------
@@ -192,9 +242,10 @@ package body Test_Graph_Adjlist is
       (Stdout : in out Output'Class; Favorite : Boolean)
    is
       Container : constant String := "custom graph";
+      Category  : constant String := "Integer Graph (chain)";
+
 
       procedure Search is new Graph1_Support.DFS.Search (My_Visitors);
-      procedure Search is new Graph1_Support.DFS.Search (My_Visitors2);
       procedure Recursive is
         new Graph1_Support.DFS.Search_Recursive (My_Visitors2);
 
@@ -207,13 +258,6 @@ package body Test_Graph_Adjlist is
          Search (G, V);
       end Do_Search1;
 
-      procedure Do_Search2;
-      procedure Do_Search2 is
-         V     : My_Visitor2;
-      begin
-         Search (G, V);
-      end Do_Search2;
-
       procedure Do_Recursive;
       procedure Do_Recursive is
          V     : My_Visitor2;
@@ -222,15 +266,13 @@ package body Test_Graph_Adjlist is
       end Do_Recursive;
 
       procedure Time_Search1 is new Report.Timeit (Do_Search1);
-      procedure Time_Search2 is new Report.Timeit (Do_Search2);
       procedure Time_Recursive is new Report.Timeit (Do_Recursive);
 
    begin
       Stdout.Set_Column
          (Category, Container, G'Size / 8, Favorite => Favorite);
-      Time_Search1 (Stdout, Category, Container, "dfs, no visitor");
-      Time_Search2 (Stdout, Category, Container, "dfs, visitor");
-      Time_Recursive (Stdout, Category, Container, "dfs-recursive, visitor");
+      Time_Search1 (Stdout, Category, Container, "dfs");
+      Time_Recursive (Stdout, Category, Container, "dfs-recursive");
    end Test_Perf_Custom;
 
 end Test_Graph_Adjlist;
