@@ -208,10 +208,7 @@ package GAL.Vectors.Generics with SPARK_Mode is
      (Self : in out Base_Vector'Class; Position : Index_Type)
      return Returned_Type
      renames Impl.Reference;
-   --  Return a reference to the element at the given position. The notion
-   --  of reference depends on the storage type chosen for the vector, and
-   --  might instead return a copy. A reference will thus be in general
-   --  more efficient than a simple copy, and will never be worse.
+   --  Return a reference to the element at the given position.
 
    use type Element_Type;
 
