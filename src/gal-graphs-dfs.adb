@@ -32,24 +32,13 @@ package body GAL.Graphs.DFS is
       use Graphs;
 
       type Vertex_Info is record
-         VC : aliased Graphs.Vertices.Stored_Type;
-         EC : Graphs.Out_Edges_Cursors.Cursor;  --  next edge to examine
+         VC : Graphs.Vertex;
+         EC : Incidence.Cursor_Type;   --  next edge to examine
       end record;
-      procedure Free (Self : in out Vertex_Info) with Inline;
       package Vertex_Info_Vectors is new GAL.Vectors.Definite_Unbounded
         (Index_Type          => Natural,
          Element_Type        => Vertex_Info,
-         Container_Base_Type => GAL.Limited_Base,
-         Free                => Free);
-
-      ----------
-      -- Free --
-      ----------
-
-      procedure Free (Self : in out Vertex_Info) is
-      begin
-         Graphs.Vertices.Release (Self.VC);
-      end Free;
+         Container_Base_Type => GAL.Limited_Base);
 
       ------------
       -- Search --
@@ -66,26 +55,25 @@ package body GAL.Graphs.DFS is
          Stack      : Vertex_Info_Vectors.Vector;
          Terminated : Boolean := False;
 
-         procedure Impl (Start : Vertex);
+         procedure Impl (Start_Vertex : Graphs.Vertex);
 
-         procedure Impl (Start : Vertex) is
-            EC   : Graphs.Out_Edges_Cursors.Cursor;
+         procedure Impl (Start_Vertex : Graphs.Vertex) is
+            EC   : Incidence.Cursor_Type;
             Info : Vertex_Info;
          begin
-            Color_Maps.Set (Colors, Start, Gray);
-            Visitors.Discover_Vertex (Visit, Start);
+            Color_Maps.Set (Colors, Start_Vertex, Gray);
+            Visitors.Discover_Vertex (Visit, Start_Vertex);
 
-            Visitors.Should_Stop (Visit, Start, Stop => Terminated);
+            Visitors.Should_Stop (Visit, Start_Vertex, Stop => Terminated);
             if Terminated then
                return;
             end if;
 
             declare
                V : Vertex_Info := (
-                  VC => <>,
-                  EC => Graphs.Out_Edges_Cursors.First (G, Start));
+                  VC => Start_Vertex,
+                  EC => Incidence.Out_Edges (G, Start_Vertex));
             begin
-               Graphs.Vertices.Set_Stored (Start, V.VC);
                Stack.Append (V);
             end;
 
@@ -93,35 +81,25 @@ package body GAL.Graphs.DFS is
                Info := Stack.Last_Element;
                Stack.Delete_Last;
 
-               if not Graphs.Out_Edges_Cursors.Has_Element (G, Info.EC) then
+               if not Incidence.Has_Element (G, Info.EC) then
                   --  No more out edges
-                  declare
-                     V : Vertex renames
-                       Graphs.Vertices.To_Element
-                         (Graphs.Vertices.To_Constant_Returned
-                            (Info.VC'Access));
-                  begin
-                     Color_Maps.Set (Colors, V, Black);
-                     Visitors.Finish_Vertex (Visit, V);
-                  end;
+                  Color_Maps.Set (Colors, Info.VC, Black);
+                  Visitors.Finish_Vertex (Visit, Info.VC);
 
                else
                   EC := Info.EC;
 
                   --  Next time we look at the same vertex, we'll look at
                   --  the next out edge
-                  Info.EC := Graphs.Out_Edges_Cursors.Next (G, Info.EC);
+                  Info.EC := Incidence.Next (G, Info.EC);
                   Stack.Append (Info);
 
                   --  Append the next vertex to examine (and we need to
                   --  examine it first)
 
                   declare
-                     E  : constant Edge :=
-                       Graphs.Out_Edges_Cursors.Element (G, EC);
-
-                     --  ??? Might be using secondary stack
-                     Target : constant Vertex := Get_Target (G, E);
+                     E      : constant Edge := Incidence.Element (G, EC);
+                     Target : constant Vertex := Incidence.Target (G, E);
                   begin
                      Visitors.Examine_Edge (Visit, E);
                      case Color_Maps.Get (Colors, Target) is
@@ -135,15 +113,9 @@ package body GAL.Graphs.DFS is
                            return;
                         end if;
 
-                        declare
-                           V : Vertex_Info :=
-                              (VC => <>,
-                               EC =>
-                                  Graphs.Out_Edges_Cursors.First (G, Target));
-                        begin
-                           Graphs.Vertices.Set_Stored (Target, V.VC);
-                           Stack.Append (V);
-                        end;
+                        Stack.Append
+                           ((VC => Target,
+                             EC => Incidence.Out_Edges (G, Target)));
 
                      when Gray =>
                         Visitors.Back_Edge (Visit, E);
@@ -158,18 +130,20 @@ package body GAL.Graphs.DFS is
 
          use type Vertex;
 
-         VC    : Graphs.Vertex_Cursors.Cursor;
+         VC    : Vertex_Lists.Vertex_Cursors.Cursor;
          Count : Count_Type := 0;
       begin
          --  Initialize
+         --  ??? Fails if the graph is "infinite" (case of custom graphs)
 
-         VC := Graphs.Vertex_Cursors.First (G);
-         while Graphs.Vertex_Cursors.Has_Element (G, VC) loop
+         VC := Vertex_Lists.Vertex_Cursors.First (G);
+         while Vertex_Lists.Vertex_Cursors.Has_Element (G, VC) loop
             Color_Maps.Set
-              (Colors, Graphs.Vertex_Maps.Get (G, VC), White);
-            Visitors.Initialize_Vertex (Visit, Graphs.Vertex_Maps.Get (G, VC));
+              (Colors, Vertex_Lists.Vertex_Maps.Get (G, VC), White);
+            Visitors.Initialize_Vertex
+               (Visit, Vertex_Lists.Vertex_Maps.Get (G, VC));
             Count := Count + 1;
-            VC := Graphs.Vertex_Cursors.Next (G, VC);
+            VC := Vertex_Lists.Vertex_Cursors.Next (G, VC);
          end loop;
 
          Visitors.Vertices_Initialized (Visit, Count);
@@ -190,15 +164,19 @@ package body GAL.Graphs.DFS is
 
          --  Search for remaining unvisited vertices
 
-         VC := Vertex_Cursors.First (G);
+         VC := Vertex_Lists.Vertex_Cursors.First (G);
          while not Terminated
-           and then Vertex_Cursors.Has_Element (G, VC)
+           and then Vertex_Lists.Vertex_Cursors.Has_Element (G, VC)
          loop
-            if Color_Maps.Get (Colors, Vertex_Maps.Get (G, VC)) = White then
-               Impl (Vertex_Maps.Get (G, VC));
-            end if;
+            declare
+               V : constant Vertex := Vertex_Lists.Vertex_Maps.Get (G, VC);
+            begin
+               if Color_Maps.Get (Colors, V) = White then
+                  Impl (V);
+               end if;
+            end;
 
-            VC := Vertex_Cursors.Next (G, VC);
+            VC := Vertex_Lists.Vertex_Cursors.Next (G, VC);
          end loop;
 
          Stack.Clear;
@@ -221,17 +199,17 @@ package body GAL.Graphs.DFS is
          procedure Impl (Current : Vertex);
 
          procedure Impl (Current : Vertex) is
-            EC   : Out_Edges_Cursors.Cursor;
+            EC   : Incidence.Cursor;
          begin
             Color_Maps.Set (Colors, Current, Gray);
             Visitors.Discover_Vertex (Visit, Current);
             Visitors.Should_Stop (Visit, Current, Terminated);
             if not Terminated then
-               EC := Out_Edges_Cursors.First (G, Current);
-               while Out_Edges_Cursors.Has_Element (G, EC) loop
+               EC := Incidence.Out_Edges (G, Current);
+               while Incidence.Has_Element (G, EC) loop
                   declare
-                     E      : Edge renames Out_Edges_Cursors.Element (G, EC);
-                     Target : constant Vertex := Get_Target (G, E);
+                     E      : Edge renames Incidence.Element (G, EC);
+                     Target : constant Vertex := Incidence.Target (G, E);
                   begin
                      Visitors.Examine_Edge (Visit, E);
                      case Color_Maps.Get (Colors, Target) is
@@ -246,7 +224,7 @@ package body GAL.Graphs.DFS is
                         Visitors.Forward_Or_Cross_Edge (Visit, E);
                      end case;
                   end;
-                  EC := Out_Edges_Cursors.Next (G, EC);
+                  EC := Incidence.Next (G, EC);
                end loop;
             end if;
 
@@ -256,17 +234,19 @@ package body GAL.Graphs.DFS is
 
          use type Vertex;
 
-         VC    : Vertex_Cursors.Cursor;
+         VC    : Vertex_Lists.Vertex_Cursors.Cursor;
          Count : Count_Type := 0;
       begin
          --  Initialize
 
-         VC := Vertex_Cursors.First (G);
-         while Vertex_Cursors.Has_Element (G, VC) loop
-            Color_Maps.Set (Colors, Vertex_Maps.Get (G, VC), White);
-            Visitors.Initialize_Vertex (Visit, Vertex_Maps.Get (G, VC));
+         VC := Vertex_Lists.Vertex_Cursors.First (G);
+         while Vertex_Lists.Vertex_Cursors.Has_Element (G, VC) loop
+            Color_Maps.Set
+               (Colors, Vertex_Lists.Vertex_Maps.Get (G, VC), White);
+            Visitors.Initialize_Vertex
+               (Visit, Vertex_Lists.Vertex_Maps.Get (G, VC));
             Count := Count + 1;
-            VC := Vertex_Cursors.Next (G, VC);
+            VC := Vertex_Lists.Vertex_Cursors.Next (G, VC);
          end loop;
 
          Visitors.Vertices_Initialized (Visit, Count);
@@ -280,13 +260,17 @@ package body GAL.Graphs.DFS is
 
          --  Search from remaining unvisited vertices
 
-         VC := Vertex_Cursors.First (G);
-         while not Terminated and then Vertex_Cursors.Has_Element (G, VC) loop
-            if Color_Maps.Get (Colors, Vertex_Maps.Get (G, VC)) = White then
-               Impl (Vertex_Maps.Get (G, VC));
+         VC := Vertex_Lists.Vertex_Cursors.First (G);
+         while not Terminated
+            and then Vertex_Lists.Vertex_Cursors.Has_Element (G, VC)
+        loop
+            if Color_Maps.Get (Colors, Vertex_Lists.Vertex_Maps.Get (G, VC)) =
+               White
+            then
+               Impl (Vertex_Lists.Vertex_Maps.Get (G, VC));
             end if;
 
-            VC := Vertex_Cursors.Next (G, VC);
+            VC := Vertex_Lists.Vertex_Cursors.Next (G, VC);
          end loop;
       end Search_Recursive;
 
@@ -306,11 +290,11 @@ package body GAL.Graphs.DFS is
          procedure Back_Edge
            (Self : in out Visitor_Type; Ignored : Edge) with Inline;
          procedure Should_Stop
-           (Self : Visitor_Type; Ignored : Graphs.Vertices.Element;
+           (Self : Visitor_Type; Ignored : Graphs.Vertex;
             Stop : in out Boolean) with Inline;
 
          procedure Should_Stop
-           (Self : Visitor_Type; Ignored : Graphs.Vertices.Element;
+           (Self : Visitor_Type; Ignored : Graphs.Vertex;
             Stop : in out Boolean) is
          begin
             Stop := Self.Has_Cycle;
@@ -323,8 +307,7 @@ package body GAL.Graphs.DFS is
          end Back_Edge;
 
          package Visitors is new DFS_Visitor_Traits
-            (Graphs       => Graphs,
-             Visitor_Type => Visitor_Type,
+            (Visitor_Type => Visitor_Type,
              Back_Edge    => Back_Edge,
              Should_Stop  => Should_Stop);
          procedure DFS is new Search (Visitors);
@@ -363,8 +346,7 @@ package body GAL.Graphs.DFS is
          end Finish_Vertex;
 
          package Visitors is new DFS_Visitor_Traits
-            (Graphs        => Graphs,
-             Visitor_Type  => TS_Visitor,
+            (Visitor_Type  => TS_Visitor,
              Back_Edge     => Back_Edge,
              Finish_Vertex => Finish_Vertex);
          procedure DFS is new Search (Visitors);
@@ -381,7 +363,7 @@ package body GAL.Graphs.DFS is
    --------------
 
    package body Exterior is
-      package Internal is new With_Map (Graphs, Color_Maps);
+      package Internal is new With_Map (Color_Maps);
 
       ----------------
       -- Is_Acyclic --
@@ -448,7 +430,7 @@ package body GAL.Graphs.DFS is
 
    package body Interior is
 
-      package Internal is new With_Map (Graphs, Color_Maps);
+      package Internal is new With_Map (Color_Maps);
 
       ----------------
       -- Is_Acyclic --

@@ -1,38 +1,33 @@
 package body GAL.Graphs.Generators is
+   use type Graphs.Vertex;
 
    --------------
    -- Complete --
    --------------
 
    procedure Complete
-      (Self : in out Graph.Graph;
-       N    : Count_Type) is
+      (Self : in out Graphs.Graph;
+       N    : Count_Type)
+   is
+      --  ??? Might result in stack_overflow when adding too many vertices.
+      --  But then the graph will likely be too big to manipulate anyway.
+      V : array (1 .. N) of Graphs.Vertex;
+      E : Graphs.Edge with Unreferenced;
    begin
-      Clear (Self);
-      Add_Vertices (Self, Count => N);
+      --  ??? Would be faster to add multiple vertices at once.
+      --  ??? or at least Reserve the space for enough
+      for I in 1 .. N loop
+         V (I) := Vertex_Mutable.Add_Vertex (Self);
+      end loop;
 
       if N > 1 then
-         declare
-            use type Graph.Vertex_Cursors.Cursor;
-            V1, V2 : Graph.Vertex_Cursors.Cursor;
-         begin
-            V1 := Graph.Vertex_Cursors.First (Self);
-            while Graph.Vertex_Cursors.Has_Element (Self, V1) loop
-               V2 := Graph.Vertex_Cursors.First (Self);
-               while Graph.Vertex_Cursors.Has_Element (Self, V2) loop
-                  if V1 /= V2 then
-                     Add_Edge
-                        (Self,
-                         Graph.Vertex_Maps.Get (Self, V1),
-                         Graph.Vertex_Maps.Get (Self, V2));
-                  end if;
-
-                  V2 := Graph.Vertex_Cursors.Next (Self, V2);
-               end loop;
-
-               V1 := Graph.Vertex_Cursors.Next (Self, V1);
+         for V1 of V loop
+            for V2 of V loop
+               if V1 /= V2 then
+                  E := Edge_Mutable.Add_Edge (Self, V1, V2);
+               end if;
             end loop;
-         end;
+         end loop;
       end if;
    end Complete;
 

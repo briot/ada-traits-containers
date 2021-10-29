@@ -52,6 +52,11 @@ package Graph1_Support is
       Colors : Color_Map (1 .. Test_Support.Items_Count);
    end record;
 
+   function Get_Source (Ignored : Graph; E : Edge) return Vertex is (E.Source);
+   function Get_Target (Ignored : Graph; E : Edge) return Vertex is (E.Target);
+   function Length (Self : Graph) return GAL.Count_Type
+      is (GAL.Count_Type (Self.Colors'Length));
+
    --------------------
    -- Vertex_Cursors --
    --------------------
@@ -81,33 +86,34 @@ package Graph1_Support is
    --     1 -> 2 -> 3 -> 4 -> 5 -> ...
 
    type Edge_Cursor is new Integer;
-   function First (G : Graph; V : Vertex) return Edge_Cursor with Inline;
+   function Out_Edges (G : Graph; V : Vertex) return Edge_Cursor with Inline;
    function Element (G : Graph; C : Edge_Cursor) return Edge with Inline;
    function Has_Element
      (G : Graph; C : Edge_Cursor) return Boolean with Inline;
    function Next
      (G : Graph; C : Edge_Cursor) return Edge_Cursor with Inline;
 
-   package Custom_Edges is new Edge_Cursors
-     (Container_Type => Graph,
-      Vertices       => Vertices.Traits,
-      Edge_Type      => Edge,
-      Cursor_Type    => Edge_Cursor);
-
    -----------
    -- Graph --
    -----------
 
-   function Get_Target (G : Graph; E : Edge) return Vertex;
    package Custom_Graphs is new GAL.Graphs.Traits
       (Graph_Type        => Graph,
        Vertex_Type       => Vertex,
-       Vertices          => Vertices.Traits,
+       Edge_Type         => Edge,
        Get_Index         => Get_Index,
-       Null_Vertex       => -1,
+       Null_Vertex       => -1);
+   package Vertex_Lists is new GAL.Graphs.Vertex_List_Graphs_Traits
+      (Graphs            => Custom_Graphs,
        Vertex_Cursors    => Custom_Vertices,
        Vertex_Maps       => Vertices_Maps,
-       Out_Edges_Cursors => Custom_Edges);
+       Length            => Length);
+   package Incidence is new GAL.Graphs.Incidence_Graphs_Traits
+      (Graphs            => Custom_Graphs,
+       Cursor_Type       => Edge_Cursor,
+       Out_Edges         => Out_Edges,
+       Source            => Get_Source,
+       Target            => Get_Target);
 
    ----------------
    -- Color maps --
@@ -122,27 +128,24 @@ package Graph1_Support is
    -- Incidence_Graphs --
    ----------------------
 
-   package DFS is new GAL.Graphs.DFS.Interior
-     (Graphs     => Custom_Graphs,
-      Color_Maps => Color_Maps);
+   package All_DFS is new GAL.Graphs.DFS (Vertex_Lists, Incidence);
+   package DFS is new All_DFS.Interior (Color_Maps => Color_Maps);
 
    ----------------
    -- Algo --
    ----------------
 
    type My_Visitor is null record;  --  no callback
-   package My_Visitors is new GAL.Graphs.DFS.DFS_Visitor_Traits
-      (Graphs       => Custom_Graphs,
-       Visitor_Type => My_Visitor);
+   package My_Visitors is new All_DFS.DFS_Visitor_Traits
+      (Visitor_Type => My_Visitor);
 
    type My_Visitor2 is null record;
    procedure Initialize_Vertex (Ignored : in out My_Visitor2; V : Vertex);
    procedure Start_Vertex      (Ignored : in out My_Visitor2; V : Vertex);
    procedure Finish_Vertex     (Ignored : in out My_Visitor2; V : Vertex);
    procedure Discover_Vertex   (Ignored : in out My_Visitor2; V : Vertex);
-   package My_Visitors2 is new GAL.Graphs.DFS.DFS_Visitor_Traits
-      (Graphs            => Custom_Graphs,
-       Visitor_Type      => My_Visitor2,
+   package My_Visitors2 is new All_DFS.DFS_Visitor_Traits
+      (Visitor_Type      => My_Visitor2,
        Initialize_Vertex => Initialize_Vertex,
        Start_Vertex      => Start_Vertex,
        Finish_Vertex     => Finish_Vertex,

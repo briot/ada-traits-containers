@@ -89,11 +89,11 @@ package body Graph1_Support is
       return C + 1;
    end Next;
 
-   function First (G : Graph; V : Vertex) return Edge_Cursor is
+   function Out_Edges (G : Graph; V : Vertex) return Edge_Cursor is
       pragma Unreferenced (G);
    begin
       return Edge_Cursor (V);
-   end First;
+   end Out_Edges;
 
    function Element (G : Graph; C : Edge_Cursor) return Edge is
       pragma Unreferenced (G);
@@ -116,11 +116,5 @@ package body Graph1_Support is
       --  Only one edge from each vertex
       return Edge_Cursor (G.Colors'Last + 1);
    end Next;
-
-   function Get_Target (G : Graph; E : Edge) return Vertex is
-      pragma Unreferenced (G);
-   begin
-      return E.Target;
-   end Get_Target;
 
 end Graph1_Support;

@@ -23,7 +23,6 @@ pragma Ada_2012;
 with Asserts;
 with GAL.Elements.Null_Elements;
 with GAL.Graphs.Adjacency_List;
-with GAL.Graphs.DFS;
 with GAL.Graphs.Generators;
 with GAL;                           use GAL;
 with Graph1_Support;                use Graph1_Support;
@@ -40,10 +39,8 @@ package body Test_Graph_Adjlist is
       Edge_Properties     => GAL.Elements.Null_Elements.Traits,
       Container_Base_Type => GAL.Controlled_Base);
    package Generators is new GAL.Graphs.Generators
-     (Graph               => Graphs.Traits,
-      Clear               => Graphs.Clear,
-      Add_Vertices        => Graphs.Add_Vertices,
-      Add_Edge            => Graphs.Add_Edge);
+     (Vertex_Mutable      => Graphs.Vertex_Mutable,
+      Edge_Mutable        => Graphs.Edge_Mutable);
 
    generic
       Category  : String;
@@ -116,9 +113,8 @@ package body Test_Graph_Adjlist is
          null;
       end Finish_Vertex;
 
-      package Visitors is new GAL.Graphs.DFS.DFS_Visitor_Traits
-         (Graphs        => Graphs.Traits,
-          Visitor_Type  => My_Visit,
+      package Visitors is new Graphs.All_DFS.DFS_Visitor_Traits
+         (Visitor_Type  => My_Visit,
           Finish_Vertex => Finish_Vertex);
       procedure DFS is new Graphs.DFS.Search (Visitors);
       procedure DFS_Recursive is new Graphs.DFS.Search_Recursive (Visitors);

@@ -29,7 +29,18 @@
 pragma Ada_2012;
 with GAL.Properties;
 
+generic
+   with package Vertex_Lists is new GAL.Graphs.Vertex_List_Graphs_Traits
+      (<>);
+   --  These algorithms need to iterate on all vertices of the graph
+
+   with package Incidence is new GAL.Graphs.Incidence_Graphs_Traits
+      (Graphs => Vertex_Lists.Graphs, others => <>);
+   --  They also need to find all out-edges for a given vertex
+
 package GAL.Graphs.DFS is
+
+   package Graphs renames Vertex_Lists.Graphs;
 
    ------------------------
    -- DFS_Visitor_Traits --
@@ -40,9 +51,8 @@ package GAL.Graphs.DFS is
    --  As always, we use a traits package to specify the various callbacks, so
    --  that no performance penalty occurs when a subprogram does nothing.
 
+   pragma Warnings (Off, "is not referenced");
    generic
-      with package Graphs is new GAL.Graphs.Traits (<>);
-
       type Visitor_Type (<>) is limited private;
 
       with procedure Should_Stop
@@ -127,6 +137,8 @@ package GAL.Graphs.DFS is
    package DFS_Visitor_Traits is
    end DFS_Visitor_Traits;
 
+   pragma Warnings (On, "is not referenced");
+
    --------------
    -- With_Map --
    --------------
@@ -137,14 +149,14 @@ package GAL.Graphs.DFS is
    --  This is the most general implementation of the algorithm.
 
    generic
-      with package Graphs is new GAL.Graphs.Traits (<>);
       with package Color_Maps is new GAL.Properties.Maps
-        (Key_Type => Graphs.Vertex, Element_Type => Color, others => <>);
+        (Key_Type     => Vertex_Lists.Graphs.Vertex,
+         Element_Type => Color,
+         others       => <>);
    package With_Map is
 
       generic
-         with package Visitors is new DFS_Visitor_Traits
-            (Graphs => Graphs, others => <>);
+         with package Visitors is new DFS_Visitor_Traits (<>);
       procedure Search
         (G      : Graphs.Graph;
          Visit  : in out Visitors.Visitor_Type;
@@ -178,8 +190,7 @@ package GAL.Graphs.DFS is
       --  can be inlined by the compiler and provide maximum performance.
 
       generic
-         with package Visitors is new DFS_Visitor_Traits
-            (Graphs => Graphs, others => <>);
+         with package Visitors is new DFS_Visitor_Traits (<>);
       procedure Search_Recursive
         (G      : Graphs.Graph;
          Visit  : in out Visitors.Visitor_Type;
@@ -219,25 +230,23 @@ package GAL.Graphs.DFS is
    --  The map is automatically created and cleared by the algorithm.
 
    generic
-      with package Graphs is new GAL.Graphs.Traits (<>);
       with package Color_Maps is new GAL.Properties.Maps
-        (Key_Type     => Graphs.Vertex,
+        (Key_Type     => Vertex_Lists.Graphs.Vertex,
          Element_Type => Color,
          others       => <>);
-      with function Create_Map (G : Graphs.Graph) return Color_Maps.Map;
+      with function Create_Map
+         (G : Vertex_Lists.Graphs.Graph) return Color_Maps.Map;
    package Exterior is
 
       generic
-         with package Visitors is new DFS_Visitor_Traits
-            (Graphs => Graphs, others => <>);
+         with package Visitors is new DFS_Visitor_Traits (<>);
       procedure Search
         (G     : Graphs.Graph;
          Visit : in out Visitors.Visitor_Type;
          V     : Graphs.Vertex := Graphs.Null_Vertex);
 
       generic
-         with package Visitors is new DFS_Visitor_Traits
-            (Graphs => Graphs, others => <>);
+         with package Visitors is new DFS_Visitor_Traits (<>);
       procedure Search_Recursive
         (G     : Graphs.Graph;
          Visit : in out Visitors.Visitor_Type;
@@ -260,25 +269,22 @@ package GAL.Graphs.DFS is
    --  algorithms, since they would interfere in the color map.
 
    generic
-      with package Graphs is new GAL.Graphs.Traits (<>);
       with package Color_Maps is new GAL.Properties.Maps
-        (Map_Type     => Graphs.Graph,
-         Key_Type     => Graphs.Vertex,
+        (Map_Type     => Vertex_Lists.Graphs.Graph,
+         Key_Type     => Vertex_Lists.Graphs.Vertex,
          Element_Type => Color,
          others       => <>);
    package Interior is
 
       generic
-         with package Visitors is new DFS_Visitor_Traits
-            (Graphs => Graphs, others => <>);
+         with package Visitors is new DFS_Visitor_Traits (<>);
       procedure Search
         (G     : in out Graphs.Graph;
          Visit : in out Visitors.Visitor_Type;
          V     : Graphs.Vertex := Graphs.Cst_Null_Vertex);
 
       generic
-         with package Visitors is new DFS_Visitor_Traits
-            (Graphs => Graphs, others => <>);
+         with package Visitors is new DFS_Visitor_Traits (<>);
       procedure Search_Recursive
         (G     : in out Graphs.Graph;
          Visit : in out Visitors.Visitor_Type;

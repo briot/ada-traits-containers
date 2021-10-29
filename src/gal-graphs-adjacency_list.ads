@@ -30,7 +30,7 @@ pragma Ada_2012;
 
 with GAL.Cursors;
 with GAL.Properties.Indexed;
-with GAL.Elements.Definite;
+with GAL.Elements;
 with GAL.Graphs.Components;
 with GAL.Graphs.DFS;
 private with GAL.Lists.Definite_Unbounded;
@@ -215,27 +215,14 @@ package GAL.Graphs.Adjacency_List is
    subtype Vertex_Cursor is Impl.Vertex_Cursor;
    subtype Vertex_Edges_Cursor is Impl.Vertex_Cursor;
 
-   use all type Graph;
-   use all type Impl.Vertex_Cursor;
-   use all type Impl.Vertex_Edges_Cursor;
-
-   procedure Clear (Self : in out Graph)
-      renames Impl.Clear;
-   procedure Add_Vertices (Self : in out Graph; Count : Count_Type)
-      renames Impl.Add_Vertices;
-   procedure Add_Edge (Self : in out Graph; From, To : Vertex)
-      renames Impl.Add_Edge;
-   --  ??? Shouldn't these be made visible via "use all type Graph"
-
-   package Vertices is new GAL.Elements.Definite (Vertex);
-
    package Vertices_Cursors is new GAL.Cursors.Forward_Cursors
      (Container_Type => Graph,
       Cursor_Type    => Impl.Vertex_Cursor,
       No_Element     => Impl.No_Vertex,
       First          => Impl.First,
       Has_Element    => Impl.Has_Element,
-      Next           => Impl.Next);
+      Next           => Impl.Next,
+      "="            => Impl."=");
    --  Iterate over all vertices in a graph
 
    package Vertices_Maps is new GAL.Properties.Read_Only_Maps
@@ -245,27 +232,36 @@ package GAL.Graphs.Adjacency_List is
       Get            => Impl.Element);
    --  Retrieve the actual vertex from a vertex cursor
 
-   package Out_Edges_Cursors is new GAL.Graphs.Edge_Cursors
-     (Container_Type => Graph,
-      Vertices       => Vertices.Traits,
-      Edge_Type      => Edge,
-      Cursor_Type    => Impl.Vertex_Edges_Cursor,
-      First          => Impl.Out_Edges,
-      Element        => Impl.Element,
-      Has_Element    => Impl.Has_Element,
-      Next           => Impl.Next);
-   --  Iterate over all out edges of a given vertex
-
    package Traits is new GAL.Graphs.Traits
      (Graph_Type        => Impl.Graph,
       Vertex_Type       => Vertex,
-      Vertices          => Vertices.Traits,
-      Get_Index         => Impl.Get_Index,
+      Edge_Type         => Edge,
       Null_Vertex       => Impl.Null_Vertex,
-      Get_Target        => Impl.Get_Target,
+      Get_Index         => Impl.Get_Index);
+   package Vertex_Lists is new GAL.Graphs.Vertex_List_Graphs_Traits
+     (Graphs            => Traits,
       Vertex_Cursors    => Vertices_Cursors,
       Vertex_Maps       => Vertices_Maps,
-      Out_Edges_Cursors => Out_Edges_Cursors);
+      Length            => Impl.Length);
+   package Incidence is new GAL.Graphs.Incidence_Graphs_Traits
+     (Graphs            => Traits,
+      Cursor_Type       => Impl.Vertex_Edges_Cursor,
+      Out_Edges         => Impl.Out_Edges,
+      Element           => Impl.Element,
+      Has_Element       => Impl.Has_Element,
+      Next              => Impl.Next,
+      Source            => Impl.Get_Source,
+      Target            => Impl.Get_Target);
+   package Adjacency is new GAL.Graphs.Adjacency_Graphs_Traits
+     (Graphs            => Traits);
+   package Vertex_Mutable is new GAL.Graphs.Vertex_Mutable_Graphs_Traits
+     (Graphs            => Traits,
+      Add_Vertex        => Impl.Add_Vertex);
+   package Edge_Mutable is new GAL.Graphs.Edge_Mutable_Graphs_Traits
+     (Graphs            => Traits,
+      Add_Edge          => Impl.Add_Edge);
+   --  Make the various capabilities of adjacency lists available to
+   --  algorithms.
 
    package Color_Maps is new GAL.Properties.Indexed
      (Container_Type      => Graph,
@@ -304,10 +300,12 @@ package GAL.Graphs.Adjacency_List is
    --  Such a map is invalidated as soon as the structure of the graph
    --  changes (since vertex indices might change at that time).
 
-   package DFS is new GAL.Graphs.DFS.Exterior
-     (Traits, Color_Maps.As_Map, Create_Map => Color_Maps.Create_Map);
+   package All_DFS is new GAL.Graphs.DFS (Vertex_Lists, Incidence);
+   package DFS is new All_DFS.Exterior
+     (Color_Maps.As_Map, Create_Map => Color_Maps.Create_Map);
    package Strongly_Connected_Components is
       new GAL.Graphs.Components.Strongly_Connected_Components
-         (Graphs         => Traits,
+         (Vertex_Lists   => Vertex_Lists,
+          Incidence      => Incidence,
           Component_Maps => Integer_Maps.As_Map);
 end GAL.Graphs.Adjacency_List;

@@ -21,8 +21,6 @@
 
 pragma Ada_2012;
 with GAL.Graphs.DFS;
-with GAL.Vectors.Storage.Unbounded;
-with GAL.Vectors.Generics;
 with GAL.Vectors.Definite_Unbounded;
 
 package body GAL.Graphs.Components is
@@ -42,12 +40,10 @@ package body GAL.Graphs.Components is
    package body Strongly_Connected_Components is
       use Graphs;
 
-      package Vertex_Storage is new GAL.Vectors.Storage.Unbounded
-        (Elements            => Graphs.Vertices,
-         Container_Base_Type => GAL.Limited_Base,
-         Resize_Policy       => GAL.Vectors.Resize_1_5);
-      package Vertex_Vectors is new GAL.Vectors.Generics
-        (Natural, Vertex_Storage.Traits);
+      package All_DFS is new GAL.Graphs.DFS (Vertex_Lists, Incidence);
+
+      package Vertex_Vectors is new GAL.Vectors.Definite_Unbounded
+         (Positive, Graphs.Vertex, GAL.Controlled_Base);
       --  A stack of vertices.
       --  Elaborate those when the package is declared (so do not declare them
       --  inside Compute, which would elaborate them when running the
@@ -132,8 +128,7 @@ package body GAL.Graphs.Components is
 
                         loop
                            declare
-                              U : constant Vertex :=
-                                Graphs.Vertices.To_Elem (Open.Last_Element);
+                              U : constant Vertex := Open.Last_Element;
                               U_Index  : constant Integer :=
                                 Component_Maps.Get (Components, U);
                            begin
@@ -164,8 +159,7 @@ package body GAL.Graphs.Components is
             Map_Type     => Component_Maps.Map,
             Set          => Set,
             Get          => Get);
-         package Local_DFS is
-            new GAL.Graphs.DFS.With_Map (Graphs, Color_Maps);
+         package Local_DFS is new All_DFS.With_Map (Color_Maps);
 
          type SCC_Visitor is null record;
          procedure Vertices_Initialized
@@ -185,7 +179,7 @@ package body GAL.Graphs.Components is
          procedure Back_Edge
            (Ignored : in out SCC_Visitor; E : Graphs.Edge)
          is
-            V           : constant Vertex := Graphs.Get_Edge_Target (G, E);
+            V           : constant Vertex := Incidence.Edge_Target (G, E);
             V_DFS_Index : constant Integer :=
                Component_Maps.Get (Components, V);
          begin
@@ -198,9 +192,8 @@ package body GAL.Graphs.Components is
             end if;
          end Back_Edge;
 
-         package Visitors is new GAL.Graphs.DFS.DFS_Visitor_Traits
-            (Graphs               => Graphs,
-             Visitor_Type         => SCC_Visitor,
+         package Visitors is new All_DFS.DFS_Visitor_Traits
+            (Visitor_Type         => SCC_Visitor,
              Vertices_Initialized => Vertices_Initialized,
              Back_Edge            => Back_Edge);
          procedure DFS is new Local_DFS.Search (Visitors);

@@ -25,10 +25,22 @@ with GAL.Properties;
 package GAL.Graphs.Components is
 
    generic
-      with package Graphs is new GAL.Graphs.Traits (<>);
+      with package Vertex_Lists is new GAL.Graphs.Vertex_List_Graphs_Traits
+         (<>);
+      --  This algorithm needs to iterate on all vertices of the graph
+
+      with package Incidence is new GAL.Graphs.Incidence_Graphs_Traits
+         (Graphs => Vertex_Lists.Graphs, others => <>);
+      --  It also needs to find all out-edges for a given vertex
+
       with package Component_Maps is new GAL.Properties.Maps
-        (Key_Type => Graphs.Vertex, Element_Type => Integer, others => <>);
+        (Key_Type     => Vertex_Lists.Graphs.Vertex,
+         Element_Type => Integer,
+         others       => <>);
+      --  The result is a map from vertex to the component it belongs to
+
    package Strongly_Connected_Components is
+      package Graphs renames Vertex_Lists.Graphs;
 
       procedure Compute
         (G                : Graphs.Graph;
