@@ -412,6 +412,22 @@ package body GAL.Graphs.DFS is
          Color_Maps.Clear (Colors);
       end Search;
 
+      ----------------------
+      -- Search_Recursive --
+      ----------------------
+
+      procedure Search_Recursive
+        (G     : Graphs.Graph;
+         Visit : in out Visitors.Visitor_Type;
+         V     : Graphs.Vertex := Graphs.Cst_Null_Vertex)
+      is
+         procedure Internal_Search is new Internal.Search_Recursive (Visitors);
+         Colors : Color_Maps.Map := Create_Map (G);   --  uninitialized map
+      begin
+         Internal_Search (G, Visit, Colors, V);
+         Color_Maps.Clear (Colors);
+      end Search_Recursive;
+
       ------------------------------
       -- Reverse_Topological_Sort --
       ------------------------------

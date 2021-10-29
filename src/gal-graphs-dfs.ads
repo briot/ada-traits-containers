@@ -235,6 +235,14 @@ package GAL.Graphs.DFS is
          Visit : in out Visitors.Visitor_Type;
          V     : Graphs.Vertex := Graphs.Null_Vertex);
 
+      generic
+         with package Visitors is new DFS_Visitor_Traits
+            (Graphs => Graphs, others => <>);
+      procedure Search_Recursive
+        (G     : Graphs.Graph;
+         Visit : in out Visitors.Visitor_Type;
+         V     : Graphs.Vertex := Graphs.Cst_Null_Vertex);
+
       function Is_Acyclic (G : Graphs.Graph) return Boolean;
 
       generic
