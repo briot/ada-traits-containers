@@ -21,10 +21,10 @@
 
 pragma Ada_2012;
 with Asserts;
-with GAL.Elements.Null_Elements;  use GAL.Elements.Null_Elements;
+with GAL.Elements.Null_Elements;
 with GAL.Graphs.Adjacency_List;
 with GAL.Graphs.DFS;
-with GAL;                         use GAL;
+with GAL;                           use GAL;
 with Graph1_Support;                use Graph1_Support;
 with Report;                        use Report;
 with System.Storage_Elements;       use System.Storage_Elements;
@@ -32,16 +32,12 @@ with Test_Support;                  use Test_Support;
 
 package body Test_Graph_Adjlist is
    use Asserts.Integers;
+   use type GAL.Graphs.Vertex_Index;
 
    Category  : constant String := "Integer Graph";
 
-   type Vertex_With_Null is (Null_V, A, B, C, D, E, F, G, H);
-   pragma Unreferenced (Null_V);
-   subtype Vertex is Vertex_With_Null range A .. Vertex_With_Null'Last;
-
-   package Enum_Graphs is new GAL.Graphs.Adjacency_List
-     (Vertex_Type         => Vertex,
-      Vertex_Properties   => GAL.Elements.Null_Elements.Traits,
+   package Graphs is new GAL.Graphs.Adjacency_List
+     (Vertex_Properties   => GAL.Elements.Null_Elements.Traits,
       Edge_Properties     => GAL.Elements.Null_Elements.Traits,
       Container_Base_Type => GAL.Controlled_Base);
 
@@ -50,40 +46,44 @@ package body Test_Graph_Adjlist is
    ----------
 
    procedure Test is
-      Gr  : Enum_Graphs.Graph;
-      Map : Enum_Graphs.Integer_Maps.Map;
+      G   : Graphs.Graph;
+      Map : Graphs.Integer_Maps.Map;
       Count : Positive;
    begin
-      Gr.Add_Vertices
-         (No_Element,
-          Count => Vertex'Pos (Vertex'Last) - Vertex'Pos (Vertex'First) + 1);
+      G.Add_Vertices (Count => 8);
 
-      Gr.Add_Edge (A, B, No_Element);
-      Gr.Add_Edge (B, C, No_Element);
-      Gr.Add_Edge (C, A, No_Element);
-      Gr.Add_Edge (D, B, No_Element);
-      Gr.Add_Edge (D, C, No_Element);
-      Gr.Add_Edge (D, E, No_Element);
-      Gr.Add_Edge (E, D, No_Element);
-      Gr.Add_Edge (E, F, No_Element);
-      Gr.Add_Edge (F, C, No_Element);
-      Gr.Add_Edge (F, G, No_Element);
-      Gr.Add_Edge (G, F, No_Element);
-      Gr.Add_Edge (H, G, No_Element);
-      Gr.Add_Edge (H, F, No_Element);
-      Gr.Add_Edge (H, H, No_Element);
+      --  In Boost Graph Library, the fact that adjacency_list uses a vector
+      --  for vertices (one of the possible configs) shows through, in fact
+      --  user code knows that a vertex is in an index into a vector. As such,
+      --  add_edge() can be directly passed integers. This leads to somewhat
+      --  easier code, though doesn't hide the implementation details.
 
-      Enum_Graphs.Strongly_Connected_Components.Compute
-         (Gr, Map, Components_Count => Count);
+      G.Add_Edge (G.From_Index (1), G.From_Index (2));
+      G.Add_Edge (G.From_Index (2), G.From_Index (3));
+      G.Add_Edge (G.From_Index (3), G.From_Index (1));
+      G.Add_Edge (G.From_Index (4), G.From_Index (2));
+      G.Add_Edge (G.From_Index (4), G.From_Index (3));
+      G.Add_Edge (G.From_Index (4), G.From_Index (5));
+      G.Add_Edge (G.From_Index (5), G.From_Index (4));
+      G.Add_Edge (G.From_Index (5), G.From_Index (6));
+      G.Add_Edge (G.From_Index (6), G.From_Index (3));
+      G.Add_Edge (G.From_Index (6), G.From_Index (7));
+      G.Add_Edge (G.From_Index (7), G.From_Index (6));
+      G.Add_Edge (G.From_Index (8), G.From_Index (7));
+      G.Add_Edge (G.From_Index (8), G.From_Index (6));
+      G.Add_Edge (G.From_Index (8), G.From_Index (8));
+
+      Graphs.Strongly_Connected_Components.Compute
+         (G, Map, Components_Count => Count);
       Assert (Count, 4, "number of strongly connected components");
-      Assert (Enum_Graphs.Integer_Maps.Get (Map, A), 1);
-      Assert (Enum_Graphs.Integer_Maps.Get (Map, B), 1);
-      Assert (Enum_Graphs.Integer_Maps.Get (Map, C), 1);
-      Assert (Enum_Graphs.Integer_Maps.Get (Map, D), 3);
-      Assert (Enum_Graphs.Integer_Maps.Get (Map, E), 3);
-      Assert (Enum_Graphs.Integer_Maps.Get (Map, F), 2);
-      Assert (Enum_Graphs.Integer_Maps.Get (Map, G), 2);
-      Assert (Enum_Graphs.Integer_Maps.Get (Map, H), 4);
+      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (1)), 1);
+      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (2)), 1);
+      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (3)), 1);
+      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (4)), 3);
+      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (5)), 3);
+      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (6)), 2);
+      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (7)), 2);
+      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (8)), 4);
    end Test;
 
    ------------------------------
@@ -94,12 +94,6 @@ package body Test_Graph_Adjlist is
       (Stdout : in out Output'Class; Favorite : Boolean)
    is
       Container : constant String := "adjacency list";
-
-      package Graphs is new GAL.Graphs.Adjacency_List
-        (Vertex_Type         => Positive,
-         Vertex_Properties   => GAL.Elements.Null_Elements.Traits,
-         Edge_Properties     => GAL.Elements.Null_Elements.Traits,
-         Container_Base_Type => GAL.Controlled_Base);
 
       type My_Visit is null record;
       procedure Finish_Vertex (Ignored : in out My_Visit; V : Graphs.Vertex);
@@ -114,8 +108,6 @@ package body Test_Graph_Adjlist is
           Finish_Vertex => Finish_Vertex);
       procedure DFS is new Graphs.DFS.Search (Visitors);
 
-      subtype Vertex is Graphs.Vertex;
-
       G : Graphs.Graph;
       Acyclic : Boolean;
 
@@ -127,13 +119,16 @@ package body Test_Graph_Adjlist is
 
       procedure Do_Fill;
       procedure Do_Fill is
+         V, V2 : Graphs.Vertex_Cursor;
       begin
-         G.Add_Vertices (No_Element, Count => Items_Count);
+         G.Add_Vertices (Count => Items_Count);
 
-         for V in Vertex'First
-           .. Vertex'First + Vertex (Items_Count) - 2
+         V := G.First;
          loop
-            G.Add_Edge (V, V + 1, No_Element);
+            V2 := G.Next (V);
+            exit when not G.Has_Element (V2);
+            G.Add_Edge (G.Element (V), G.Element (V2));
+            V := V2;
          end loop;
       end Do_Fill;
 
@@ -183,8 +178,9 @@ package body Test_Graph_Adjlist is
 
       Do_Clear;
       Do_Fill;
-      G.Add_Edge (Items_Count / 10 + 1, 4, No_Element);
-      G.Add_Edge (2 * Items_Count / 10 + 1, Items_Count, No_Element);
+      G.Add_Edge (G.From_Index (Items_Count / 10 + 1), G.From_Index (4));
+      G.Add_Edge
+         (G.From_Index (2 * Items_Count / 10 + 1), G.From_Index (Items_Count));
       Time_SCC (Stdout, Category, Container, "scc", Start_Group => True);
    end Test_Perf_Adjacency_List;
 

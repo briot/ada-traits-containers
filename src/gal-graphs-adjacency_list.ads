@@ -21,57 +21,55 @@
 
 --  A graph data structure implemented as an adjacency list.
 --  It stores a sequence of out-edges for each vertex.
+--
+--  ??? Should Vertex_Index be a formal parameter. It could be an enumeration
+--      type, which would simplify user code in some places.
+--  ??? Would be nice to write "for V of G.Vertices loop"
 
 pragma Ada_2012;
 
 with GAL.Cursors;
 with GAL.Properties.Indexed;
 with GAL.Elements.Definite;
-with GAL.Vectors.Generics;
-with GAL.Vectors.Storage.Unbounded;
-with GAL.Vectors.Definite_Unbounded;
 with GAL.Graphs.Components;
 with GAL.Graphs.DFS;
+private with GAL.Lists.Definite_Unbounded;
+private with GAL.Vectors.Definite_Unbounded;
 
 generic
-   type Vertex_Type is (<>);
-   --  The type used to represent vertices. These are indices into an internal
-   --  vector of vertices, but could be any integer type, ...
-   --  Just like for vectors's index_type, this package expects that
-   --    (Vertex_Type'First - 1) is valid in Vertex_Type'Base.
-   --  This prevents Integer or enumeration types from being used (though
-   --  subtypes of those are acceptable).
-
    with package Vertex_Properties is new GAL.Elements.Traits (<>);
    with package Edge_Properties is new GAL.Elements.Traits (<>);
    --  The data associated with edges and properties
 
    type Container_Base_Type is abstract tagged limited private;
    --  The base type for the graph.
-   --  This is a way to make lists either controlled or limited.
+   --  This is a way to make graphs either controlled or limited.
 
 package GAL.Graphs.Adjacency_List is
-
-   subtype Extended_Vertex is Vertex_Type'Base range
-     Vertex_Type'Pred (Vertex_Type'First) .. Vertex_Type'Last;
-   --  Index_Type with one more element to the left, used to represent
-   --  invalid indexes
-
-   subtype Vertex is Vertex_Type;
-   --  Make this type visible to all packages using instances.
 
    package Impl is
       type Graph is new Container_Base_Type with private;
 
-      function Length (Self : Graph) return Count_Type;
-      --  Return the number of elements in the graph
-
-      Null_Vertex : constant Extended_Vertex;
+      type Vertex is private;
+      Null_Vertex : constant Vertex;
+      --  A vertex is the graph.
+      --  Depending on how the graph is implemented internally (using vectors
+      --  or lists, for instance), a given vertex might change identifier when
+      --  the structure of the graph is modified.
+      --  For instance, when the list of vertices is stored as a vector, and
+      --  you remove a vertex from the graph, then all existing Vertex
+      --  descriptors are invalidated.
 
       type Edge is private;
+      --  A descriptor for an edge. Just like for Vertex, existing descriptors
+      --  might be invalidated when the structure of the graph is modified.
 
-      function Get_Target
-        (G : Graph; E : Edge) return Vertex with Inline;
+      function Length (Self : Graph) return Count_Type;
+      --  Return the number of vertices in the graph
+
+      function Get_Source (G : Graph; E : Edge) return Vertex with Inline;
+      function Get_Target (G : Graph; E : Edge) return Vertex with Inline;
+      --  Both ends of an edge
 
       type Vertex_Cursor is private;
       No_Vertex : constant Vertex_Cursor;
@@ -80,66 +78,116 @@ package GAL.Graphs.Adjacency_List is
       function Has_Element (G : Graph; C : Vertex_Cursor) return Boolean;
       function Next (G : Graph; C : Vertex_Cursor) return Vertex_Cursor;
 
-      type Edges_Cursor is private;
-      function Out_Edges (G : Graph; V : Vertex) return Edges_Cursor;
-      function Element (G : Graph; C : Edges_Cursor) return Edge;
-      function Has_Element (G : Graph; C : Edges_Cursor) return Boolean;
-      function Next (G : Graph; C : Edges_Cursor) return Edges_Cursor;
+      type Vertex_Edges_Cursor is private;
+      function Out_Edges (G : Graph; V : Vertex) return Vertex_Edges_Cursor;
+      function Element (G : Graph; C : Vertex_Edges_Cursor) return Edge;
+      function Has_Element (G : Graph; C : Vertex_Edges_Cursor) return Boolean;
+      function Next
+         (G : Graph; C : Vertex_Edges_Cursor) return Vertex_Edges_Cursor;
 
-      procedure Add_Vertices
-        (Self  : in out Graph;
-         Props : Vertex_Properties.Element;
-         Count : Count_Type := 1);
-      --  Add Count vertices to the graph.
-      --  Each node gets a copy of Props
+      function Add_Vertex (Self : in out Graph) return Vertex;
+      procedure Add_Vertices (Self : in out Graph; Count : Count_Type);
+      function Add_Vertex
+         (Self  : in out Graph;
+          Props : Vertex_Properties.Element) return Vertex;
+      --  Add a new vertex to the graph.
+      --  Its associated properties are left uninitialized when the subprogram
+      --  has no Props parameter. Your code should immediately set them.
 
-      procedure Add_Edge
-        (Self     : in out Graph;
-         From, To : Vertex;
-         Props    : Edge_Properties.Element)
-        with Pre => Vertex'Pos (From) <= Self.Length
-                    and Vertex'Pos (To) <= Self.Length;
-      --  Add a new edge between two vertices
+      procedure Set
+         (Self  : in out Graph;
+          V     : Vertex;
+          Props : Vertex_Properties.Element);
+      --  Modify the properties associated with a vertex
+
+      function Add_Edge (Self : in out Graph; From, To : Vertex) return Edge;
+      procedure Add_Edge (Self : in out Graph; From, To : Vertex);
+      function Add_Edge
+         (Self     : in out Graph;
+          From, To : Vertex;
+          Props    : Edge_Properties.Element) return Edge;
+      --  Add a new edge to the graph.
+      --  Its associated element is left uninitialized, your code should
+      --  immediately set it.
+
+      procedure Set
+         (Self  : in out Graph;
+          E     : Edge;
+          Props : Edge_Properties.Element);
+      --  Set the properties for the edge
 
       procedure Clear (Self : in out Graph);
       --  Remove all vertices and edges from the graph
 
-   private
-      Null_Vertex : constant Extended_Vertex := Extended_Vertex'Last;
+      function Get_Index (V : Vertex) return Vertex_Index
+         with Inline;
+      --  Return the index of a vertex.
+      --  Those indexes are always in the range [1 .. Self.Length].
+      --  When you change the structure of the graph, the graph might need to
+      --  re-adjust those indexes. Therefore any property map that depends on
+      --  them should also be changed.
+      --
+      --  ??? This should be implemented as its own property map
 
-      type Edge_Index is new Natural;
+      function From_Index (Self : Graph; Index : Vertex_Index) return Vertex;
+      --   Return the vertex with the given index.
+      --
+      --   Complexity:
+      --      Up to O(n) where n is the number of vertices in graph.
+      --      This depends on how the graph is implemented. When using a vector
+      --      this is a O(1) operation.
+
+   private
+      type Dummy_Record is tagged null record;
+      --  This class is doing its own memory management, to all nested
+      --  containers are not controlled types. This is slightly more efficient.
+
+      type Vertex is new Vertex_Index'Base;
+
+      type Edge_Details_Type is record
+         From, To : Vertex_Index;  --  not Vertex, must be valid index
+         Props    : Edge_Properties.Stored;
+      end record;
+      procedure Release (E : in out Edge_Details_Type);
+
+      package Edge_Details_Lists is new GAL.Lists.Definite_Unbounded
+         (Element_Type        => Edge_Details_Type,
+          Container_Base_Type => Dummy_Record,
+          Free                => Release);
+      --  A graph stores all edges in a single list.
+      --  That way, undirected graphs can share edges between the two end
+      --  vertices.
 
       type Edge is record
-         Props : Edge_Properties.Stored;
-         From, To : Vertex;
+         Current : Edge_Details_Lists.Cursor;
       end record;
-      procedure Release (E : in out Edge);
 
-      type Dummy_Record is tagged null record;
+      type Edge_Index is new Positive;
+      --  The index is only valid for a given vertex
+
       package Edge_Vectors is new GAL.Vectors.Definite_Unbounded
         (Index_Type          => Edge_Index,
-         Element_Type        => Edge,
-         Container_Base_Type => Dummy_Record,
-         Free                => Release);
+         Element_Type        => Edge, --  pointer into the global list of edges
+         Container_Base_Type => Dummy_Record);
+      --  Each vertex also stores a list of all its incoming/outgoing edges
 
-      type Vertex_Record is record
+      type Vertex_Details_Type is record
          Props     : Vertex_Properties.Stored;
          Out_Edges : Edge_Vectors.Vector;
       end record;
-      procedure Release (V : in out Vertex_Record);
+      procedure Release (V : in out Vertex_Details_Type);
 
-      package Vertex_Elements is new GAL.Elements.Definite
-        (Vertex_Record, Free => Release);
-         --  ??? needs handling of Copy, Movable, Copyable
-      package Vertex_Storage is new GAL.Vectors.Storage.Unbounded
-        (Vertex_Elements.Traits,
-         Container_Base_Type => Dummy_Record,
-         Resize_Policy       => GAL.Vectors.Resize_1_5);
-      package Vertex_Vectors is new GAL.Vectors.Generics
-        (Index_Type => Vertex, Storage => Vertex_Storage.Traits);
+      package Vertex_Vectors is new GAL.Vectors.Definite_Unbounded
+         (Index_Type          => Vertex_Index,
+          Element_Type        => Vertex_Details_Type,
+          Container_Base_Type => Dummy_Record,
+          Free                => Release);
+
+      Null_Vertex : constant Vertex := Vertex (Vertex_Vectors.No_Index);
 
       type Graph is new Container_Base_Type with record
          Vertices : Vertex_Vectors.Vector;
+         Edges    : Edge_Details_Lists.List;
       end record;
 
       procedure Adjust (Self : in out Graph);
@@ -152,15 +200,22 @@ package GAL.Graphs.Adjacency_List is
       No_Vertex : constant Vertex_Cursor :=
          (Current => Vertex_Vectors.No_Element);
 
-      type Edges_Cursor is record
-         From    : Vertex;
+      type Vertex_Edges_Cursor is record
+         From    : Vertex_Index;   --  must be a valid vertex
          Current : Edge_Vectors.Cursor;
       end record;
+
+      function Get_Index (V : Vertex) return Vertex_Index
+         is (Vertex_Index (V));
    end Impl;
+
    use all type Impl.Vertex_Cursor;
 
    subtype Graph is Impl.Graph;
+   subtype Vertex is Impl.Vertex;
    subtype Edge is Impl.Edge;
+   subtype Vertex_Cursor is Impl.Vertex_Cursor;
+   subtype Vertex_Edges_Cursor is Impl.Vertex_Cursor;
 
    function Identity (V : Vertex) return Vertex is (V) with Inline;
    function Identity (V : not null access Vertex) return Vertex
@@ -175,59 +230,73 @@ package GAL.Graphs.Adjacency_List is
       First          => Impl.First,
       Has_Element    => Impl.Has_Element,
       Next           => Impl.Next);
+   --  Iterate over all vertices in a graph
 
    package Vertices_Maps is new GAL.Properties.Read_Only_Maps
      (Map_Type       => Graph,
       Key_Type       => Impl.Vertex_Cursor,
       Element_Type   => Vertex,
       Get            => Impl.Element);
+   --  Retrieve the actual vertex from a vertex cursor
 
    package Out_Edges_Cursors is new GAL.Graphs.Edge_Cursors
      (Container_Type => Graph,
       Vertices       => Vertices.Traits,
       Edge_Type      => Edge,
-      Cursor_Type    => Impl.Edges_Cursor,
+      Cursor_Type    => Impl.Vertex_Edges_Cursor,
       First          => Impl.Out_Edges,
       Element        => Impl.Element,
       Has_Element    => Impl.Has_Element,
       Next           => Impl.Next);
+   --  Iterate over all out edges of a given vertex
 
    package Traits is new GAL.Graphs.Traits
      (Graph_Type        => Impl.Graph,
+      Vertex_Type       => Vertex,
       Vertices          => Vertices.Traits,
+      Get_Index         => Impl.Get_Index,
       Null_Vertex       => Impl.Null_Vertex,
       Get_Target        => Impl.Get_Target,
       Vertex_Cursors    => Vertices_Cursors,
       Vertex_Maps       => Vertices_Maps,
       Out_Edges_Cursors => Out_Edges_Cursors);
 
-   --  Color map is always limited, since this is mostly created automatically
-   --  by algorithms. If you create a color map yourself, you need to clear
-   --  it manually.
    package Color_Maps is new GAL.Properties.Indexed
      (Container_Type      => Graph,
       Key_Type            => Vertex,
       Element_Type        => Color,
       Default_Value       => White,
-      Index_Type          => Vertex,
+      Index_Type          => Vertex_Index,
       Container_Base_Type => GAL.Limited_Base,
-      Get_Index           => Identity,
+      Get_Index           => Impl.Get_Index,
       Length              => Impl.Length);
+   --  Associates a "color" to a vertex.
+   --  This is used for the duration of a number of algorithms to somehow
+   --  mark the temporary state of vertices. This should in general be
+   --  implemented as an external property map (i.e. the color is not stored
+   --  directly in the vertices themselves), so that we can have multiple
+   --  algorithms running in parallel and using their own color map.
+   --
+   --  Such a map is invalidated as soon as the structure of the graph
+   --  changes (since vertex indices might change at that time).
 
-   --  An integer map is mostly created by the application, since it holds the
-   --  results of strongly connected components for instance. So we make it
-   --  a controlled type (implicit Clear) if the graph itself is controlled,
-   --  so that it is compatible with SPARK when people want to, but on the
-   --  other hand it is in general cleared automatically when possible.
    package Integer_Maps is new GAL.Properties.Indexed
      (Container_Type      => Graph,
       Key_Type            => Vertex,
       Element_Type        => Integer,
       Default_Value       => -1,
-      Index_Type          => Vertex,
+      Index_Type          => Vertex_Index,
       Container_Base_Type => Container_Base_Type,
-      Get_Index           => Identity,
+      Get_Index           => Impl.Get_Index,
       Length              => Impl.Length);
+   --  An integer map is mostly created by the application, since it holds the
+   --  results of strongly connected components for instance. So we make it
+   --  a controlled type (implicit Clear) if the graph itself is controlled,
+   --  so that it is compatible with SPARK when people want to, but on the
+   --  other hand it is in general cleared automatically when possible.
+   --
+   --  Such a map is invalidated as soon as the structure of the graph
+   --  changes (since vertex indices might change at that time).
 
    package DFS is new GAL.Graphs.DFS.Exterior
      (Traits, Color_Maps.As_Map, Create_Map => Color_Maps.Create_Map);

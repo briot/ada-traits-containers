@@ -29,6 +29,10 @@ package GAL.Graphs is
    type Color is (White, Gray, Black);
    --  Used to mark vertices during several algorithms.
 
+   type Vertex_Index is new Positive;
+   --  All vertices can always be mapped to a range of [1..N] integers, where
+   --  N is the number of vertices in the graph.
+
    Graph_Has_Cycles : exception;
 
    -------------------
@@ -69,8 +73,13 @@ package GAL.Graphs is
 
    generic
       type Graph_Type (<>) is limited private;
-      with package Vertices is new GAL.Elements.Traits (<>);
+      type Vertex_Type is private;  --  always a definite type
+      with package Vertices is new GAL.Elements.Traits
+         (Element_Type => Vertex_Type, others => <>);
       Null_Vertex : Vertices.Element;
+
+      with function Get_Index (V : Vertex_Type) return Vertex_Index is <>;
+      --  Return the index of a vertex
 
       with package Out_Edges_Cursors is new Edge_Cursors
         (Container_Type => Graph_Type,

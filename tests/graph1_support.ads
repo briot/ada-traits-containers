@@ -39,6 +39,9 @@ package Graph1_Support is
    type Vertex is new Integer;
    package Vertices is new GAL.Elements.Definite (Vertex);
 
+   function Get_Index (V : Vertex) return GAL.Graphs.Vertex_Index
+      is (GAL.Graphs.Vertex_Index (V));
+
    type Edge is record
       Source, Target : Vertex;
    end record;
@@ -98,7 +101,9 @@ package Graph1_Support is
    function Get_Target (G : Graph; E : Edge) return Vertex;
    package Custom_Graphs is new GAL.Graphs.Traits
       (Graph_Type        => Graph,
+       Vertex_Type       => Vertex,
        Vertices          => Vertices.Traits,
+       Get_Index         => Get_Index,
        Null_Vertex       => -1,
        Vertex_Cursors    => Custom_Vertices,
        Vertex_Maps       => Vertices_Maps,
