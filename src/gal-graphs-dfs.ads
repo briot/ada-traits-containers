@@ -41,6 +41,9 @@ generic
 package GAL.Graphs.DFS is
 
    package Graphs renames Vertex_Lists.Graphs;
+   subtype Graph_Type is Graphs.Graph;
+   subtype Vertex_Type is Graphs.Vertex;
+   subtype Edge_Type is Incidence.Edge;
 
    ------------------------
    -- DFS_Visitor_Traits --
@@ -57,7 +60,7 @@ package GAL.Graphs.DFS is
 
       with procedure Should_Stop
         (Self   : Visitor_Type;
-         Vertex : Graphs.Vertex;
+         Vertex : Vertex_Type;
          Stop   : in out Boolean) is null;
       --  Whether to stop iterating after discovering Vertex.
       --  If iteration should stop, this procedure should set Stop to True (its
@@ -77,36 +80,36 @@ package GAL.Graphs.DFS is
 
       with procedure Initialize_Vertex
          (Self   : in out Visitor_Type;
-          Vertex : Graphs.Vertex) is null;
+          Vertex : Vertex_Type) is null;
       --  Called on every vertex before the start of the search
       --  ??? Not compatible with infinite graphs.
 
       with procedure Start_Vertex
          (Self   : in out Visitor_Type;
-          Vertex : Graphs.Vertex) is null;
+          Vertex : Vertex_Type) is null;
       --  Called on a source vertex once before the start of the search.
       --  All vertices reachable from the source will not be source vertices
       --  themselves, so will not be called for Start_Vertex.
 
       with procedure Finish_Vertex
          (Self   : in out Visitor_Type;
-          Vertex : Graphs.Vertex) is null;
+          Vertex : Vertex_Type) is null;
       --  Called on every vertex after all its out edges have been added to the
       --  search tree and its adjacent vertices have been visited.
 
       with procedure Discover_Vertex
          (Self   : in out Visitor_Type;
-          Vertex : Graphs.Vertex) is null;
+          Vertex : Vertex_Type) is null;
       --  Called when a vertex is encountered the first time.
 
       with procedure Examine_Edge
          (Self : in out Visitor_Type;
-          Edge : Graphs.Edge) is null;
+          Edge : Edge_Type) is null;
       --  Called for every out edge of every vertex, after it is discovered.
 
       with procedure Tree_Edge
          (Self : in out Visitor_Type;
-          Edge : Graphs.Edge) is null;
+          Edge : Edge_Type) is null;
       --  Called on each edge when it becomes a member of the edges that form
       --  a spanning tree (i.e. for out edges that do not lead to an already
       --  visited vertex).
@@ -114,7 +117,7 @@ package GAL.Graphs.DFS is
 
       with procedure Back_Edge
          (Self : in out Visitor_Type;
-          Edge : Graphs.Edge) is null;
+          Edge : Edge_Type) is null;
       --  Called on the back edges of the graph.
       --  Those are edges that lead back to a visited ancestors vertex in the
       --  tree.
@@ -123,7 +126,7 @@ package GAL.Graphs.DFS is
 
       with procedure Forward_Or_Cross_Edge
          (Self : in out Visitor_Type;
-          Edge : Graphs.Edge) is null;
+          Edge : Edge_Type) is null;
       --  Called on forward or cross edges, unused for undirected
       --  Forward edges lead to a visited descendant vertex in the tree.
       --  Cross edges lead to a visited vertex which is neither ancestor nor
@@ -131,7 +134,7 @@ package GAL.Graphs.DFS is
 
       with procedure Finish_Edge
          (Self : in out Visitor_Type;
-          Edge : Graphs.Edge) is null;
+          Edge : Edge_Type) is null;
       --  Called when the algorithm finishes processing an edge
 
    package DFS_Visitor_Traits is
@@ -150,7 +153,7 @@ package GAL.Graphs.DFS is
 
    generic
       with package Color_Maps is new GAL.Properties.Maps
-        (Key_Type     => Vertex_Lists.Graphs.Vertex,
+        (Key_Type     => Vertex_Type,
          Element_Type => Color,
          others       => <>);
    package With_Map is
@@ -158,10 +161,10 @@ package GAL.Graphs.DFS is
       generic
          with package Visitors is new DFS_Visitor_Traits (<>);
       procedure Search
-        (G      : Graphs.Graph;
+        (G      : Graph_Type;
          Visit  : in out Visitors.Visitor_Type;
          Colors : out Color_Maps.Map;
-         V      : Graphs.Vertex := Graphs.Null_Vertex);
+         V      : Vertex_Type := Graphs.Null_Vertex);
       --  A depth first search is a traversal of the graph that always chooses
       --  to go deeper in the graph when possible, by looking at the next
       --  adjacent undiscovered vertex until reaching a vertex that has no
@@ -192,23 +195,23 @@ package GAL.Graphs.DFS is
       generic
          with package Visitors is new DFS_Visitor_Traits (<>);
       procedure Search_Recursive
-        (G      : Graphs.Graph;
+        (G      : Graph_Type;
          Visit  : in out Visitors.Visitor_Type;
          Colors : out Color_Maps.Map;
-         V      : Graphs.Vertex := Graphs.Null_Vertex);
+         V      : Vertex_Type := Graphs.Null_Vertex);
       --  A recursive version of the DFS algorithm.
       --  It is fractionally faster on small graph, and is not compatible with
       --  large graphs (since the depth of recursion with blow the stack).
 
       function Is_Acyclic
-        (G      : Graphs.Graph;
+        (G      : Graph_Type;
          Colors : out Color_Maps.Map) return Boolean;
       --  Whether the graph has no cycles
 
       generic
-         with procedure Callback (V : Graphs.Vertex);
+         with procedure Callback (V : Vertex_Type);
       procedure Reverse_Topological_Sort
-        (G      : Graphs.Graph;
+        (G      : Graph_Type;
          Colors : out Color_Maps.Map);
       --  Return the vertices in reverse topological order.
       --
@@ -231,32 +234,31 @@ package GAL.Graphs.DFS is
 
    generic
       with package Color_Maps is new GAL.Properties.Maps
-        (Key_Type     => Vertex_Lists.Graphs.Vertex,
+        (Key_Type     => Vertex_Type,
          Element_Type => Color,
          others       => <>);
-      with function Create_Map
-         (G : Vertex_Lists.Graphs.Graph) return Color_Maps.Map;
+      with function Create_Map (G : Graph_Type) return Color_Maps.Map;
    package Exterior is
 
       generic
          with package Visitors is new DFS_Visitor_Traits (<>);
       procedure Search
-        (G     : Graphs.Graph;
+        (G     : Graph_Type;
          Visit : in out Visitors.Visitor_Type;
-         V     : Graphs.Vertex := Graphs.Null_Vertex);
+         V     : Vertex_Type := Graphs.Null_Vertex);
 
       generic
          with package Visitors is new DFS_Visitor_Traits (<>);
       procedure Search_Recursive
-        (G     : Graphs.Graph;
+        (G     : Graph_Type;
          Visit : in out Visitors.Visitor_Type;
-         V     : Graphs.Vertex := Graphs.Cst_Null_Vertex);
+         V     : Vertex_Type := Graphs.Cst_Null_Vertex);
 
-      function Is_Acyclic (G : Graphs.Graph) return Boolean;
+      function Is_Acyclic (G : Graph_Type) return Boolean;
 
       generic
-         with procedure Callback (V : Graphs.Vertex);
-      procedure Reverse_Topological_Sort (G : Graphs.Graph);
+         with procedure Callback (V : Vertex_Type);
+      procedure Reverse_Topological_Sort (G : Graph_Type);
 
    end Exterior;
 
@@ -270,8 +272,8 @@ package GAL.Graphs.DFS is
 
    generic
       with package Color_Maps is new GAL.Properties.Maps
-        (Map_Type     => Vertex_Lists.Graphs.Graph,
-         Key_Type     => Vertex_Lists.Graphs.Vertex,
+        (Map_Type     => Graph_Type,
+         Key_Type     => Vertex_Type,
          Element_Type => Color,
          others       => <>);
    package Interior is
@@ -279,22 +281,22 @@ package GAL.Graphs.DFS is
       generic
          with package Visitors is new DFS_Visitor_Traits (<>);
       procedure Search
-        (G     : in out Graphs.Graph;
+        (G     : in out Graph_Type;
          Visit : in out Visitors.Visitor_Type;
-         V     : Graphs.Vertex := Graphs.Cst_Null_Vertex);
+         V     : Vertex_Type := Graphs.Cst_Null_Vertex);
 
       generic
          with package Visitors is new DFS_Visitor_Traits (<>);
       procedure Search_Recursive
-        (G     : in out Graphs.Graph;
+        (G     : in out Graph_Type;
          Visit : in out Visitors.Visitor_Type;
-         V     : Graphs.Vertex := Graphs.Cst_Null_Vertex);
+         V     : Vertex_Type := Graphs.Cst_Null_Vertex);
 
-      function Is_Acyclic (G : in out Graphs.Graph) return Boolean;
+      function Is_Acyclic (G : in out Graph_Type) return Boolean;
 
       generic
-         with procedure Callback (V : Graphs.Vertex);
-      procedure Reverse_Topological_Sort (G : in out Graphs.Graph);
+         with procedure Callback (V : Vertex_Type);
+      procedure Reverse_Topological_Sort (G : in out Graph_Type);
 
    end Interior;
 

@@ -38,12 +38,13 @@ package body GAL.Graphs.Components is
    -----------------------------------
 
    package body Strongly_Connected_Components is
-      use Graphs;
+      subtype Vertex_Type is Graphs.Vertex;
+      subtype Edge_Type is Incidence.Edge;
 
       package All_DFS is new GAL.Graphs.DFS (Vertex_Lists, Incidence);
 
       package Vertex_Vectors is new GAL.Vectors.Definite_Unbounded
-         (Positive, Graphs.Vertex, GAL.Controlled_Base);
+         (Positive, Vertex_Type, GAL.Controlled_Base);
       --  A stack of vertices.
       --  Elaborate those when the package is declared (so do not declare them
       --  inside Compute, which would elaborate them when running the
@@ -54,7 +55,7 @@ package body GAL.Graphs.Components is
       -------------
 
       procedure Compute
-        (G                : Graphs.Graph;
+        (G                : Graph_Type;
          Components       : out Component_Maps.Map;
          Components_Count : out Positive)
       is
@@ -98,11 +99,11 @@ package body GAL.Graphs.Components is
 
          --  A custom color map which stores integers instead
          procedure Set
-           (M : in out Component_Maps.Map; V : Vertex; C : Color);
-         function Get (M : Component_Maps.Map; V : Vertex) return Color;
+           (M : in out Component_Maps.Map; V : Vertex_Type; C : Color);
+         function Get (M : Component_Maps.Map; V : Vertex_Type) return Color;
 
          procedure Set
-           (M : in out Component_Maps.Map; V : Vertex; C : Color) is
+           (M : in out Component_Maps.Map; V : Vertex_Type; C : Color) is
          begin
             case C is
                when White =>
@@ -128,7 +129,7 @@ package body GAL.Graphs.Components is
 
                         loop
                            declare
-                              U : constant Vertex := Open.Last_Element;
+                              U : constant Vertex_Type := Open.Last_Element;
                               U_Index  : constant Integer :=
                                 Component_Maps.Get (Components, U);
                            begin
@@ -144,7 +145,7 @@ package body GAL.Graphs.Components is
             end case;
          end Set;
 
-         function Get (M : Component_Maps.Map; V : Vertex) return Color is
+         function Get (M : Component_Maps.Map; V : Vertex_Type) return Color is
          begin
             if Component_Maps.Get (M, V) = 0 then
                return White;
@@ -154,7 +155,7 @@ package body GAL.Graphs.Components is
          end Get;
 
          package Color_Maps is new GAL.Properties.Maps
-           (Key_Type     => Vertex,
+           (Key_Type     => Vertex_Type,
             Element_Type => Color,
             Map_Type     => Component_Maps.Map,
             Set          => Set,
@@ -165,7 +166,7 @@ package body GAL.Graphs.Components is
          procedure Vertices_Initialized
             (Ignored : in out SCC_Visitor; Count : Count_Type);
          procedure Back_Edge
-            (Ignored : in out SCC_Visitor; E : Graphs.Edge);
+            (Ignored : in out SCC_Visitor; E : Edge_Type);
          --  Some of the operations (discover and finish) are handled in the
          --  color map.
 
@@ -176,10 +177,8 @@ package body GAL.Graphs.Components is
             Open.Reserve_Capacity (Count_Type'Min (300_000, Count));
          end Vertices_Initialized;
 
-         procedure Back_Edge
-           (Ignored : in out SCC_Visitor; E : Graphs.Edge)
-         is
-            V           : constant Vertex := Incidence.Edge_Target (G, E);
+         procedure Back_Edge (Ignored : in out SCC_Visitor; E : Edge_Type) is
+            V           : constant Vertex_Type := Incidence.Edge_Target (G, E);
             V_DFS_Index : constant Integer :=
                Component_Maps.Get (Components, V);
          begin

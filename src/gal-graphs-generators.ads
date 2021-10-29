@@ -11,9 +11,10 @@ generic
 
 package GAL.Graphs.Generators is
    package Graphs renames Vertex_Mutable.Graphs;
+   subtype Graph_Type is Graphs.Graph;
 
    procedure Complete
-      (Self         : in out Graphs.Graph;
+      (Self         : in out Graph_Type;
        N            : Count_Type);
    --  Return the complete graph with N nodes.
    --  This assumes the graph is initially empty.

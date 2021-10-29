@@ -100,7 +100,6 @@ package Graph1_Support is
    package Custom_Graphs is new GAL.Graphs.Traits
       (Graph_Type        => Graph,
        Vertex_Type       => Vertex,
-       Edge_Type         => Edge,
        Get_Index         => Get_Index,
        Null_Vertex       => -1);
    package Vertex_Lists is new GAL.Graphs.Vertex_List_Graphs_Traits
@@ -110,6 +109,7 @@ package Graph1_Support is
        Length            => Length);
    package Incidence is new GAL.Graphs.Incidence_Graphs_Traits
       (Graphs            => Custom_Graphs,
+       Edge_Type         => Edge,
        Cursor_Type       => Edge_Cursor,
        Out_Edges         => Out_Edges,
        Source            => Get_Source,

@@ -51,7 +51,6 @@ package GAL.Graphs is
    generic
       type Graph_Type (<>) is limited private;
       type Vertex_Type is private;
-      type Edge_Type is private;
       Null_Vertex : Vertex_Type;
 
       with function Get_Index (V : Vertex_Type) return Vertex_Index is <>;
@@ -66,7 +65,6 @@ package GAL.Graphs is
 
       subtype Graph  is Graph_Type;
       subtype Vertex is Vertex_Type;
-      subtype Edge   is Edge_Type;
       Cst_Null_Vertex : constant Vertex := Null_Vertex;
 
    end Traits;
@@ -104,20 +102,22 @@ package GAL.Graphs is
    generic
       with package Graphs is new Traits (<>);
 
+      type Edge_Type is private;
+
       type Cursor_Type is private;
       with function Out_Edges (G : Graphs.Graph; V : Graphs.Vertex)
          return Cursor_Type is <>;
       with function Element (G : Graphs.Graph; C : Cursor_Type)
-         return Graphs.Edge is <>;
+         return Edge_Type is <>;
       with function Has_Element (G : Graphs.Graph; C : Cursor_Type)
          return Boolean is <>;
       with function Next (G : Graphs.Graph; C : Cursor_Type)
          return Cursor_Type is <>;
       --  Iterate on all out-edges of a given vertex.
 
-      with function Source (G : Graphs.Graph; E : Graphs.Edge)
+      with function Source (G : Graphs.Graph; E : Edge_Type)
         return Graphs.Vertex is <>;
-      with function Target (G : Graphs.Graph; E : Graphs.Edge)
+      with function Target (G : Graphs.Graph; E : Edge_Type)
         return Graphs.Vertex is <>;
       --  Return the source and target of the edge.
       --  Complexity: constant time
@@ -127,12 +127,13 @@ package GAL.Graphs is
       --  ??? Out_Degree
    package Incidence_Graphs_Traits is
       subtype Cursor is Cursor_Type;
+      subtype Edge is Edge_Type;
 
       function Edge_Source
-        (G : Graphs.Graph; E : Graphs.Edge) return Graphs.Vertex
+        (G : Graphs.Graph; E : Edge_Type) return Graphs.Vertex
         renames Source;
       function Edge_Target
-        (G : Graphs.Graph; E : Graphs.Edge) return Graphs.Vertex
+        (G : Graphs.Graph; E : Edge_Type) return Graphs.Vertex
         renames Target;
 
    end Incidence_Graphs_Traits;
@@ -179,10 +180,11 @@ package GAL.Graphs is
 
    generic
       with package Graphs is new Traits (<>);
+      type Edge_Type is private;
 
       with function Add_Edge
          (Self : in out Graphs.Graph; From, To : Graphs.Vertex)
-         return Graphs.Edge is <>;
+         return Edge_Type is <>;
       --  Attempt to insert a new edge in the graph. This might fail when the
       --  graph doesn't allow parallel edges and you try to add a second edge
       --  between From and To. Or in other cases, for instance when From=To
@@ -197,6 +199,7 @@ package GAL.Graphs is
       --  ??? Remove_Edges
       --  ??? Clear_Vertex
    package Edge_Mutable_Graphs_Traits is
+      subtype Edge is Edge_Type;
    end Edge_Mutable_Graphs_Traits;
 
 end GAL.Graphs;

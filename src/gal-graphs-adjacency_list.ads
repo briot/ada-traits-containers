@@ -235,7 +235,6 @@ package GAL.Graphs.Adjacency_List is
    package Traits is new GAL.Graphs.Traits
      (Graph_Type        => Impl.Graph,
       Vertex_Type       => Vertex,
-      Edge_Type         => Edge,
       Null_Vertex       => Impl.Null_Vertex,
       Get_Index         => Impl.Get_Index);
    package Vertex_Lists is new GAL.Graphs.Vertex_List_Graphs_Traits
@@ -245,6 +244,7 @@ package GAL.Graphs.Adjacency_List is
       Length            => Impl.Length);
    package Incidence is new GAL.Graphs.Incidence_Graphs_Traits
      (Graphs            => Traits,
+      Edge_Type         => Edge,
       Cursor_Type       => Impl.Vertex_Edges_Cursor,
       Out_Edges         => Impl.Out_Edges,
       Element           => Impl.Element,
@@ -259,6 +259,7 @@ package GAL.Graphs.Adjacency_List is
       Add_Vertex        => Impl.Add_Vertex);
    package Edge_Mutable is new GAL.Graphs.Edge_Mutable_Graphs_Traits
      (Graphs            => Traits,
+      Edge_Type         => Edge,
       Add_Edge          => Impl.Add_Edge);
    --  Make the various capabilities of adjacency lists available to
    --  algorithms.

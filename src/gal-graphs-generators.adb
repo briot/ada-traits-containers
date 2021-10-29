@@ -1,4 +1,6 @@
 package body GAL.Graphs.Generators is
+   subtype Edge_Type is Edge_Mutable.Edge;
+   subtype Vertex_Type is Graphs.Vertex;
    use type Graphs.Vertex;
 
    --------------
@@ -6,13 +8,13 @@ package body GAL.Graphs.Generators is
    --------------
 
    procedure Complete
-      (Self : in out Graphs.Graph;
+      (Self : in out Graph_Type;
        N    : Count_Type)
    is
       --  ??? Might result in stack_overflow when adding too many vertices.
       --  But then the graph will likely be too big to manipulate anyway.
-      V : array (1 .. N) of Graphs.Vertex;
-      E : Graphs.Edge with Unreferenced;
+      V : array (1 .. N) of Vertex_Type;
+      E : Edge_Type with Unreferenced;
    begin
       --  ??? Would be faster to add multiple vertices at once.
       --  ??? or at least Reserve the space for enough

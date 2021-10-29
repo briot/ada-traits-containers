@@ -23,41 +23,39 @@ pragma Ada_2012;
 with GAL.Vectors.Definite_Unbounded;
 
 package body GAL.Graphs.DFS is
+   use type Vertex_Type;
+
+   type Vertex_Info is record
+      VC : Vertex_Type;
+      EC : Incidence.Cursor_Type;   --  next edge to examine
+   end record;
+   package Vertex_Info_Vectors is new GAL.Vectors.Definite_Unbounded
+     (Index_Type          => Natural,
+      Element_Type        => Vertex_Info,
+      Container_Base_Type => GAL.Limited_Base);
 
    --------------
    -- With_Map --
    --------------
 
    package body With_Map is
-      use Graphs;
-
-      type Vertex_Info is record
-         VC : Graphs.Vertex;
-         EC : Incidence.Cursor_Type;   --  next edge to examine
-      end record;
-      package Vertex_Info_Vectors is new GAL.Vectors.Definite_Unbounded
-        (Index_Type          => Natural,
-         Element_Type        => Vertex_Info,
-         Container_Base_Type => GAL.Limited_Base);
 
       ------------
       -- Search --
       ------------
 
       procedure Search
-        (G      : Graphs.Graph;
+        (G      : Graph_Type;
          Visit  : in out Visitors.Visitor_Type;
          Colors : out Color_Maps.Map;
-         V      : Graphs.Vertex := Graphs.Null_Vertex)
+         V      : Vertex_Type := Graphs.Null_Vertex)
       is
-         use Graphs;
-
          Stack      : Vertex_Info_Vectors.Vector;
          Terminated : Boolean := False;
 
-         procedure Impl (Start_Vertex : Graphs.Vertex);
+         procedure Impl (Start_Vertex : Vertex_Type);
 
-         procedure Impl (Start_Vertex : Graphs.Vertex) is
+         procedure Impl (Start_Vertex : Vertex_Type) is
             EC   : Incidence.Cursor_Type;
             Info : Vertex_Info;
          begin
@@ -69,13 +67,9 @@ package body GAL.Graphs.DFS is
                return;
             end if;
 
-            declare
-               V : Vertex_Info := (
-                  VC => Start_Vertex,
-                  EC => Incidence.Out_Edges (G, Start_Vertex));
-            begin
-               Stack.Append (V);
-            end;
+            Stack.Append
+               ((VC => Start_Vertex,
+                 EC => Incidence.Out_Edges (G, Start_Vertex)));
 
             while not Stack.Is_Empty loop
                Info := Stack.Last_Element;
@@ -98,8 +92,8 @@ package body GAL.Graphs.DFS is
                   --  examine it first)
 
                   declare
-                     E      : constant Edge := Incidence.Element (G, EC);
-                     Target : constant Vertex := Incidence.Target (G, E);
+                     E      : constant Edge_Type := Incidence.Element (G, EC);
+                     Target : constant Vertex_Type := Incidence.Target (G, E);
                   begin
                      Visitors.Examine_Edge (Visit, E);
                      case Color_Maps.Get (Colors, Target) is
@@ -127,8 +121,6 @@ package body GAL.Graphs.DFS is
                end if;
             end loop;
          end Impl;
-
-         use type Vertex;
 
          VC    : Vertex_Lists.Vertex_Cursors.Cursor;
          Count : Count_Type := 0;
@@ -169,7 +161,8 @@ package body GAL.Graphs.DFS is
            and then Vertex_Lists.Vertex_Cursors.Has_Element (G, VC)
          loop
             declare
-               V : constant Vertex := Vertex_Lists.Vertex_Maps.Get (G, VC);
+               V : constant Vertex_Type :=
+                  Vertex_Lists.Vertex_Maps.Get (G, VC);
             begin
                if Color_Maps.Get (Colors, V) = White then
                   Impl (V);
@@ -187,18 +180,16 @@ package body GAL.Graphs.DFS is
       ----------------------
 
       procedure Search_Recursive
-        (G      : Graphs.Graph;
+        (G      : Graph_Type;
          Visit  : in out Visitors.Visitor_Type;
          Colors : out Color_Maps.Map;
-         V      : Graphs.Vertex := Graphs.Null_Vertex)
+         V      : Vertex_Type := Graphs.Null_Vertex)
       is
-         use Graphs;
-
          Terminated : Boolean := False;
 
-         procedure Impl (Current : Vertex);
+         procedure Impl (Current : Vertex_Type);
 
-         procedure Impl (Current : Vertex) is
+         procedure Impl (Current : Vertex_Type) is
             EC   : Incidence.Cursor;
          begin
             Color_Maps.Set (Colors, Current, Gray);
@@ -208,8 +199,8 @@ package body GAL.Graphs.DFS is
                EC := Incidence.Out_Edges (G, Current);
                while Incidence.Has_Element (G, EC) loop
                   declare
-                     E      : Edge renames Incidence.Element (G, EC);
-                     Target : constant Vertex := Incidence.Target (G, E);
+                     E      : Edge_Type renames Incidence.Element (G, EC);
+                     Target : constant Vertex_Type := Incidence.Target (G, E);
                   begin
                      Visitors.Examine_Edge (Visit, E);
                      case Color_Maps.Get (Colors, Target) is
@@ -231,8 +222,6 @@ package body GAL.Graphs.DFS is
             Color_Maps.Set (Colors, Current, Black);
             Visitors.Finish_Vertex (Visit, Current);
          end Impl;
-
-         use type Vertex;
 
          VC    : Vertex_Lists.Vertex_Cursors.Cursor;
          Count : Count_Type := 0;
@@ -263,12 +252,15 @@ package body GAL.Graphs.DFS is
          VC := Vertex_Lists.Vertex_Cursors.First (G);
          while not Terminated
             and then Vertex_Lists.Vertex_Cursors.Has_Element (G, VC)
-        loop
-            if Color_Maps.Get (Colors, Vertex_Lists.Vertex_Maps.Get (G, VC)) =
-               White
-            then
-               Impl (Vertex_Lists.Vertex_Maps.Get (G, VC));
-            end if;
+         loop
+            declare
+               V : constant Vertex_Type :=
+                  Vertex_Lists.Vertex_Maps.Get (G, VC);
+            begin
+               if Color_Maps.Get (Colors, V) = White then
+                  Impl (V);
+               end if;
+            end;
 
             VC := Vertex_Lists.Vertex_Cursors.Next (G, VC);
          end loop;
@@ -279,29 +271,28 @@ package body GAL.Graphs.DFS is
       ----------------
 
       function Is_Acyclic
-        (G       : Graphs.Graph;
+        (G       : Graph_Type;
          Colors  : out Color_Maps.Map) return Boolean
       is
-         use Graphs;
          type Visitor_Type is record
             Has_Cycle : Boolean := False;
          end record;
 
          procedure Back_Edge
-           (Self : in out Visitor_Type; Ignored : Edge) with Inline;
+           (Self : in out Visitor_Type; Ignored : Edge_Type) with Inline;
          procedure Should_Stop
-           (Self : Visitor_Type; Ignored : Graphs.Vertex;
+           (Self : Visitor_Type; Ignored : Vertex_Type;
             Stop : in out Boolean) with Inline;
 
          procedure Should_Stop
-           (Self : Visitor_Type; Ignored : Graphs.Vertex;
+           (Self : Visitor_Type; Ignored : Vertex_Type;
             Stop : in out Boolean) is
          begin
             Stop := Self.Has_Cycle;
          end Should_Stop;
 
          procedure Back_Edge
-            (Self : in out Visitor_Type; Ignored : Edge) is
+            (Self : in out Visitor_Type; Ignored : Edge_Type) is
          begin
             Self.Has_Cycle := True;
          end Back_Edge;
@@ -322,25 +313,24 @@ package body GAL.Graphs.DFS is
       ------------------------------
 
       procedure Reverse_Topological_Sort
-        (G      : Graphs.Graph;
+        (G      : Graph_Type;
          Colors : out Color_Maps.Map)
       is
          type TS_Visitor is null record;
          procedure Back_Edge
            (Ignored  : in out TS_Visitor;
-            Ignored2 : Graphs.Edge) with Inline;
-         procedure Finish_Vertex
-           (Ignored : in out TS_Visitor; V : Graphs.Vertex)
+            Ignored2 : Edge_Type) with Inline;
+         procedure Finish_Vertex (Ignored : in out TS_Visitor; V : Vertex_Type)
            with Inline;
 
          procedure Back_Edge
-           (Ignored : in out TS_Visitor; Ignored2 : Graphs.Edge) is
+           (Ignored : in out TS_Visitor; Ignored2 : Edge_Type) is
          begin
             raise GAL.Graphs.Graph_Has_Cycles with "Graph is not acyclic";
          end Back_Edge;
 
          procedure Finish_Vertex
-           (Ignored : in out TS_Visitor; V : Graphs.Vertex) is
+           (Ignored : in out TS_Visitor; V : Vertex_Type) is
          begin
             Callback (V);
          end Finish_Vertex;
@@ -369,7 +359,7 @@ package body GAL.Graphs.DFS is
       -- Is_Acyclic --
       ----------------
 
-      function Is_Acyclic (G : Graphs.Graph) return Boolean is
+      function Is_Acyclic (G : Graph_Type) return Boolean is
          Acyclic : Boolean;
          Colors  : Color_Maps.Map := Create_Map (G);   --  uninitialized map
       begin
@@ -383,9 +373,9 @@ package body GAL.Graphs.DFS is
       ------------
 
       procedure Search
-        (G     : Graphs.Graph;
+        (G     : Graph_Type;
          Visit : in out Visitors.Visitor_Type;
-         V     : Graphs.Vertex := Graphs.Null_Vertex)
+         V     : Vertex_Type := Graphs.Null_Vertex)
       is
          procedure Internal_Search is new Internal.Search (Visitors);
          Colors : Color_Maps.Map := Create_Map (G);   --  uninitialized map
@@ -399,9 +389,9 @@ package body GAL.Graphs.DFS is
       ----------------------
 
       procedure Search_Recursive
-        (G     : Graphs.Graph;
+        (G     : Graph_Type;
          Visit : in out Visitors.Visitor_Type;
-         V     : Graphs.Vertex := Graphs.Cst_Null_Vertex)
+         V     : Vertex_Type := Graphs.Cst_Null_Vertex)
       is
          procedure Internal_Search is new Internal.Search_Recursive (Visitors);
          Colors : Color_Maps.Map := Create_Map (G);   --  uninitialized map
@@ -414,7 +404,7 @@ package body GAL.Graphs.DFS is
       -- Reverse_Topological_Sort --
       ------------------------------
 
-      procedure Reverse_Topological_Sort (G : Graphs.Graph) is
+      procedure Reverse_Topological_Sort (G : Graph_Type) is
          procedure Internal_Sort is
            new Internal.Reverse_Topological_Sort (Callback);
          Colors : Color_Maps.Map := Create_Map (G);
@@ -436,7 +426,7 @@ package body GAL.Graphs.DFS is
       -- Is_Acyclic --
       ----------------
 
-      function Is_Acyclic (G : in out Graphs.Graph) return Boolean is
+      function Is_Acyclic (G : in out Graph_Type) return Boolean is
       begin
          return Internal.Is_Acyclic (G, G);
       end Is_Acyclic;
@@ -446,9 +436,9 @@ package body GAL.Graphs.DFS is
       ------------
 
       procedure Search
-        (G     : in out Graphs.Graph;
+        (G     : in out Graph_Type;
          Visit : in out Visitors.Visitor_Type;
-         V     : Graphs.Vertex := Graphs.Cst_Null_Vertex)
+         V     : Vertex_Type := Graphs.Cst_Null_Vertex)
       is
          procedure Internal_Search is new Internal.Search (Visitors);
       begin
@@ -460,9 +450,9 @@ package body GAL.Graphs.DFS is
       ----------------------
 
       procedure Search_Recursive
-        (G     : in out Graphs.Graph;
+        (G     : in out Graph_Type;
          Visit : in out Visitors.Visitor_Type;
-         V     : Graphs.Vertex := Graphs.Cst_Null_Vertex)
+         V     : Vertex_Type := Graphs.Cst_Null_Vertex)
       is
          procedure Internal_Search is new Internal.Search_Recursive (Visitors);
       begin
@@ -473,7 +463,7 @@ package body GAL.Graphs.DFS is
       -- Reverse_Topological_Sort --
       ------------------------------
 
-      procedure Reverse_Topological_Sort (G : in out Graphs.Graph) is
+      procedure Reverse_Topological_Sort (G : in out Graph_Type) is
          procedure Internal_Sort is
            new Internal.Reverse_Topological_Sort (Callback);
       begin

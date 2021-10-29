@@ -41,9 +41,10 @@ package GAL.Graphs.Components is
 
    package Strongly_Connected_Components is
       package Graphs renames Vertex_Lists.Graphs;
+      subtype Graph_Type is Graphs.Graph;
 
       procedure Compute
-        (G                : Graphs.Graph;
+        (G                : Graph_Type;
          Components       : out Component_Maps.Map;
          Components_Count : out Positive);
       --  Compute the strongly components of the graph:

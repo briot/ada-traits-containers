@@ -240,7 +240,6 @@ package body Test_Graph_Adjlist is
       Container : constant String := "custom graph";
       Category  : constant String := "Integer Graph (chain)";
 
-
       procedure Search is new Graph1_Support.DFS.Search (My_Visitors);
       procedure Recursive is
         new Graph1_Support.DFS.Search_Recursive (My_Visitors2);
