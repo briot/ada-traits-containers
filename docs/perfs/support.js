@@ -185,6 +185,8 @@ filter('kb', function() {
    return function(value) {
       if (!value) {
          return '0';
+      } else if (value > 1000000) {
+         return (value / 1000000).toFixed(0) + 'Mb';
       } else if (value > 1000) {
          return (value / 1000).toFixed(0) + 'kb';
       } else {
