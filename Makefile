@@ -27,7 +27,7 @@ GPRINSTALL=gprinstall -p -m ${RBD} ${GPRBUILD_OPTIONS} \
 			  --install-name='gal' \
 			  --project-subdir=lib/gnat
 
-.PHONY: docs all build install ada_test clean
+.PHONY: generate docs all build install clean test test_production
 
 all:  build generate docs test
 
@@ -49,10 +49,14 @@ docs:
 install:
 	${GPRINSTALL} -P${GPR_CONTS} --prefix=${PREFIX}
 
-test: build build_test_debug build_test_production
+test_debug: build_test_debug
 	tests/obj/Debug/main
+
+test_production: build_test_production
 	tests/obj/Production/main
 	tests/obj/Production/main -perf -o docs/perfs/data.js
+
+test: test_debug test_production
 
 clean:
 	-rm -rf tests/perfs/obj/
