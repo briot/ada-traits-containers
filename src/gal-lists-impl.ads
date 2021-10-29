@@ -247,6 +247,10 @@ package GAL.Lists.Impl with SPARK_Mode is
           Storage.Elements.To_Element (Element'Result) =
           Element (Model (Self), P_Get (Positions (Self), Position));
 
+   function Reference
+     (Self : in out Base_List'Class; Position : Cursor)
+     return Returned_Type;
+
    procedure Swap
      (Self        : in out Base_List'Class;
       Left, Right : Cursor)

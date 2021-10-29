@@ -118,6 +118,18 @@ package body GAL.Lists.Impl with SPARK_Mode => Off is
         (Get_RO_Stored (Self, Position.Current));
    end Element;
 
+   ---------------
+   -- Reference --
+   ---------------
+
+   function Reference
+     (Self : in out Base_List'Class; Position : Cursor)
+     return Returned_Type is
+   begin
+      return Storage.Elements.To_Returned
+        (Get_RW_Stored (Self, Position.Current));
+   end Reference;
+
    -----------------
    -- Has_Element --
    -----------------

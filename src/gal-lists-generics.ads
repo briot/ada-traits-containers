@@ -131,6 +131,12 @@ package GAL.Lists.Generics with SPARK_Mode is
 
    use type Element_Type;
 
+   function Reference
+     (Self : in out Base_List'Class; Position : Cursor)
+     return Returned_Type
+     renames Impl.Reference;
+   --  Return a reference to the element at the given position.
+
    function As_Element
      (Self : Base_List'Class; Position : Cursor) return Element_Type
      is (Storage.Elements.To_Element (Element (Self, Position)))
