@@ -1,5 +1,6 @@
 with Ada.Strings.Hash;
 with GAL;
+with GAL.Vectors.Indefinite_Unbounded;
 with GNATCOLL.Strings;
 
 package Test_Support is
@@ -55,7 +56,10 @@ package Test_Support is
    --  Whether the test Name should run
 
 private
+   package String_Vectors is new GAL.Vectors.Indefinite_Unbounded
+      (Positive, String, GAL.Controlled_Base);
+
    type Test_Filter is tagged record
-      Filter : GNATCOLL.Strings.XString;
+      Filter : String_Vectors.Vector;
    end record;
 end Test_Support;

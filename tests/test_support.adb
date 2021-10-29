@@ -25,7 +25,7 @@ package body Test_Support is
 
    procedure Setup (Self : in out Test_Filter; Arg : String) is
    begin
-      Self.Filter.Set (Arg);
+      Self.Filter.Append (Arg);
    end Setup;
 
    ------------
@@ -33,12 +33,17 @@ package body Test_Support is
    ------------
 
    function Active (Self : Test_Filter; Name : String) return Boolean is
-      A : Boolean;
    begin
-      A := GNATCOLL.Strings.Starts_With
-         (GNATCOLL.Strings.To_XString (Name),
-          Self.Filter);
-      return A;
+      if Self.Filter.Is_Empty then
+         return True;
+      end if;
+
+      for V of Self.Filter loop
+         if V = Name then
+            return True;
+         end if;
+      end loop;
+      return False;
    end Active;
 
 end Test_Support;
