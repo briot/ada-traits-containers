@@ -29,7 +29,7 @@ package GAL.Elements.Null_Elements is
 
    type Null_Element is null record;
 
-   No_Element : constant Null_Element := (others => <>);
+   No_Element : constant Null_Element := (null record);
 
    procedure Set_Stored (E : Null_Element; S : out Null_Element) is null;
    function Identity (E : Null_Element) return Null_Element is (E) with Inline;
