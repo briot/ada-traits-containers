@@ -46,7 +46,7 @@ package GAL.Graphs.Components is
       procedure Compute
         (G                : Graph_Type;
          Components       : out Component_Maps.Map;
-         Components_Count : out Positive);
+         Components_Count : out Natural);
       --  Compute the strongly components of the graph:
       --  These are maximal sets of vertices such that for every pair of
       --  vertices u and v in the set, there exists a path from u to v and

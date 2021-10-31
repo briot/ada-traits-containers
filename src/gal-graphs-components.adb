@@ -57,7 +57,7 @@ package body GAL.Graphs.Components is
       procedure Compute
         (G                : Graph_Type;
          Components       : out Component_Maps.Map;
-         Components_Count : out Positive)
+         Components_Count : out Natural)
       is
          --  This algorithm needs multiple pieces of information for each
          --  vertex:

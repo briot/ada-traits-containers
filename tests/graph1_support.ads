@@ -143,7 +143,8 @@ package Graph1_Support is
    procedure Initialize_Vertex (Ignored : in out My_Visitor2; V : Vertex);
    procedure Start_Vertex      (Ignored : in out My_Visitor2; V : Vertex);
    procedure Finish_Vertex     (Ignored : in out My_Visitor2; V : Vertex);
-   procedure Discover_Vertex   (Ignored : in out My_Visitor2; V : Vertex);
+   procedure Discover_Vertex
+      (Ignored : in out My_Visitor2; V : Vertex; Stop : in out Boolean);
    package My_Visitors2 is new All_DFS.DFS_Visitor_Traits
       (Visitor_Type      => My_Visitor2,
        Initialize_Vertex => Initialize_Vertex,

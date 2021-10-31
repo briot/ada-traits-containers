@@ -183,9 +183,13 @@ begin
    Run_Perf_Test ("graph_c++", Test_Cpp_Graph'Access);
 
    Run_Test
-      ("graph_adj_list",
+      ("graph_chain",
        Test_Graph_Adjlist.Test'Access,
-       Test_Graph_Adjlist.Test_Perf_Adjacency_List'Access,
+       Test_Graph_Adjlist.Test_Perf_Adjacency_List_Chain'Access);
+   Run_Test
+      ("graph_complete",
+       null,
+       Test_Graph_Adjlist.Test_Perf_Adjacency_List_Complete'Access,
        Favorite => True);
    Run_Test
       ("graph_custom",

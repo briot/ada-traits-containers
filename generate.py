@@ -469,6 +469,7 @@ generic
    subtype Cursor is Vectors.Cursor;
    subtype Extended_Index is Vectors.Extended_Index;
    subtype Constant_Returned is Elements.Traits.Constant_Returned;
+   subtype Returned is Elements.Traits.Returned;
 
    No_Element : Cursor renames Vectors.No_Element;
    No_Index   : Index_Type renames Vectors.No_Index;
@@ -634,6 +635,7 @@ generic
    subtype List is Lists.List;
    subtype Cursor is Lists.Cursor;
    subtype Constant_Returned is Elements.Traits.Constant_Returned;
+   subtype Returned is Elements.Traits.Returned;
 
    No_Element : Cursor renames Lists.No_Element;
 

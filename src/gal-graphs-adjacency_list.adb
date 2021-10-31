@@ -201,14 +201,14 @@ package body GAL.Graphs.Adjacency_List is
          return Vertex (G.Edges.Constant_Reference (E.Current).To);
       end Get_Target;
 
-      -----------
-      -- First --
-      -----------
+      --------------
+      -- Vertices --
+      --------------
 
-      function First (G : Graph) return Vertex_Cursor is
+      function Vertices (G : Graph) return Vertex_Cursor is
       begin
          return (Current => G.Vertices.First);
-      end First;
+      end Vertices;
 
       -------------
       -- Element --

@@ -47,6 +47,7 @@ package GAL.Lists.Indefinite_Bounded with SPARK_Mode is
    subtype List is Lists.List;
    subtype Cursor is Lists.Cursor;
    subtype Constant_Returned is Elements.Traits.Constant_Returned;
+   subtype Returned is Elements.Traits.Returned;
 
    No_Element : Cursor renames Lists.No_Element;
 

@@ -57,7 +57,10 @@ package body Graph1_Support is
       end if;
    end Finish_Vertex;
 
-   procedure Discover_Vertex (Ignored : in out My_Visitor2; V : Vertex) is
+   procedure Discover_Vertex
+      (Ignored : in out My_Visitor2; V : Vertex; Stop : in out Boolean)
+   is
+      pragma Unreferenced (Stop);
    begin
       if Output then
          Put_Line ("Discover" & V'Img);

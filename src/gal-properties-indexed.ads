@@ -40,7 +40,6 @@ generic
    --  when the vector is resized.
 
    type Index_Type is (<>);
-   type Container_Base_Type is abstract tagged limited private;
 
    with function Get_Index (K : Key_Type) return Index_Type is <>;
    --  Maps the key to an index
@@ -53,7 +52,7 @@ generic
 package GAL.Properties.Indexed is
 
    package Value_Vectors is new GAL.Vectors.Definite_Unbounded
-     (Index_Type, Element_Type, Container_Base_Type => Container_Base_Type);
+     (Index_Type, Element_Type, Limited_Controlled_Base);
 
    type Map is limited record
       Values : Value_Vectors.Vector;

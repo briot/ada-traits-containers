@@ -25,6 +25,7 @@ with GAL.Elements.Null_Elements;
 with GAL.Graphs.Adjacency_List;
 with GAL.Graphs.Generators;
 with GAL;                           use GAL;
+with GNATCOLL.Strings;              use GNATCOLL.Strings;
 with Graph1_Support;                use Graph1_Support;
 with Report;                        use Report;
 with System.Storage_Elements;       use System.Storage_Elements;
@@ -60,6 +61,7 @@ package body Test_Graph_Adjlist is
       G   : Graphs.Graph;
       Map : Graphs.Integer_Maps.Map;
       Count : Positive;
+      Events : GNATCOLL.Strings.XString;
    begin
       G.Add_Vertices (Count => 8);
 
@@ -95,6 +97,115 @@ package body Test_Graph_Adjlist is
       Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (6)), 2);
       Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (7)), 2);
       Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (8)), 4);
+
+      G.Clear;
+      Generators.Complete (G, N => 3);
+
+      declare
+         subtype Vertex_Type is Graphs.Vertex;
+         subtype Edge_Type is Graphs.Edge;
+
+         function Image (V : Vertex_Type) return String
+            is (Graphs.Impl.Get_Index (V)'Image);
+         function Image (E : Edge_Type) return String
+            is (Image (G.Get_Source (E)) & "->" & Image (G.Get_Target (E)));
+
+         type Visit is null record;
+
+         procedure Vertices_Initialized
+            (Ignored : in out Visit; Count : Count_Type);
+         procedure Discover_Vertex
+            (Ignored : in out Visit; V : Vertex_Type; Stop : in out Boolean);
+
+         generic
+             Name : String;
+         procedure Vertex_Cb (Ignored : in out Visit; V : Vertex_Type);
+         procedure Vertex_Cb (Ignored : in out Visit; V : Vertex_Type) is
+         begin
+            Events.Append (Name & Image (V) & ASCII.LF);
+         end Vertex_Cb;
+
+         generic
+             Name : String;
+         procedure Edge_Cb (Ignored : in out Visit; E : Edge_Type);
+         procedure Edge_Cb (Ignored : in out Visit; E : Edge_Type) is
+         begin
+            Events.Append (Name & Image (E) & ASCII.LF);
+         end Edge_Cb;
+
+         procedure Vertices_Initialized
+            (Ignored : in out Visit; Count : Count_Type) is
+         begin
+            Events.Append ("Vertices_Initialized" & Count'Image & ASCII.LF);
+         end Vertices_Initialized;
+
+         procedure Discover_Vertex
+            (Ignored : in out Visit; V : Vertex_Type; Stop : in out Boolean) is
+         begin
+            Events.Append ("Discover_Vertex" & Image (V) & ASCII.LF);
+            Stop := False;
+         end Discover_Vertex;
+
+         procedure Initialize_Vertex is new Vertex_Cb ("Initialize_Vertex");
+         procedure Start_Vertex is new Vertex_Cb ("Start_Vertex");
+         procedure Finish_Vertex is new Vertex_Cb ("Finish_Vertex");
+         procedure Examine_Edge is new Edge_Cb ("Examine_Edge");
+         procedure Finish_Edge is new Edge_Cb ("Finish_Edge");
+         procedure Tree_Edge is new Edge_Cb ("Tree_Edge");
+         procedure Back_Edge is new Edge_Cb ("Back_Edge");
+         procedure Forward_Or_Cross_Edge is new Edge_Cb
+            ("Forward_Or_Cross_Edge");
+
+         package Visitor is new Graphs.All_DFS.DFS_Visitor_Traits
+            (Visitor_Type          => Visit,
+             Vertices_Initialized  => Vertices_Initialized,
+             Initialize_Vertex     => Initialize_Vertex,
+             Start_Vertex          => Start_Vertex,
+             Finish_Vertex         => Finish_Vertex,
+             Discover_Vertex       => Discover_Vertex,
+             Examine_Edge          => Examine_Edge,
+             Tree_Edge             => Tree_Edge,
+             Back_Edge             => Back_Edge,
+             Forward_Or_Cross_Edge => Forward_Or_Cross_Edge,
+             Finish_Edge           => Finish_Edge);
+         procedure Search is new Graphs.DFS.Search (Visitor);
+
+         V : Visit;
+      begin
+         Search (G, V);
+         Asserts.Strings.Assert
+            (Events.To_String,
+             "Initialize_Vertex 1" & ASCII.LF &
+             "Initialize_Vertex 2" & ASCII.LF &
+             "Initialize_Vertex 3" & ASCII.LF &
+             "Vertices_Initialized 3" & ASCII.LF &
+             "Start_Vertex 1" & ASCII.LF &
+             "Discover_Vertex 1" & ASCII.LF &
+             "Examine_Edge 1-> 2" & ASCII.LF &
+             "Tree_Edge 1-> 2" & ASCII.LF &
+             "Discover_Vertex 2" & ASCII.LF &
+             "Examine_Edge 2-> 1" & ASCII.LF &
+             "Back_Edge 2-> 1" & ASCII.LF &
+             "Finish_Edge 2-> 1" & ASCII.LF &
+             "Examine_Edge 2-> 3" & ASCII.LF &
+             "Tree_Edge 2-> 3" & ASCII.LF &
+             "Discover_Vertex 3" & ASCII.LF &
+             "Examine_Edge 3-> 1" & ASCII.LF &
+             "Back_Edge 3-> 1" & ASCII.LF &
+             "Finish_Edge 3-> 1" & ASCII.LF &
+             "Examine_Edge 3-> 2" & ASCII.LF &
+             "Back_Edge 3-> 2" & ASCII.LF &
+             "Finish_Edge 3-> 2" & ASCII.LF &
+             "Finish_Vertex 3" & ASCII.LF &
+             "Finish_Edge 2-> 3" & ASCII.LF &
+             "Finish_Vertex 2" & ASCII.LF &
+             "Examine_Edge 1-> 3" & ASCII.LF &
+             "Forward_Or_Cross_Edge 1-> 3" & ASCII.LF &
+             "Finish_Edge 1-> 3" & ASCII.LF &
+             "Finish_Vertex 1" & ASCII.LF);
+      end;
+
+      Asserts.Booleans.Assert (Graphs.DFS.Is_Acyclic (G), False);
    end Test;
 
    -----------------------
@@ -187,11 +298,11 @@ package body Test_Graph_Adjlist is
       Time_SCC (Stdout, Category, Container, "scc", Start_Group => True);
    end Generic_Test_Perf;
 
-   ------------------------------
-   -- Test_Perf_Adjacency_List --
-   ------------------------------
+   ------------------------------------
+   -- Test_Perf_Adjacency_List_Chain --
+   ------------------------------------
 
-   procedure Test_Perf_Adjacency_List
+   procedure Test_Perf_Adjacency_List_Chain
       (Stdout : in out Output'Class; Favorite : Boolean)
    is
       procedure Fill_Chain (G : in out Graphs.Graph);
@@ -200,7 +311,7 @@ package body Test_Graph_Adjlist is
       begin
          G.Add_Vertices (Count => Items_Count);
 
-         V := G.First;
+         V := G.Vertices;
          loop
             V2 := G.Next (V);
             exit when not G.Has_Element (V2);
@@ -214,21 +325,31 @@ package body Test_Graph_Adjlist is
              G.From_Index (Items_Count));
       end Fill_Chain;
 
+      procedure Gen_Test_Chain is new Generic_Test_Perf
+         ("Integer Graph (chain)", "adjacency list", Graphs, Fill_Chain);
+   begin
+      Gen_Test_Chain    (Stdout, Favorite, Expected_Acyclic => False);
+   end Test_Perf_Adjacency_List_Chain;
+
+   ---------------------------------------
+   -- Test_Perf_Adjacency_List_Complete --
+   ---------------------------------------
+
+   procedure Test_Perf_Adjacency_List_Complete
+      (Stdout : in out Output'Class; Favorite : Boolean)
+   is
       procedure Fill_Complete (G : in out Graphs.Graph);
       procedure Fill_Complete (G : in out Graphs.Graph) is
       begin
          Generators.Complete (G, N => 10_000);
       end Fill_Complete;
 
-      procedure Gen_Test_Chain is new Generic_Test_Perf
-         ("Integer Graph (chain)", "adjacency list", Graphs, Fill_Chain);
       procedure Gen_Test_Complete is new Generic_Test_Perf
          ("Integer Graph (complete, small)",
           "adjacency list", Graphs, Fill_Complete);
    begin
-      Gen_Test_Chain    (Stdout, Favorite, Expected_Acyclic => False);
       Gen_Test_Complete (Stdout, Favorite, Expected_Acyclic => False);
-   end Test_Perf_Adjacency_List;
+   end Test_Perf_Adjacency_List_Complete;
 
    ----------------------
    -- Test_Perf_Custom --

@@ -65,7 +65,7 @@ package body GAL.Properties.Indexed is
    function Create_Map (G : Container_Type) return Map is
    begin
       return M : Map do
-         M.Values.Reserve_Capacity (Length (G));
+         M.Values.Resize (Length (G), Element => Default_Value);
       end return;
    end Create_Map;
 

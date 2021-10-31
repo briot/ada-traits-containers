@@ -43,6 +43,8 @@ package GAL with SPARK_Mode is
 
    type Controlled_Base is abstract
       new Ada.Finalization.Controlled with null record;
+   type Limited_Controlled_Base is abstract
+      new Ada.Finalization.Limited_Controlled with null record;
    type Limited_Base is abstract tagged limited null record;
    --  A type that can be used as the root of a container hierarchy when a
    --  container should be limited (and thus prevent its copying).

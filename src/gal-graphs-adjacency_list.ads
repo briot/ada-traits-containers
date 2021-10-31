@@ -73,17 +73,24 @@ package GAL.Graphs.Adjacency_List is
 
       type Vertex_Cursor is private;
       No_Vertex : constant Vertex_Cursor;
-      function First (G : Graph) return Vertex_Cursor;
-      function Element (G : Graph; C : Vertex_Cursor) return Vertex;
-      function Has_Element (G : Graph; C : Vertex_Cursor) return Boolean;
-      function Next (G : Graph; C : Vertex_Cursor) return Vertex_Cursor;
+      function Vertices (G : Graph) return Vertex_Cursor with Inline;
+      function Element (G : Graph; C : Vertex_Cursor) return Vertex
+         with Inline;
+      function Has_Element (G : Graph; C : Vertex_Cursor) return Boolean
+         with Inline;
+      function Next (G : Graph; C : Vertex_Cursor) return Vertex_Cursor
+         with Inline;
 
       type Vertex_Edges_Cursor is private;
-      function Out_Edges (G : Graph; V : Vertex) return Vertex_Edges_Cursor;
-      function Element (G : Graph; C : Vertex_Edges_Cursor) return Edge;
-      function Has_Element (G : Graph; C : Vertex_Edges_Cursor) return Boolean;
+      function Out_Edges (G : Graph; V : Vertex) return Vertex_Edges_Cursor
+         with Inline;
+      function Element (G : Graph; C : Vertex_Edges_Cursor) return Edge
+         with Inline;
+      function Has_Element (G : Graph; C : Vertex_Edges_Cursor) return Boolean
+         with Inline;
       function Next
-         (G : Graph; C : Vertex_Edges_Cursor) return Vertex_Edges_Cursor;
+         (G : Graph; C : Vertex_Edges_Cursor) return Vertex_Edges_Cursor
+         with Inline;
 
       function Add_Vertex (Self : in out Graph) return Vertex;
       procedure Add_Vertices (Self : in out Graph; Count : Count_Type);
@@ -219,7 +226,7 @@ package GAL.Graphs.Adjacency_List is
      (Container_Type => Graph,
       Cursor_Type    => Impl.Vertex_Cursor,
       No_Element     => Impl.No_Vertex,
-      First          => Impl.First,
+      First          => Impl.Vertices,
       Has_Element    => Impl.Has_Element,
       Next           => Impl.Next,
       "="            => Impl."=");
@@ -270,7 +277,6 @@ package GAL.Graphs.Adjacency_List is
       Element_Type        => Color,
       Default_Value       => White,
       Index_Type          => Vertex_Index,
-      Container_Base_Type => GAL.Limited_Base,
       Get_Index           => Impl.Get_Index,
       Length              => Impl.Length);
    --  Associates a "color" to a vertex.
@@ -289,7 +295,6 @@ package GAL.Graphs.Adjacency_List is
       Element_Type        => Integer,
       Default_Value       => -1,
       Index_Type          => Vertex_Index,
-      Container_Base_Type => Container_Base_Type,
       Get_Index           => Impl.Get_Index,
       Length              => Impl.Length);
    --  An integer map is mostly created by the application, since it holds the

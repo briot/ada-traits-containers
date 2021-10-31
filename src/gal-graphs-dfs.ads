@@ -58,18 +58,6 @@ package GAL.Graphs.DFS is
    generic
       type Visitor_Type (<>) is limited private;
 
-      with procedure Should_Stop
-        (Self   : Visitor_Type;
-         Vertex : Vertex_Type;
-         Stop   : in out Boolean) is null;
-      --  Whether to stop iterating after discovering Vertex.
-      --  If iteration should stop, this procedure should set Stop to True (its
-      --  initial value is always False).
-      --  This can be used for instance when you are only interested in finding
-      --  whether there exists a path between two specific vertices.
-      --  It should also be used for infinite graphs (those an infinite number
-      --  of vertices that are created on the fly for instance).
-
       with procedure Vertices_Initialized
         (Self  : in out Visitor_Type;
          Count : Count_Type) is null;
@@ -99,8 +87,15 @@ package GAL.Graphs.DFS is
 
       with procedure Discover_Vertex
          (Self   : in out Visitor_Type;
-          Vertex : Vertex_Type) is null;
+          Vertex : Vertex_Type;
+          Stop   : in out Boolean) is null;
       --  Called when a vertex is encountered the first time.
+      --  If iteration should stop, this procedure should set Stop to True (its
+      --  initial value is always False). This can be used for instance when
+      --  you are only interested in finding whether there exists a path
+      --  between two specific vertices. It should also be used for infinite
+      --  graphs (those an infinite number of vertices that are created on the
+      --  fly for instance).
 
       with procedure Examine_Edge
          (Self : in out Visitor_Type;
@@ -164,7 +159,7 @@ package GAL.Graphs.DFS is
         (G      : Graph_Type;
          Visit  : in out Visitors.Visitor_Type;
          Colors : out Color_Maps.Map;
-         V      : Vertex_Type := Graphs.Null_Vertex);
+         Source : Vertex_Type := Graphs.Null_Vertex);
       --  A depth first search is a traversal of the graph that always chooses
       --  to go deeper in the graph when possible, by looking at the next
       --  adjacent undiscovered vertex until reaching a vertex that has no
@@ -198,7 +193,7 @@ package GAL.Graphs.DFS is
         (G      : Graph_Type;
          Visit  : in out Visitors.Visitor_Type;
          Colors : out Color_Maps.Map;
-         V      : Vertex_Type := Graphs.Null_Vertex);
+         Source : Vertex_Type := Graphs.Null_Vertex);
       --  A recursive version of the DFS algorithm.
       --  It is fractionally faster on small graph, and is not compatible with
       --  large graphs (since the depth of recursion with blow the stack).
