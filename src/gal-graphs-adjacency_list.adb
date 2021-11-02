@@ -226,16 +226,16 @@ package body GAL.Graphs.Adjacency_List is
 
       function Has_Element (G : Graph; C : Vertex_Cursor) return Boolean is
       begin
-         return G.Vertices.Has_Element (C.Current);
+         return C.Current /= Vertex_Vectors.No_Element;
       end Has_Element;
 
       ----------
       -- Next --
       ----------
 
-      function Next (G : Graph; C : Vertex_Cursor) return Vertex_Cursor is
+      procedure Next (G : Graph; C : in out Vertex_Cursor) is
       begin
-         return (Current => G.Vertices.Next (C.Current));
+         G.Vertices.Next (C.Current);
       end Next;
 
       ---------------
@@ -266,21 +266,16 @@ package body GAL.Graphs.Adjacency_List is
       function Has_Element
          (G : Graph; C : Vertex_Edges_Cursor) return Boolean is
       begin
-         return G.Vertices.Constant_Reference
-            (C.From).Out_Edges.Has_Element (C.Current);
+         return C.Current /= Edge_Vectors.No_Element;
       end Has_Element;
 
       ----------
       -- Next --
       ----------
 
-      function Next
-         (G : Graph; C : Vertex_Edges_Cursor) return Vertex_Edges_Cursor is
+      procedure Next (G : Graph; C : in out Vertex_Edges_Cursor) is
       begin
-         return
-            (Current => G.Vertices.Constant_Reference (C.From).Out_Edges.Next
-               (C.Current),
-             From    => C.From);
+         G.Vertices.Constant_Reference (C.From).Out_Edges.Next (C.Current);
       end Next;
 
       -------------

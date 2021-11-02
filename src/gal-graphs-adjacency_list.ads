@@ -78,8 +78,7 @@ package GAL.Graphs.Adjacency_List is
          with Inline;
       function Has_Element (G : Graph; C : Vertex_Cursor) return Boolean
          with Inline;
-      function Next (G : Graph; C : Vertex_Cursor) return Vertex_Cursor
-         with Inline;
+      procedure Next (G : Graph; C : in out Vertex_Cursor) with Inline;
 
       type Vertex_Edges_Cursor is private;
       function Out_Edges (G : Graph; V : Vertex) return Vertex_Edges_Cursor
@@ -88,8 +87,7 @@ package GAL.Graphs.Adjacency_List is
          with Inline;
       function Has_Element (G : Graph; C : Vertex_Edges_Cursor) return Boolean
          with Inline;
-      function Next
-         (G : Graph; C : Vertex_Edges_Cursor) return Vertex_Edges_Cursor
+      procedure Next (G : Graph; C : in out Vertex_Edges_Cursor)
          with Inline;
 
       function Add_Vertex (Self : in out Graph) return Vertex;

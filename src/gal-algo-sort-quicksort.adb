@@ -10,7 +10,7 @@ procedure GAL.Algo.Sort.Quicksort (Self : in out Cursors.Container) is
       Dist : Integer;
       L    : Cursors.Index := Low;
       H    : Cursors.Index := High;
-      Left, Right : Cursors.Index;
+      Left, Right, Tmp : Cursors.Index;
    begin
       loop
          Dist := Cursors.Dist (H, L);
@@ -39,29 +39,32 @@ procedure GAL.Algo.Sort.Quicksort (Self : in out Cursors.Container) is
 
             loop
                while "<" (Getters.Value (Self, Left), Pivot) loop
-                  Left := Cursors.Next (Self, Left);
+                  Cursors.Next (Self, Left);
                end loop;
 
                while "<" (Pivot, Getters.Value (Self, Right)) loop
-                  Right := Cursors.Previous (Self, Right);
+                  Cursors.Previous (Self, Right);
                end loop;
 
                exit when Cursors.Dist (Right, Left) <= 0;
 
                Swap (Self, Right, Left);
-               Left := Cursors.Next (Self, Left);
-               Right := Cursors.Previous (Self, Right);
+               Cursors.Next (Self, Left);
+               Cursors.Previous (Self, Right);
             end loop;
          end;
 
          --  Recurse for smaller sequence, and tail recursion for longer
          --  one. Do not keep pivot on the stack while recursing.
          if Cursors.Dist (Right, L) > Cursors.Dist (H, Right) then
-            Recurse (Cursors.Next (Self, Right), H);
+            Tmp := Right;
+            Cursors.Next (Self, Tmp);
+            Recurse (Tmp, H);
             H := Right;  --  loop on L..Right
          else
             Recurse (L, Right);
-            L := Cursors.Next (Self, Right);  --  loop on Right+1 .. H
+            L := Right;
+            Cursors.Next (Self, L);  --  loop on Right+1 .. H
          end if;
       end loop;
    end Recurse;

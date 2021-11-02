@@ -11,8 +11,8 @@ begin
          return False;
       end if;
 
-      L_C := Cursors.Next (Left, L_C);
-      R_C := Cursors.Next (Right, R_C);
+      Cursors.Next (Left, L_C);
+      Cursors.Next (Right, R_C);
    end loop;
 
    return not Cursors.Has_Element (Right, R_C);

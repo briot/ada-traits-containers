@@ -43,11 +43,11 @@ package body GAL.Algo.Permutations is
       C := Last;
       loop
          C2 := C;
-         C := Cursors.Prev (Self, C);
+         Cursors.Prev (Self, C);
          if Getters.Get (Self, C) < Getters.Get (Self, C2) then
             C3 := Cursors.Last_Cursor (Self);
             while not (Getters.Get (Self, C) < Getters.Get (Self, C3)) loop
-               C3 := Cursors.Prev (Self, C3);
+               Cursors.Prev (Self, C3);
             end loop;
             Swap (Self, C, C3);
             Reverse_Order (Self, C2, Last);
@@ -73,8 +73,10 @@ package body GAL.Algo.Permutations is
       --  See  "combinations, with and without repetitions", Hervé Brönnimann
       --  https://citeseerx.ist.psu.edu/viewdoc/
       --     download?doi=10.1.1.353.930&rep=rep1&type=pdf
-      N : constant Cursors.Cursor_Type := Cursors.Next (Self, K);
+      N : Cursors.Cursor_Type;
    begin
+      N := K;
+      Cursors.Next (Self, N);
       if Cursors.Has_Element (Self, N) then
          Reverse_Order (Self, N, Cursors.Last_Cursor (Self));
       end if;
@@ -97,8 +99,8 @@ package body GAL.Algo.Permutations is
       use type Cursors.Cursor_Type;
       First1 : Cursors.Cursor := Cursors.First_Cursor (Self);
       Last2  : constant Cursors.Cursor := Cursors.Last_Cursor (Self);
-      K_Next : constant Cursors.Cursor := Cursors.Next (Self, K);
-      M1, M2, First2 : Cursors.Cursor;
+      K_Next : Cursors.Cursor := K;
+      M1, M2, First2, Prev : Cursors.Cursor;
       Result : Boolean;
 
    begin
@@ -108,13 +110,15 @@ package body GAL.Algo.Permutations is
       end if;
 
       M1 := K;
+
+      Cursors.Next (Self, K_Next);
       First2 := K_Next;
       M2 := Last2;
 
       while M1 /= First1
          and then not (Getters.Get (Self, M1) < Getters.Get (Self, M2))
       loop
-         M1 := Cursors.Previous (Self, M1);
+         Cursors.Previous (Self, M1);
       end loop;
 
       Result := M1 = First1
@@ -124,26 +128,28 @@ package body GAL.Algo.Permutations is
          while First2 /= M2
             and then not (Getters.Get (Self, M1) < Getters.Get (Self, First2))
          loop
-            First2 := Cursors.Next (Self, First2);
+            Cursors.Next (Self, First2);
          end loop;
 
          First1 := M1;
          Swap (Self, First1, First2);
-         First1 := Cursors.Next (Self, First1);
-         First2 := Cursors.Next (Self, First2);
+         Cursors.Next (Self, First1);
+         Cursors.Next (Self, First2);
       end if;
 
       if First1 /= K_Next and First2 /= Cursors.No_Element then
          M1 := K_Next;
          M2 := First2;
          while M1 /= First1 and then M2 /= Cursors.No_Element loop
-            M1 := Cursors.Previous (Self, M1);
+            Cursors.Previous (Self, M1);
             Swap (Self, M1, M2);
-            M2 := Cursors.Next (Self, M2);
+            Cursors.Next (Self, M2);
          end loop;
 
          if M1 /= First1 then
-            Reverse_Order (Self, First1, Cursors.Previous (Self, M1));
+            Prev := M1;
+            Cursors.Previous (Self, Prev);
+            Reverse_Order (Self, First1, Prev);
          end if;
          Reverse_Order (Self, First1, K);
          if M2 /= Cursors.No_Element then

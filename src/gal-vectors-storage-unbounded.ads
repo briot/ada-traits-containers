@@ -49,7 +49,8 @@ package GAL.Vectors.Storage.Unbounded with SPARK_Mode is
       function Get_RW_Stored
         (Self  : in out Container'Class;
          Index : Count_Type)
-        return not null access Elements.Stored_Type;
+        return not null access Elements.Stored_Type
+        with Inline;
       function Get_Returned
         (Self  : in out Container'Class;
          Index : Count_Type) return Elements.Returned_Type with Inline;

@@ -81,7 +81,7 @@ package body GAL.Graphs.DFS is
               (Colors, Vertex_Lists.Vertex_Maps.Get (G, VC), White);
             Visitors.Initialize_Vertex
                (Visit, Vertex_Lists.Vertex_Maps.Get (G, VC));
-            VC := Vertex_Lists.Vertex_Cursors.Next (G, VC);
+            Vertex_Lists.Vertex_Cursors.Next (G, VC);
          end loop;
 
          Visitors.Vertices_Initialized (Visit, Count);
@@ -90,7 +90,7 @@ package body GAL.Graphs.DFS is
          VC := Vertex_Lists.Vertex_Cursors.First (G);
          if Source = Graphs.Null_Vertex then
             Current := Vertex_Lists.Vertex_Maps.Get (G, VC);
-            VC := Vertex_Lists.Vertex_Cursors.Next (G, VC);
+            Vertex_Lists.Vertex_Cursors.Next (G, VC);
          else
             Current := Source;
          end if;
@@ -105,7 +105,7 @@ package body GAL.Graphs.DFS is
 
             exit when not Vertex_Lists.Vertex_Cursors.Has_Element (G, VC);
             Current := Vertex_Lists.Vertex_Maps.Get (G, VC);
-            VC := Vertex_Lists.Vertex_Cursors.Next (G, VC);
+            Vertex_Lists.Vertex_Cursors.Next (G, VC);
          end loop;
       end Explore;
 
@@ -169,7 +169,7 @@ package body GAL.Graphs.DFS is
                      case Color_Maps.Get (Colors, V) is
                      when White =>
                         Visitors.Tree_Edge (Visit, E);
-                        EC := Incidence.Next (G, EC);
+                        Incidence.Next (G, EC);
                         Stack.Append
                            ((V        => U,
                              E        => E,
@@ -187,12 +187,12 @@ package body GAL.Graphs.DFS is
                      when Gray =>
                         Visitors.Back_Edge (Visit, E);
                         Visitors.Finish_Edge (Visit, E);
-                        EC := Incidence.Next (G, EC);
+                        Incidence.Next (G, EC);
 
                      when Black =>
                         Visitors.Forward_Or_Cross_Edge (Visit, E);
                         Visitors.Finish_Edge (Visit, E);
-                        EC := Incidence.Next (G, EC);
+                        Incidence.Next (G, EC);
                      end case;
                   end loop;
 
@@ -265,7 +265,7 @@ package body GAL.Graphs.DFS is
 
                      Visitors.Finish_Edge (Visit, E);
                   end;
-                  EC := Incidence.Next (G, EC);
+                  Incidence.Next (G, EC);
                end loop;
 
                Color_Maps.Set (Colors, Current, Black);

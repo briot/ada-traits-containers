@@ -114,18 +114,13 @@ package GAL.Lists.Generics with SPARK_Mode is
    function Has_Element
      (Self : Base_List'Class; Position : Cursor) return Boolean
      renames Impl.Has_Element;
-   function Next
-     (Self : Base_List'Class; Position : Cursor) return Cursor
+   procedure Next (Self : Base_List'Class; Position : in out Cursor)
      renames Impl.Next;
-   function Previous
-     (Self : Base_List'Class; Position : Cursor) return Cursor
+   procedure Previous (Self : Base_List'Class; Position : in out Cursor)
      renames Impl.Previous;
    --  We pass the container explicitly for the sake of writing the pre
    --  and post conditions.
    --  Complexity: constant for all cursor operations.
-
-   procedure Next (Self : Base_List'Class; Position : in out Cursor)
-     renames Impl.Next;
 
    function "=" (Left, Right : Cursor) return Boolean renames Impl."=";
 
@@ -190,6 +185,11 @@ package GAL.Lists.Generics with SPARK_Mode is
                        Next        => Next_Primitive,
                        Has_Element => Has_Element_Primitive,
                        Element     => Element_Primitive);
+
+   function Previous (Self : List'Class; Position : Cursor) return Cursor
+      with Inline;
+   function Next (Self : List'Class; Position : Cursor) return Cursor
+      with Inline;
 
    function Constant_Reference
      (Self : List; Position : Cursor) return Constant_Returned_Type

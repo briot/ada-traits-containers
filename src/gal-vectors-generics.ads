@@ -190,19 +190,15 @@ package GAL.Vectors.Generics with SPARK_Mode is
    function Has_Element
      (Self : Base_Vector'Class; Position : Cursor) return Boolean
      renames Impl.Has_Element;
-   function Next
-     (Self : Base_Vector'Class; Position : Cursor) return Cursor
+   procedure Next
+     (Self : Base_Vector'Class; Position : in out Cursor)
      renames Impl.Next;
-   function Previous
-     (Self : Base_Vector'Class; Position : Cursor) return Cursor
+   procedure Previous
+     (Self : Base_Vector'Class; Position : in out Cursor)
      renames Impl.Previous;
    --  We pass the container explicitly for the sake of writing the pre
    --  and post conditions.
    --  Complexity: constant for all cursor operations.
-
-   procedure Next (Self : Base_Vector'Class; Position : in out Cursor)
-     renames Impl.Next;
-   --  Modifies Position in place.
 
    function Reference
      (Self : in out Base_Vector'Class; Position : Index_Type)
@@ -229,7 +225,7 @@ package GAL.Vectors.Generics with SPARK_Mode is
      with Constant_Indexing => Constant_Reference,
           Iterable          => (First       => First_Primitive,
                                 Next        => Next_Primitive,
-                                Has_Element => Has_Element_Primitive,
+                                Has_Element => Has_Element_For_Loops_Primitive,
                                 Element     => Element_Primitive);
 
    function Constant_Reference
@@ -288,7 +284,7 @@ package GAL.Vectors.Generics with SPARK_Mode is
          No_Element     => No_Element,
          First          => First,
          Last           => Last,
-         Has_Element    => Has_Element,
+         Has_Element    => Impl.Has_Element_For_Loops,
          Next           => Next,
          Previous       => Previous);
       package Forward renames Bidirectional.Forward;

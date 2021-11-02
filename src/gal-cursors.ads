@@ -52,8 +52,13 @@ package GAL.Cursors with SPARK_Mode is
       with function First (Self : Container_Type) return Cursor_Type is <>;
       with function Has_Element (Self : Container_Type; Pos : Cursor_Type)
          return Boolean is <>;
-      with function Next (Self : Container_Type; Pos : Cursor_Type)
-         return Cursor_Type is <>;
+      with procedure Next (Self : Container_Type; Pos : in out Cursor_Type)
+         is <>;
+      --  In all cursors traits packages, we have preferred the change-in-place
+      --  versions of Next and Previous. When cursors are a bit more
+      --  complex (like in graphs), those procedures tend to be more
+      --  efficient than functions.
+
       with function "=" (Left, Right : Cursor_Type) return Boolean is <>;
    package Forward_Cursors is
       subtype Container is Container_Type;
@@ -72,10 +77,10 @@ package GAL.Cursors with SPARK_Mode is
       with function Last (Self : Container_Type) return Cursor_Type is <>;
       with function Has_Element (Self : Container_Type; Pos : Cursor_Type)
          return Boolean is <>;
-      with function Next (Self : Container_Type; Pos : Cursor_Type)
-         return Cursor_Type is <>;
-      with function Previous (Self : Container_Type; Pos : Cursor_Type)
-         return Cursor_Type is <>;
+      with procedure Next (Self : Container_Type; Pos : in out Cursor_Type)
+         is <>;
+      with procedure Previous (Self : Container_Type; Pos : in out Cursor_Type)
+         is <>;
    package Bidirectional_Cursors is
       subtype Container is Container_Type;
       subtype Cursor    is Cursor_Type;
@@ -84,8 +89,8 @@ package GAL.Cursors with SPARK_Mode is
          renames First;
       function Last_Cursor (Self : Container_Type) return Cursor_Type
          renames Last;
-      function Prev
-         (Self : Container_Type; Pos : Cursor_Type) return Cursor_Type
+      procedure Prev
+         (Self : Container_Type; Pos : in out Cursor_Type)
          renames Previous;
       function Has_Elem
          (Self : Container_Type; Pos : Cursor_Type)
@@ -144,11 +149,9 @@ package GAL.Cursors with SPARK_Mode is
       function "-" (Left : Index_Type; N : Integer) return Index_Type
         is (Left + (-N)) with Inline;
 
-      function Next
-        (Self : Container_Type; Idx : Index_Type) return Index_Type
+      procedure Next (Self : Container_Type; Idx : in out Index_Type)
         with Inline;
-      function Previous
-        (Self : Container_Type; Idx : Index_Type) return Index_Type
+      procedure Previous (Self : Container_Type; Idx : in out Index_Type)
         with Inline;
       --  Returns No_Element when moving out of the container's bounds
 

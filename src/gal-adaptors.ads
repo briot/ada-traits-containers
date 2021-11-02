@@ -57,10 +57,10 @@ package GAL.Adaptors is
       function Has_Element
          (Self_Ignored : List; Position : Cursor) return Boolean
          is (Lists.Has_Element (Position)) with Inline;
-      function Next (Self_Ignored : List; Position : Cursor) return Cursor
-         is (Lists.Next (Position)) with Inline;
-      function Previous (Self_Ignored : List; Position : Cursor) return Cursor
-         is (Lists.Previous (Position)) with Inline;
+      procedure Next (Self_Ignored : List; Position : in out Cursor)
+         with Inline;
+      procedure Previous (Self_Ignored : List; Position : in out Cursor)
+         with Inline;
 
       package Cursors is
          package Bidirectional is new Bidirectional_Cursors
@@ -96,10 +96,10 @@ package GAL.Adaptors is
       function Has_Element
          (Self_Ignored : List; Position : Cursor) return Boolean
          is (Lists.Has_Element (Position)) with Inline;
-      function Next (Self_Ignored : List; Position : Cursor) return Cursor
-         is (Lists.Next (Position)) with Inline;
-      function Previous (Self_Ignored : List; Position : Cursor) return Cursor
-         is (Lists.Previous (Position)) with Inline;
+      procedure Next (Self_Ignored : List; Position : in out Cursor)
+         with Inline;
+      procedure Previous (Self_Ignored : List; Position : in out Cursor)
+         with Inline;
 
       package Cursors is
          package Bidirectional is new Bidirectional_Cursors
@@ -139,10 +139,10 @@ package GAL.Adaptors is
       function Has_Element
          (Self_Ignored : List; Position : Cursor) return Boolean
          is (Lists.Has_Element (Position)) with Inline;
-      function Next (Self_Ignored : List; Position : Cursor) return Cursor
-         is (Lists.Next (Position)) with Inline;
-      function Previous (Self_Ignored : List; Position : Cursor) return Cursor
-         is (Lists.Previous (Position)) with Inline;
+      procedure Next (Self_Ignored : List; Position : in out Cursor)
+         with Inline;
+      procedure Previous (Self_Ignored : List; Position : in out Cursor)
+         with Inline;
 
       package Cursors is
          package Bidirectional is new Bidirectional_Cursors
@@ -180,11 +180,10 @@ package GAL.Adaptors is
       function Has_Element
          (Self_Ignored : Vector; Position : Cursor) return Boolean
          is (Vectors.Has_Element (Position)) with Inline;
-      function Next (Self_Ignored : Vector; Position : Cursor) return Cursor
-         is (Vectors.Next (Position)) with Inline;
-      function Previous
-         (Self_Ignored : Vector; Position : Cursor) return Cursor
-         is (Vectors.Previous (Position)) with Inline;
+      procedure Next (Self_Ignored : Vector; Position : in out Cursor)
+         with Inline;
+      procedure Previous (Self_Ignored : Vector; Position : in out Cursor)
+         with Inline;
 
       function Distance (Left, Right : Extended_Index) return Integer
          is (Integer (Vectors."-" (Left, Right)));
@@ -232,11 +231,10 @@ package GAL.Adaptors is
       function Has_Element
          (Self_Ignored : Vector; Position : Cursor) return Boolean
          is (Vectors.Has_Element (Position)) with Inline;
-      function Next (Self_Ignored : Vector; Position : Cursor) return Cursor
-         is (Vectors.Next (Position)) with Inline;
-      function Previous
-         (Self_Ignored : Vector; Position : Cursor) return Cursor
-         is (Vectors.Previous (Position)) with Inline;
+      procedure Next (Self_Ignored : Vector; Position : in out Cursor)
+         with Inline;
+      procedure Previous (Self_Ignored : Vector; Position : in out Cursor)
+         with Inline;
 
       function Distance (Left, Right : Extended_Index) return Integer
          is (Integer (Vectors."-" (Left, Right)));
@@ -287,11 +285,10 @@ package GAL.Adaptors is
       function Has_Element
          (Self_Ignored : Vector; Position : Cursor) return Boolean
          is (Vectors.Has_Element (Position)) with Inline;
-      function Next (Self_Ignored : Vector; Position : Cursor) return Cursor
-         is (Vectors.Next (Position)) with Inline;
-      function Previous
-         (Self_Ignored : Vector; Position : Cursor) return Cursor
-         is (Vectors.Previous (Position)) with Inline;
+      procedure Next (Self_Ignored : Vector; Position : in out Cursor)
+         with Inline;
+      procedure Previous (Self_Ignored : Vector; Position : in out Cursor)
+         with Inline;
 
       function Distance (Left, Right : Extended_Index) return Integer
          is (Integer (Vectors."-" (Left, Right)));
@@ -342,8 +339,8 @@ package GAL.Adaptors is
       function Has_Element
          (Self_Ignored : Map; Position : Cursor) return Boolean
          is (Hashed_Maps.Has_Element (Position)) with Inline;
-      function Next (Self_Ignored : Map; Position : Cursor) return Cursor
-         is (Hashed_Maps.Next (Position)) with Inline;
+      procedure Next (Self_Ignored : Map; Position : in out Cursor)
+         with Inline;
 
       package Cursors is
          package Forward is new Forward_Cursors
@@ -381,8 +378,8 @@ package GAL.Adaptors is
       function Has_Element
          (Self_Ignored : Map; Position : Cursor) return Boolean
          is (Hashed_Maps.Has_Element (Position)) with Inline;
-      function Next (Self_Ignored : Map; Position : Cursor) return Cursor
-         is (Hashed_Maps.Next (Position)) with Inline;
+      procedure Next (Self_Ignored : Map; Position : in out Cursor)
+         with Inline;
 
       package Cursors is
          package Forward is new Forward_Cursors
@@ -419,10 +416,10 @@ package GAL.Adaptors is
       function Has_Element
          (Self_Ignored : Map; Position : Cursor) return Boolean
          is (Ordered_Maps.Has_Element (Position)) with Inline;
-      function Next (Self_Ignored : Map; Position : Cursor) return Cursor
-         is (Ordered_Maps.Next (Position)) with Inline;
-      function Previous (Self_Ignored : Map; Position : Cursor) return Cursor
-         is (Ordered_Maps.Previous (Position)) with Inline;
+      procedure Next (Self_Ignored : Map; Position : in out Cursor)
+         with Inline;
+      procedure Previous (Self_Ignored : Map; Position : in out Cursor)
+         with Inline;
 
       package Cursors is
          package Bidirectional is new Bidirectional_Cursors
@@ -463,8 +460,8 @@ package GAL.Adaptors is
       function Has_Element
          (Self_Ignored : Map; Position : Cursor) return Boolean
          is (Hashed_Maps.Has_Element (Position)) with Inline;
-      function Next (Self_Ignored : Map; Position : Cursor) return Cursor
-         is (Hashed_Maps.Next (Position)) with Inline;
+      procedure Next (Self_Ignored : Map; Position : in out Cursor)
+         with Inline;
 
       package Cursors is
          package Forward is new Forward_Cursors
@@ -502,10 +499,10 @@ package GAL.Adaptors is
       function Has_Element
          (Self_Ignored : Map; Position : Cursor) return Boolean
          is (Ordered_Maps.Has_Element (Position)) with Inline;
-      function Next (Self_Ignored : Map; Position : Cursor) return Cursor
-         is (Ordered_Maps.Next (Position)) with Inline;
-      function Previous (Self_Ignored : Map; Position : Cursor) return Cursor
-         is (Ordered_Maps.Previous (Position)) with Inline;
+      procedure Next (Self_Ignored : Map; Position : in out Cursor)
+         with Inline;
+      procedure Previous (Self_Ignored : Map; Position : in out Cursor)
+         with Inline;
 
       package Cursors is
          package Bidirectional is new Bidirectional_Cursors

@@ -111,8 +111,7 @@ package GAL.Graphs is
          return Edge_Type is <>;
       with function Has_Element (G : Graphs.Graph; C : Cursor_Type)
          return Boolean is <>;
-      with function Next (G : Graphs.Graph; C : Cursor_Type)
-         return Cursor_Type is <>;
+      with procedure Next (G : Graphs.Graph; C : in out Cursor_Type) is <>;
       --  Iterate on all out-edges of a given vertex.
 
       with function Source (G : Graphs.Graph; E : Edge_Type)

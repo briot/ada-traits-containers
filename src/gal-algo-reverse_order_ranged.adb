@@ -8,8 +8,8 @@ is
 begin
    while F /= L loop
       Swap (Self, F, L);
-      L := Cursors.Previous (Self, L);
+      Cursors.Previous (Self, L);
       exit when F = L;
-      F := Cursors.Next (Self, F);
+      Cursors.Next (Self, F);
    end loop;
 end GAL.Algo.Reverse_Order_Ranged;

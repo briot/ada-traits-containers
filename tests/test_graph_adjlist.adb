@@ -312,8 +312,9 @@ package body Test_Graph_Adjlist is
          G.Add_Vertices (Count => Items_Count);
 
          V := G.Vertices;
+         V2 := V;
          loop
-            V2 := G.Next (V);
+            G.Next (V2);
             exit when not G.Has_Element (V2);
             G.Add_Edge (G.Element (V), G.Element (V2));
             V := V2;

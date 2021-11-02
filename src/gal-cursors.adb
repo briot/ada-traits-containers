@@ -6,15 +6,13 @@ package body GAL.Cursors is
       -- Next --
       ----------
 
-      function Next
-        (Self : Container_Type; Idx : Index_Type) return Index_Type
-      is
+      procedure Next (Self : Container_Type; Idx : in out Index_Type) is
          L : constant Index_Type := Idx + 1;
       begin
          if L <= Last (Self) then
-            return L;
+            Idx := L;
          else
-            return No_Element;
+            Idx := No_Element;
          end if;
       end Next;
 
@@ -22,15 +20,13 @@ package body GAL.Cursors is
       -- Previous --
       --------------
 
-      function Previous
-        (Self : Container_Type; Idx : Index_Type) return Index_Type
-      is
+      procedure Previous (Self : Container_Type; Idx : in out Index_Type) is
          L : constant Index_Type := Idx - 1;
       begin
          if L >= First (Self) then
-            return L;
+            Idx := L;
          else
-            return No_Element;
+            Idx := No_Element;
          end if;
       end Previous;
    end Random_Access_Cursors;

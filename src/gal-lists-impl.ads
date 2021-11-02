@@ -182,34 +182,19 @@ package GAL.Lists.Impl with SPARK_Mode is
           others            => Has_Element (Self, First'Result)
           and  P_Get (Positions (Self), First'Result) = 1);
 
-   function Next
-     (Self : Base_List'Class; Position : Cursor) return Cursor
+   procedure Previous
+     (Self : Base_List'Class; Position : in out Cursor)
    --  See documentation in conts-lists-generics.ads
      with
        Inline,
        Global         => null,
        Pre            => P_Mem (Positions (Self), Position),
        Contract_Cases =>
-         (P_Get (Positions (Self), Position) = Length (Self) =>
-                Next'Result = No_Element,
-          others => Has_Element (Self, Next'Result)
-             and then P_Get (Positions (Self), Next'Result) =
-                 P_Get (Positions (Self), Position) + 1);
-
-   function Previous
-     (Self : Base_List'Class; Position : Cursor) return Cursor
-   --  See documentation in conts-lists-generics.ads
-     with
-       Inline,
-       Global         => null,
-       Pre            => P_Mem (Positions (Self), Position),
-       Contract_Cases =>
-         (P_Get (Positions (Self), Position) = 1 =>
-                Previous'Result = No_Element,
+         (P_Get (Positions (Self), Position) = 1 => Position = No_Element,
           others =>
-            Has_Element (Self, Previous'Result)
-            and then P_Get (Positions (Self), Previous'Result) =
-               P_Get (Positions (Self), Position) - 1);
+            Has_Element (Self, Position)
+            and then P_Get (Positions (Self), Position) =
+               P_Get (Positions (Self), Position'Old) - 1);
 
    procedure Next (Self : Base_List'Class; Position : in out Cursor)
    --  See documentation in conts-lists-generics.ads
@@ -548,7 +533,6 @@ package GAL.Lists.Impl with SPARK_Mode is
    --  of type List instead of List'Class. But then it means that the loop
    --  is doing a lot of dynamic dispatching, and is twice as slow as a loop
    --  using an explicit cursor.
-     is (Next (Self, Position))
      with
        Inline,
        Pre'Class => P_Mem (Positions (Self), Position);

@@ -390,7 +390,7 @@ package body Support_Vectors is
          C     : Vectors.Cursor := L1.First;
       begin
          Count := 0;
-         while L1.Has_Element (C) loop
+         while C /= Vectors.No_Element loop
             if Check_Element_Internal (L1.Element (C)) then
                Count := Count + 1;
             end if;

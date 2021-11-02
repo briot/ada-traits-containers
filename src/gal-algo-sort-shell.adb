@@ -24,7 +24,7 @@ begin
             end loop;
          end;
 
-         C := Cursors.Next (Self, C);
+         Cursors.Next (Self, C);
       end loop;
    end loop;
 end GAL.Algo.Sort.Shell;

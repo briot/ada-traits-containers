@@ -66,8 +66,7 @@ package Graph1_Support is
    function Element (G : Graph; C : Vertex_Cursor) return Vertex with Inline;
    function Has_Element
      (G : Graph; C : Vertex_Cursor) return Boolean with Inline;
-   function Next
-     (G : Graph; C : Vertex_Cursor) return Vertex_Cursor with Inline;
+   procedure Next (G : Graph; C : in out Vertex_Cursor) with Inline;
 
    package Custom_Vertices is new GAL.Cursors.Forward_Cursors
      (Container_Type => Graph,
@@ -90,8 +89,7 @@ package Graph1_Support is
    function Element (G : Graph; C : Edge_Cursor) return Edge with Inline;
    function Has_Element
      (G : Graph; C : Edge_Cursor) return Boolean with Inline;
-   function Next
-     (G : Graph; C : Edge_Cursor) return Edge_Cursor with Inline;
+   procedure Next (G : Graph; C : in out Edge_Cursor);
 
    -----------
    -- Graph --

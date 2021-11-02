@@ -64,38 +64,39 @@ package body GAL.Vectors.Impl with SPARK_Mode => Off is
    -- Next --
    ----------
 
-   function Next
-     (Self : Base_Vector'Class; Position : Cursor) return Cursor is
+   procedure Next (Self : Base_Vector'Class; Position : in out Cursor) is
    begin
       if Likely (To_Count (Position) < Self.Last) then
-         return Cursor'Succ (Position);
+         Position := Cursor'Succ (Position);
       else
-         return No_Element;
+         Position := No_Element;
       end if;
    end Next;
 
-   ----------
-   -- Next --
-   ----------
+   --------------------
+   -- Next_Primitive --
+   --------------------
 
-   procedure Next (Self : Base_Vector'Class; Position : in out Cursor) is
+   function Next_Primitive
+     (Self : Base_Vector; Position : Cursor) return Cursor
+   is
+      P : Cursor := Position;
    begin
-      Position := Impl.Next (Self, Position);
-   end Next;
+      Next (Self, P);
+      return P;
+   end Next_Primitive;
 
    --------------
    -- Previous --
    --------------
 
-   function Previous
-     (Self : Base_Vector'Class; Position : Cursor) return Cursor
-   is
+   procedure Previous (Self : Base_Vector'Class; Position : in out Cursor) is
       pragma Unreferenced (Self);
    begin
       if Likely (To_Count (Position) > Min_Index) then
-         return Cursor'Pred (Position);
+         Position := Cursor'Pred (Position);
       else
-         return No_Element;
+         Position := No_Element;
       end if;
    end Previous;
 

@@ -11,7 +11,7 @@ begin
       if Predicate (Getters.Get (Map, C)) then
          Count := Count + 1;
       end if;
-      C := Cursors.Next (Self, C);
+      Cursors.Next (Self, C);
    end loop;
    return Count;
 end GAL.Algo.Count_If_External;

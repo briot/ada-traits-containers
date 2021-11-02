@@ -84,12 +84,10 @@ package body Graph1_Support is
       return C <= Vertex_Cursor (G.Colors'Last);
    end Has_Element;
 
-   function Next
-      (G : Graph; C : Vertex_Cursor) return Vertex_Cursor
-   is
+   procedure Next (G : Graph; C : in out Vertex_Cursor) is
       pragma Unreferenced (G);
    begin
-      return C + 1;
+      C := C + 1;
    end Next;
 
    function Out_Edges (G : Graph; V : Vertex) return Edge_Cursor is
@@ -111,13 +109,10 @@ package body Graph1_Support is
          and then Integer (C) < Integer (G.Colors'Last);
    end Has_Element;
 
-   function Next
-      (G : Graph; C : Edge_Cursor) return Edge_Cursor
-   is
-      pragma Unreferenced (C);
+   procedure Next (G : Graph; C : in out Edge_Cursor) is
    begin
       --  Only one edge from each vertex
-      return Edge_Cursor (G.Colors'Last + 1);
+      C := Edge_Cursor (G.Colors'Last + 1);
    end Next;
 
 end Graph1_Support;

@@ -9,7 +9,7 @@ begin
       if Getters.Get (Self, C) = E then
          return C;
       end if;
-      C := Cursors.Next (Self, C);
+      Cursors.Next (Self, C);
    end loop;
    return Cursors.No_Element;
 end GAL.Algo.Find;

@@ -191,17 +191,14 @@ package GAL.Vectors.Impl with SPARK_Mode is
                            (Position in Index_Type'First .. Self.Last);
    pragma Annotate (GNATprove, Inline_For_Proof, Entity => Has_Element);
 
-   function Next
-     (Self : Base_Vector'Class; Position : Cursor) return Cursor
-   --  See documentation in conts-vectors-generics.ads
-     with
-       Inline,
-       Global         => null,
-       Pre            => Has_Element (Self, Position),
-       Contract_Cases   =>
-         (Position < Last (Self) => Next'Result = Index_Type'Succ (Position)
-             and then Has_Element (Self, Next'Result),
-          others => Next'Result = No_Element);
+   function Has_Element_For_Loops
+     (Ignored : Base_Vector'Class; Position : Cursor) return Boolean
+     is (Position /= No_Element)
+     with Inline, Global => null;
+   --  A faster version of Has_Element, suitable for use in loops when the
+   --  position is only manipulated via First, Next or Previous. Since those
+   --  functions always set invalid position to No_Element, we do not need
+   --  to check this again here.
 
    procedure Next (Self : Base_Vector'Class; Position : in out Cursor)
    --  See documentation in conts-vectors-generics.ads
@@ -214,8 +211,8 @@ package GAL.Vectors.Impl with SPARK_Mode is
              and then Has_Element (Self, Position),
           others => Position = No_Element);
 
-   function Previous
-     (Self : Base_Vector'Class; Position : Cursor) return Cursor
+   procedure Previous
+     (Self : Base_Vector'Class; Position : in out Cursor)
    --  See documentation in conts-vectors-generics.ads
      with
        Inline,
@@ -223,9 +220,9 @@ package GAL.Vectors.Impl with SPARK_Mode is
        Pre            => Has_Element (Self, Position),
        Contract_Cases =>
          (Position > Index_Type'First =>
-             Previous'Result = Index_Type'Pred (Position)
-             and then Has_Element (Self, Previous'Result),
-          others => Previous'Result = No_Element);
+             Position = Index_Type'Pred (Position'Old)
+             and then Has_Element (Self, Position),
+          others => Position = No_Element);
 
    procedure Reserve_Capacity
      (Self : in out Base_Vector'Class; Capacity : Count_Type)
@@ -501,15 +498,16 @@ package GAL.Vectors.Impl with SPARK_Mode is
        Post      => Storage.Elements.To_Element (Element_Primitive'Result) =
           Element (Model (Self), Position);
 
-   function Has_Element_Primitive
+   function Has_Element_For_Loops_Primitive
      (Self : Base_Vector; Position : Cursor) return Boolean
    --  See documentation in conts-vectors-generics.ads
-     is (Has_Element (Self, Position))
+     is (Has_Element_For_Loops (Self, Position))
      with
        Inline,
-   Post => Has_Element_Primitive'Result =
+   Post => Has_Element_For_Loops_Primitive'Result =
                   (Position in Index_Type'First .. Self.Last);
-   pragma Annotate (GNATprove, Inline_For_Proof, Has_Element_Primitive);
+   pragma Annotate
+      (GNATprove, Inline_For_Proof, Has_Element_For_Loops_Primitive);
 
    function Next_Primitive
      (Self : Base_Vector; Position : Cursor) return Cursor
@@ -517,7 +515,6 @@ package GAL.Vectors.Impl with SPARK_Mode is
    --  of type List instead of List'Class. But then it means that the loop
    --  is doing a lot of dynamic dispatching, and is twice as slow as a loop
    --  using an explicit cursor.
-     is (Next (Self, Position))
      with
        Inline,
        Pre'Class => Has_Element (Self, Position);

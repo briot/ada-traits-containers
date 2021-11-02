@@ -170,17 +170,28 @@ package body GAL.Lists.Impl with SPARK_Mode => Off is
       Position := Next (Self, Position);
    end Next;
 
+   --------------------
+   -- Next_Primitive --
+   --------------------
+
+   function Next_Primitive
+     (Self : Base_List; Position : Cursor) return Cursor
+   is
+      P : Cursor := Position;
+   begin
+      Next (Self, P);
+      return P;
+   end Next_Primitive;
+
    --------------
    -- Previous --
    --------------
 
-   function Previous
-     (Self : Base_List'Class; Position : Cursor) return Cursor is
+   procedure Previous
+     (Self : Base_List'Class; Position : in out Cursor) is
    begin
-      if Unlikely (Position.Current = Null_Access) then
-         return Position;
-      else
-         return (Current => Get_Previous (Self, Position.Current));
+      if Likely (Position.Current /= Null_Access) then
+         Position.Current := Get_Previous (Self, Position.Current);
       end if;
    end Previous;
 
