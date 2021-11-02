@@ -106,7 +106,6 @@ package GAL.Properties is
       with procedure Set
          (M : in out Map_Type; K : Key_Type; V : Element_Type) is <>;
       with function Get (M : Map_Type; K : Key_Type) return Element_Type is <>;
-      with procedure Clear (M : in out Map_Type) is null;
    package Maps is
       subtype Map is Map_Type;
       subtype Key is Key_Type;

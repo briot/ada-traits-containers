@@ -23,15 +23,6 @@ pragma Ada_2012;
 
 package body GAL.Properties.Indexed is
 
-   -----------
-   -- Clear --
-   -----------
-
-   procedure Clear (M : in out Map) is
-   begin
-      M.Values.Clear;
-   end Clear;
-
    ---------
    -- Get --
    ---------

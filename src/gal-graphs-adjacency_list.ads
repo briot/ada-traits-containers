@@ -277,6 +277,8 @@ package GAL.Graphs.Adjacency_List is
       Index_Type          => Vertex_Index,
       Get_Index           => Impl.Get_Index,
       Length              => Impl.Length);
+   function Create_Color_Map (G : Graph) return Color_Maps.Map
+      renames Color_Maps.Create_Map;
    --  Associates a "color" to a vertex.
    --  This is used for the duration of a number of algorithms to somehow
    --  mark the temporary state of vertices. This should in general be
@@ -304,12 +306,13 @@ package GAL.Graphs.Adjacency_List is
    --  Such a map is invalidated as soon as the structure of the graph
    --  changes (since vertex indices might change at that time).
 
-   package All_DFS is new GAL.Graphs.DFS (Vertex_Lists, Incidence);
-   package DFS is new All_DFS.Exterior
-     (Color_Maps.As_Map, Create_Map => Color_Maps.Create_Map);
+   package DFS is new GAL.Graphs.DFS
+      (Vertex_Lists     => Vertex_Lists,
+       Incidence        => Incidence,
+       Color_Maps       => Color_Maps.As_Map,
+       Create_Color_Map => Create_Color_Map);
    package Strongly_Connected_Components is
-      new GAL.Graphs.Components.Strongly_Connected_Components
-         (Vertex_Lists   => Vertex_Lists,
-          Incidence      => Incidence,
+      new GAL.Graphs.Components.Strongly_Connected
+         (DFS            => DFS,
           Component_Maps => Integer_Maps.As_Map);
 end GAL.Graphs.Adjacency_List;

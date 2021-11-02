@@ -51,6 +51,7 @@ package Graph1_Support is
    type Graph is record
       Colors : Color_Map (1 .. Test_Support.Items_Count);
    end record;
+   type Graph_Access is access all Graph;
 
    function Get_Source (Ignored : Graph; E : Edge) return Vertex is (E.Source);
    function Get_Target (Ignored : Graph; E : Edge) return Vertex is (E.Target);
@@ -117,24 +118,27 @@ package Graph1_Support is
    -- Color maps --
    ----------------
 
-   procedure Set_Color (G : in out Graph; V : Vertex; C : Color);
-   function Get_Color (G : Graph; V : Vertex) return Color;
+   procedure Set_Color (G : in out Graph_Access; V : Vertex; C : Color);
+   function Get_Color (G : Graph_Access; V : Vertex) return Color;
    package Color_Maps is new GAL.Properties.Maps
-      (Graph, Vertex, Color, Set_Color, Get_Color);
+      (Graph_Access, Vertex, Color, Set_Color, Get_Color);
+
+   function Create_Color_Map (G : Graph) return Graph_Access
+      is (G'Unrestricted_Access);
 
    ----------------------
    -- Incidence_Graphs --
    ----------------------
 
-   package All_DFS is new GAL.Graphs.DFS (Vertex_Lists, Incidence);
-   package DFS is new All_DFS.Interior (Color_Maps => Color_Maps);
+   package DFS is new GAL.Graphs.DFS
+      (Vertex_Lists, Incidence, Color_Maps, Create_Color_Map);
 
    ----------------
    -- Algo --
    ----------------
 
    type My_Visitor is null record;  --  no callback
-   package My_Visitors is new All_DFS.DFS_Visitor_Traits
+   package My_Visitors is new DFS.DFS_Visitor_Traits
       (Visitor_Type => My_Visitor);
 
    type My_Visitor2 is null record;
@@ -143,7 +147,7 @@ package Graph1_Support is
    procedure Finish_Vertex     (Ignored : in out My_Visitor2; V : Vertex);
    procedure Discover_Vertex
       (Ignored : in out My_Visitor2; V : Vertex; Stop : in out Boolean);
-   package My_Visitors2 is new All_DFS.DFS_Visitor_Traits
+   package My_Visitors2 is new DFS.DFS_Visitor_Traits
       (Visitor_Type      => My_Visitor2,
        Initialize_Vertex => Initialize_Vertex,
        Start_Vertex      => Start_Vertex,

@@ -35,456 +35,324 @@ package body GAL.Graphs.DFS is
       Element_Type        => Vertex_Info,
       Container_Base_Type => GAL.Limited_Controlled_Base);
 
-   --------------
-   -- With_Map --
-   --------------
+   generic
+      with package Visitors is new DFS_Visitor_Traits (others => <>);
+      with function Impl
+         (Visit   : in out Visitors.Visitor_Type;
+          Colors  : in out Color_Maps.Map;
+          Current : Vertex_Type) return Boolean;
+      --  Returns True if user asked to stop
+   procedure Explore
+     (G      : Graph_Type;
+      Visit  : in out Visitors.Visitor_Type;
+      Source : Vertex_Type := Graphs.Null_Vertex);
 
-   package body With_Map is
+   -------------
+   -- Explore --
+   -------------
 
-      generic
-         with package Visitors is new DFS_Visitor_Traits (<>);
-         with function Impl
-            (Visit   : in out Visitors.Visitor_Type;
-             Current : Vertex_Type) return Boolean;
-         --  Returns True if user asked to stop
-      procedure Explore
-        (G      : Graph_Type;
-         Visit  : in out Visitors.Visitor_Type;
-         Colors : out Color_Maps.Map;
-         Source : Vertex_Type := Graphs.Null_Vertex);
+   procedure Explore
+     (G      : Graph_Type;
+      Visit  : in out Visitors.Visitor_Type;
+      Source : Vertex_Type := Graphs.Null_Vertex)
+   is
+      Colors  : Color_Maps.Map := Create_Color_Map (G); --  uninitialized map
+      Count   : constant Count_Type := Vertex_Lists.Length (G);
+      VC      : Vertex_Lists.Vertex_Cursors.Cursor;
+      Current : Vertex_Type;
+   begin
+      if Count = 0 then
+         return;
+      end if;
 
-      -------------
-      -- Explore --
-      -------------
+      --  Initialize the color map to White
+      --  ??? Fails if the graph is "infinite" (case of custom graphs)
 
-      procedure Explore
-        (G      : Graph_Type;
-         Visit  : in out Visitors.Visitor_Type;
-         Colors : out Color_Maps.Map;
-         Source : Vertex_Type := Graphs.Null_Vertex)
-      is
-         Count   : constant Count_Type := Vertex_Lists.Length (G);
-         VC      : Vertex_Lists.Vertex_Cursors.Cursor;
-         Current : Vertex_Type;
-      begin
-         if Count = 0 then
-            return;
+      VC := Vertex_Lists.Vertex_Cursors.First (G);
+      while Vertex_Lists.Vertex_Cursors.Has_Element (G, VC) loop
+         --  ??? map should have a way to initialize all values faster
+         Color_Maps.Set
+           (Colors, Vertex_Lists.Vertex_Maps.Get (G, VC), White);
+         Visitors.Initialize_Vertex
+            (Visit, Vertex_Lists.Vertex_Maps.Get (G, VC));
+         Vertex_Lists.Vertex_Cursors.Next (G, VC);
+      end loop;
+
+      Visitors.Vertices_Initialized (Visit, Count);
+
+      --  Search from the start vertex if one was provided
+      VC := Vertex_Lists.Vertex_Cursors.First (G);
+      if Source = Graphs.Null_Vertex then
+         Current := Vertex_Lists.Vertex_Maps.Get (G, VC);
+         Vertex_Lists.Vertex_Cursors.Next (G, VC);
+      else
+         Current := Source;
+      end if;
+
+      loop
+         if Color_Maps.Get (Colors, Current) = White then
+            Visitors.Start_Vertex (Visit, Current);
+            if Impl (Visit, Colors, Current) then
+               return;
+            end if;
          end if;
 
-         --  Initialize the color map to White
-         --  ??? Fails if the graph is "infinite" (case of custom graphs)
+         exit when not Vertex_Lists.Vertex_Cursors.Has_Element (G, VC);
+         Current := Vertex_Lists.Vertex_Maps.Get (G, VC);
+         Vertex_Lists.Vertex_Cursors.Next (G, VC);
+      end loop;
+   end Explore;
 
-         VC := Vertex_Lists.Vertex_Cursors.First (G);
-         while Vertex_Lists.Vertex_Cursors.Has_Element (G, VC) loop
-            --  ??? map should have a way to initialize all values faster
-            Color_Maps.Set
-              (Colors, Vertex_Lists.Vertex_Maps.Get (G, VC), White);
-            Visitors.Initialize_Vertex
-               (Visit, Vertex_Lists.Vertex_Maps.Get (G, VC));
-            Vertex_Lists.Vertex_Cursors.Next (G, VC);
-         end loop;
+   ------------
+   -- Search --
+   ------------
 
-         Visitors.Vertices_Initialized (Visit, Count);
+   procedure Search
+     (G      : Graph_Type;
+      Visit  : in out Visitors.Visitor_Type;
+      Source : Vertex_Type := Graphs.Null_Vertex)
+   is
+      Stack   : Vertex_Info_Vectors.Vector;
 
-         --  Search from the start vertex if one was provided
-         VC := Vertex_Lists.Vertex_Cursors.First (G);
-         if Source = Graphs.Null_Vertex then
-            Current := Vertex_Lists.Vertex_Maps.Get (G, VC);
-            Vertex_Lists.Vertex_Cursors.Next (G, VC);
-         else
-            Current := Source;
-         end if;
-
-         loop
-            if Color_Maps.Get (Colors, Current) = White then
-               Visitors.Start_Vertex (Visit, Current);
-               if Impl (Visit, Current) then
-                  return;
-               end if;
-            end if;
-
-            exit when not Vertex_Lists.Vertex_Cursors.Has_Element (G, VC);
-            Current := Vertex_Lists.Vertex_Maps.Get (G, VC);
-            Vertex_Lists.Vertex_Cursors.Next (G, VC);
-         end loop;
-      end Explore;
-
-      ------------
-      -- Search --
-      ------------
-
-      procedure Search
-        (G      : Graph_Type;
-         Visit  : in out Visitors.Visitor_Type;
-         Colors : out Color_Maps.Map;
-         Source : Vertex_Type := Graphs.Null_Vertex)
+      function Impl
+         (Visit   : in out Visitors.Visitor_Type;
+          Colors  : in out Color_Maps.Map;
+          Current : Vertex_Type)
+         return Boolean;
+      function Impl
+         (Visit   : in out Visitors.Visitor_Type;
+          Colors  : in out Color_Maps.Map;
+          Current : Vertex_Type)
+         return Boolean
       is
-         Stack   : Vertex_Info_Vectors.Vector;
-
-         function Impl
-            (Visit : in out Visitors.Visitor_Type; Current : Vertex_Type)
-            return Boolean;
-         function Impl
-            (Visit : in out Visitors.Visitor_Type; Current : Vertex_Type)
-            return Boolean
-         is
-            E    : Edge_Type;
-            Stop : Boolean := False;
-         begin
-            Color_Maps.Set (Colors, Current, Gray);
-            Visitors.Discover_Vertex (Visit, Current, Stop => Stop);
-            if Stop then
-               return True;
-            end if;
-
-            Stack.Append
-               ((V        => Current,
-                 E        => <>,
-                 EC       => Incidence.Out_Edges (G, Current)));
-
-            while not Stack.Is_Empty loop
-               declare
-                  Info : constant Vertex_Info := Stack.Element (Stack.Last);
-                  U  : Vertex_Type := Info.V;
-                  V  : Vertex_Type;
-                  EC : Incidence.Cursor_Type := Info.EC;
-               begin
-                  Stack.Delete_Last;
-
-                  --  There is no edge leading to `Current`, which is a source
-                  if U /= Current then
-                     Visitors.Finish_Edge (Visit, Info.E);
-                  end if;
-
-                  --  This loop avoids manipulating the stack for every vertex
-                  --  and edge. Instead, we optimize by going as deep as we
-                  --  can while only appending to the stack, not retrieving the
-                  --  last element.
-
-                  while Incidence.Has_Element (G, EC) loop
-                     E   := Incidence.Element (G, EC);
-                     V   := Incidence.Target (G, E);
-                     Visitors.Examine_Edge (Visit, E);
-
-                     case Color_Maps.Get (Colors, V) is
-                     when White =>
-                        Visitors.Tree_Edge (Visit, E);
-                        Incidence.Next (G, EC);
-                        Stack.Append
-                           ((V        => U,
-                             E        => E,
-                             EC       => EC));
-
-                        U := V;
-                        Color_Maps.Set (Colors, U, Gray);
-                        Visitors.Discover_Vertex (Visit, U, Stop => Stop);
-                        if Stop then
-                           return True;
-                        end if;
-
-                        EC := Incidence.Out_Edges (G, U);
-
-                     when Gray =>
-                        Visitors.Back_Edge (Visit, E);
-                        Visitors.Finish_Edge (Visit, E);
-                        Incidence.Next (G, EC);
-
-                     when Black =>
-                        Visitors.Forward_Or_Cross_Edge (Visit, E);
-                        Visitors.Finish_Edge (Visit, E);
-                        Incidence.Next (G, EC);
-                     end case;
-                  end loop;
-
-                  Color_Maps.Set (Colors, U, Black);
-                  Visitors.Finish_Vertex (Visit, U);
-               end;
-            end loop;
-            return False;
-         end Impl;
-
-         procedure Expl is new Explore (Visitors, Impl);
-      begin
-         --  Preallocate some space, to improve performance
-         --  Unless the graph is a tree with depth n, we do not need as many
-         --  nodes in the stack as they are elements in the graph. So we use
-         --  a number somewhere in between, as an attempt to limit the number
-         --  of allocations, and yet not allocating too much memory.
-         Stack.Reserve_Capacity
-            (Count_Type'Min (100_000, Vertex_Lists.Length (G)));
-
-         Expl (G, Visit, Colors, Source);
-      end Search;
-
-      ----------------------
-      -- Search_Recursive --
-      ----------------------
-
-      procedure Search_Recursive
-        (G      : Graph_Type;
-         Visit  : in out Visitors.Visitor_Type;
-         Colors : out Color_Maps.Map;
-         Source : Vertex_Type := Graphs.Null_Vertex)
-      is
+         E    : Edge_Type;
          Stop : Boolean := False;
+      begin
+         Color_Maps.Set (Colors, Current, Gray);
+         Visitors.Discover_Vertex (Visit, Current, Stop => Stop);
+         if Stop then
+            return True;
+         end if;
 
-         function Impl
-            (Visit : in out Visitors.Visitor_Type; Current : Vertex_Type)
-            return Boolean;
-         function Impl
-            (Visit : in out Visitors.Visitor_Type; Current : Vertex_Type)
-            return Boolean
-         is
-            EC   : Incidence.Cursor;
-         begin
-            Color_Maps.Set (Colors, Current, Gray);
-            Visitors.Discover_Vertex (Visit, Current, Stop);
-            if Stop then
-               return True;
-            else
-               EC := Incidence.Out_Edges (G, Current);
+         Stack.Append
+            ((V        => Current,
+              E        => <>,
+              EC       => Incidence.Out_Edges (G, Current)));
+
+         while not Stack.Is_Empty loop
+            declare
+               Info : constant Vertex_Info := Stack.Element (Stack.Last);
+               U  : Vertex_Type := Info.V;
+               V  : Vertex_Type;
+               EC : Incidence.Cursor_Type := Info.EC;
+            begin
+               Stack.Delete_Last;
+
+               --  There is no edge leading to `Current`, which is a source
+               if U /= Current then
+                  Visitors.Finish_Edge (Visit, Info.E);
+               end if;
+
+               --  This loop avoids manipulating the stack for every vertex
+               --  and edge. Instead, we optimize by going as deep as we
+               --  can while only appending to the stack, not retrieving the
+               --  last element.
+
                while Incidence.Has_Element (G, EC) loop
-                  declare
-                     E      : Edge_Type renames Incidence.Element (G, EC);
-                     Target : constant Vertex_Type := Incidence.Target (G, E);
-                  begin
-                     Visitors.Examine_Edge (Visit, E);
-                     case Color_Maps.Get (Colors, Target) is
-                     when White =>
-                        Visitors.Tree_Edge (Visit, E);
-                        if Impl (Visit, Target) then
-                           return True;
-                        end if;
+                  E   := Incidence.Element (G, EC);
+                  V   := Incidence.Target (G, E);
+                  Visitors.Examine_Edge (Visit, E);
 
-                     when Gray =>
-                        Visitors.Back_Edge (Visit, E);
+                  case Color_Maps.Get (Colors, V) is
+                  when White =>
+                     Visitors.Tree_Edge (Visit, E);
+                     Incidence.Next (G, EC);
+                     Stack.Append
+                        ((V        => U,
+                          E        => E,
+                          EC       => EC));
 
-                     when Black =>
-                        Visitors.Forward_Or_Cross_Edge (Visit, E);
-                     end case;
+                     U := V;
+                     Color_Maps.Set (Colors, U, Gray);
+                     Visitors.Discover_Vertex (Visit, U, Stop => Stop);
+                     if Stop then
+                        return True;
+                     end if;
 
+                     EC := Incidence.Out_Edges (G, U);
+
+                  when Gray =>
+                     Visitors.Back_Edge (Visit, E);
                      Visitors.Finish_Edge (Visit, E);
-                  end;
-                  Incidence.Next (G, EC);
+                     Incidence.Next (G, EC);
+
+                  when Black =>
+                     Visitors.Forward_Or_Cross_Edge (Visit, E);
+                     Visitors.Finish_Edge (Visit, E);
+                     Incidence.Next (G, EC);
+                  end case;
                end loop;
 
-               Color_Maps.Set (Colors, Current, Black);
-               Visitors.Finish_Vertex (Visit, Current);
-               return False;
-            end if;
-         end Impl;
+               Color_Maps.Set (Colors, U, Black);
+               Visitors.Finish_Vertex (Visit, U);
+            end;
+         end loop;
+         return False;
+      end Impl;
 
-         procedure Expl is new Explore (Visitors, Impl);
-      begin
-         Expl (G, Visit, Colors, Source);
-      end Search_Recursive;
+      procedure Expl is new Explore (Visitors, Impl);
+   begin
+      --  Preallocate some space, to improve performance
+      --  Unless the graph is a tree with depth n, we do not need as many
+      --  nodes in the stack as they are elements in the graph. So we use
+      --  a number somewhere in between, as an attempt to limit the number
+      --  of allocations, and yet not allocating too much memory.
+      Stack.Reserve_Capacity
+         (Count_Type'Min (100_000, Vertex_Lists.Length (G)));
 
-      ----------------
-      -- Is_Acyclic --
-      ----------------
+      Expl (G, Visit, Source);
+   end Search;
 
-      function Is_Acyclic
-        (G       : Graph_Type;
-         Colors  : out Color_Maps.Map) return Boolean
+   ----------------------
+   -- Search_Recursive --
+   ----------------------
+
+   procedure Search_Recursive
+     (G      : Graph_Type;
+      Visit  : in out Visitors.Visitor_Type;
+      Source : Vertex_Type := Graphs.Null_Vertex)
+   is
+      Stop   : Boolean := False;
+
+      function Impl
+         (Visit   : in out Visitors.Visitor_Type;
+          Colors  : in out Color_Maps.Map;
+          Current : Vertex_Type)
+         return Boolean;
+      function Impl
+         (Visit   : in out Visitors.Visitor_Type;
+          Colors  : in out Color_Maps.Map;
+          Current : Vertex_Type)
+         return Boolean
       is
-         type Visitor_Type is record
-            Has_Cycle : Boolean := False;
-         end record;
-
-         procedure Back_Edge
-           (Self : in out Visitor_Type; Ignored : Edge_Type) with Inline;
-         procedure Discover_Vertex
-           (Self    : in out Visitor_Type;
-            Ignored : Vertex_Type;
-            Stop    : in out Boolean) with Inline;
-
-         procedure Discover_Vertex
-           (Self    : in out Visitor_Type;
-            Ignored : Vertex_Type;
-            Stop    : in out Boolean) is
-         begin
-            Stop := Self.Has_Cycle;
-         end Discover_Vertex;
-
-         procedure Back_Edge
-            (Self : in out Visitor_Type; Ignored : Edge_Type) is
-         begin
-            Self.Has_Cycle := True;
-         end Back_Edge;
-
-         package Visitors is new DFS_Visitor_Traits
-            (Visitor_Type    => Visitor_Type,
-             Back_Edge       => Back_Edge,
-             Discover_Vertex => Discover_Vertex);
-         procedure DFS is new Search (Visitors);
-         V   : Visitor_Type;
+         EC   : Incidence.Cursor;
       begin
-         DFS (G, V, Colors);
-         return not V.Has_Cycle;
-      end Is_Acyclic;
+         Color_Maps.Set (Colors, Current, Gray);
+         Visitors.Discover_Vertex (Visit, Current, Stop);
+         if Stop then
+            return True;
+         else
+            EC := Incidence.Out_Edges (G, Current);
+            while Incidence.Has_Element (G, EC) loop
+               declare
+                  E      : Edge_Type renames Incidence.Element (G, EC);
+                  Target : constant Vertex_Type := Incidence.Target (G, E);
+               begin
+                  Visitors.Examine_Edge (Visit, E);
+                  case Color_Maps.Get (Colors, Target) is
+                  when White =>
+                     Visitors.Tree_Edge (Visit, E);
+                     if Impl (Visit, Colors, Target) then
+                        return True;
+                     end if;
 
-      ------------------------------
-      -- Reverse_Topological_Sort --
-      ------------------------------
+                  when Gray =>
+                     Visitors.Back_Edge (Visit, E);
 
-      procedure Reverse_Topological_Sort
-        (G      : Graph_Type;
-         Colors : out Color_Maps.Map)
-      is
-         type TS_Visitor is null record;
-         procedure Back_Edge
-           (Ignored  : in out TS_Visitor;
-            Ignored2 : Edge_Type) with Inline;
-         procedure Finish_Vertex (Ignored : in out TS_Visitor; V : Vertex_Type)
-           with Inline;
+                  when Black =>
+                     Visitors.Forward_Or_Cross_Edge (Visit, E);
+                  end case;
 
-         procedure Back_Edge
-           (Ignored : in out TS_Visitor; Ignored2 : Edge_Type) is
-         begin
-            raise GAL.Graphs.Graph_Has_Cycles with "Graph is not acyclic";
-         end Back_Edge;
+                  Visitors.Finish_Edge (Visit, E);
+               end;
+               Incidence.Next (G, EC);
+            end loop;
 
-         procedure Finish_Vertex
-           (Ignored : in out TS_Visitor; V : Vertex_Type) is
-         begin
-            Callback (V);
-         end Finish_Vertex;
+            Color_Maps.Set (Colors, Current, Black);
+            Visitors.Finish_Vertex (Visit, Current);
+            return False;
+         end if;
+      end Impl;
 
-         package Visitors is new DFS_Visitor_Traits
-            (Visitor_Type  => TS_Visitor,
-             Back_Edge     => Back_Edge,
-             Finish_Vertex => Finish_Vertex);
-         procedure DFS is new Search (Visitors);
+      procedure Expl is new Explore (Visitors, Impl);
+   begin
+      Expl (G, Visit, Source);
+   end Search_Recursive;
 
-         V : TS_Visitor;
+   ----------------
+   -- Is_Acyclic --
+   ----------------
+
+   function Is_Acyclic (G : Graph_Type) return Boolean is
+      type Visitor_Type is record
+         Has_Cycle : Boolean := False;
+      end record;
+
+      procedure Back_Edge
+        (Self : in out Visitor_Type; Ignored : Edge_Type) with Inline;
+      procedure Discover_Vertex
+        (Self    : in out Visitor_Type;
+         Ignored : Vertex_Type;
+         Stop    : in out Boolean) with Inline;
+
+      procedure Discover_Vertex
+        (Self    : in out Visitor_Type;
+         Ignored : Vertex_Type;
+         Stop    : in out Boolean) is
       begin
-         DFS (G, V, Colors);
-      end Reverse_Topological_Sort;
+         Stop := Self.Has_Cycle;
+      end Discover_Vertex;
 
-   end With_Map;
-
-   --------------
-   -- Exterior --
-   --------------
-
-   package body Exterior is
-      package Internal is new With_Map (Color_Maps);
-
-      ----------------
-      -- Is_Acyclic --
-      ----------------
-
-      function Is_Acyclic (G : Graph_Type) return Boolean is
-         Acyclic : Boolean;
-         Colors  : Color_Maps.Map := Create_Map (G);   --  uninitialized map
+      procedure Back_Edge
+         (Self : in out Visitor_Type; Ignored : Edge_Type) is
       begin
-         Acyclic := Internal.Is_Acyclic (G, Colors);
-         Color_Maps.Clear (Colors);
-         return Acyclic;
-      end Is_Acyclic;
+         Self.Has_Cycle := True;
+      end Back_Edge;
 
-      ------------
-      -- Search --
-      ------------
+      package Visitors is new DFS_Visitor_Traits
+         (Visitor_Type    => Visitor_Type,
+          Back_Edge       => Back_Edge,
+          Discover_Vertex => Discover_Vertex);
+      procedure DFS is new Search (Visitors);
+      V   : Visitor_Type;
+   begin
+      DFS (G, V);
+      return not V.Has_Cycle;
+   end Is_Acyclic;
 
-      procedure Search
-        (G     : Graph_Type;
-         Visit : in out Visitors.Visitor_Type;
-         V     : Vertex_Type := Graphs.Null_Vertex)
-      is
-         procedure Internal_Search is new Internal.Search (Visitors);
-         Colors : Color_Maps.Map := Create_Map (G);   --  uninitialized map
+   ------------------------------
+   -- Reverse_Topological_Sort --
+   ------------------------------
+
+   procedure Reverse_Topological_Sort (G : Graph_Type) is
+      type TS_Visitor is null record;
+      procedure Back_Edge
+        (Ignored  : in out TS_Visitor;
+         Ignored2 : Edge_Type) with Inline;
+      procedure Finish_Vertex (Ignored : in out TS_Visitor; V : Vertex_Type)
+        with Inline;
+
+      procedure Back_Edge
+        (Ignored : in out TS_Visitor; Ignored2 : Edge_Type) is
       begin
-         Internal_Search (G, Visit, Colors, V);
-         Color_Maps.Clear (Colors);
-      end Search;
+         raise GAL.Graphs.Graph_Has_Cycles with "Graph is not acyclic";
+      end Back_Edge;
 
-      ----------------------
-      -- Search_Recursive --
-      ----------------------
-
-      procedure Search_Recursive
-        (G     : Graph_Type;
-         Visit : in out Visitors.Visitor_Type;
-         V     : Vertex_Type := Graphs.Cst_Null_Vertex)
-      is
-         procedure Internal_Search is new Internal.Search_Recursive (Visitors);
-         Colors : Color_Maps.Map := Create_Map (G);   --  uninitialized map
+      procedure Finish_Vertex
+        (Ignored : in out TS_Visitor; V : Vertex_Type) is
       begin
-         Internal_Search (G, Visit, Colors, V);
-         Color_Maps.Clear (Colors);
-      end Search_Recursive;
+         Callback (V);
+      end Finish_Vertex;
 
-      ------------------------------
-      -- Reverse_Topological_Sort --
-      ------------------------------
+      package Visitors is new DFS_Visitor_Traits
+         (Visitor_Type  => TS_Visitor,
+          Back_Edge     => Back_Edge,
+          Finish_Vertex => Finish_Vertex);
+      procedure DFS is new Search (Visitors);
 
-      procedure Reverse_Topological_Sort (G : Graph_Type) is
-         procedure Internal_Sort is
-           new Internal.Reverse_Topological_Sort (Callback);
-         Colors : Color_Maps.Map := Create_Map (G);
-      begin
-         Internal_Sort (G, Colors);
-         Color_Maps.Clear (Colors);
-      end Reverse_Topological_Sort;
-   end Exterior;
-
-   --------------
-   -- Interior --
-   --------------
-
-   package body Interior is
-
-      package Internal is new With_Map (Color_Maps);
-
-      ----------------
-      -- Is_Acyclic --
-      ----------------
-
-      function Is_Acyclic (G : in out Graph_Type) return Boolean is
-      begin
-         return Internal.Is_Acyclic (G, G);
-      end Is_Acyclic;
-
-      ------------
-      -- Search --
-      ------------
-
-      procedure Search
-        (G     : in out Graph_Type;
-         Visit : in out Visitors.Visitor_Type;
-         V     : Vertex_Type := Graphs.Cst_Null_Vertex)
-      is
-         procedure Internal_Search is new Internal.Search (Visitors);
-      begin
-         Internal_Search (G, Visit, G, V);
-      end Search;
-
-      ----------------------
-      -- Search_Recursive --
-      ----------------------
-
-      procedure Search_Recursive
-        (G     : in out Graph_Type;
-         Visit : in out Visitors.Visitor_Type;
-         V     : Vertex_Type := Graphs.Cst_Null_Vertex)
-      is
-         procedure Internal_Search is new Internal.Search_Recursive (Visitors);
-      begin
-         Internal_Search (G, Visit, G, V);
-      end Search_Recursive;
-
-      ------------------------------
-      -- Reverse_Topological_Sort --
-      ------------------------------
-
-      procedure Reverse_Topological_Sort (G : in out Graph_Type) is
-         procedure Internal_Sort is
-           new Internal.Reverse_Topological_Sort (Callback);
-      begin
-         Internal_Sort (G, G);
-      end Reverse_Topological_Sort;
-
-   end Interior;
+      V : TS_Visitor;
+   begin
+      DFS (G, V);
+   end Reverse_Topological_Sort;
 
 end GAL.Graphs.DFS;

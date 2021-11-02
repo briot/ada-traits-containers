@@ -20,27 +20,21 @@
 ------------------------------------------------------------------------------
 
 pragma Ada_2012;
+with GAL.Graphs.DFS;
 with GAL.Properties;
 
 package GAL.Graphs.Components is
 
    generic
-      with package Vertex_Lists is new GAL.Graphs.Vertex_List_Graphs_Traits
-         (<>);
-      --  This algorithm needs to iterate on all vertices of the graph
-
-      with package Incidence is new GAL.Graphs.Incidence_Graphs_Traits
-         (Graphs => Vertex_Lists.Graphs, others => <>);
-      --  It also needs to find all out-edges for a given vertex
-
+      with package DFS is new GAL.Graphs.DFS (<>);
       with package Component_Maps is new GAL.Properties.Maps
-        (Key_Type     => Vertex_Lists.Graphs.Vertex,
+        (Key_Type     => DFS.Graphs.Vertex,
          Element_Type => Integer,
          others       => <>);
       --  The result is a map from vertex to the component it belongs to
 
-   package Strongly_Connected_Components is
-      package Graphs renames Vertex_Lists.Graphs;
+   package Strongly_Connected is
+      package Graphs renames DFS.Graphs;
       subtype Graph_Type is Graphs.Graph;
 
       procedure Compute
@@ -61,6 +55,6 @@ package GAL.Graphs.Components is
       --  The implementation uses the Cheriyan-Mehlhorn-Gabow algorithm.
       --  Complexity is O( |edges| + |vertices| )
 
-   end Strongly_Connected_Components;
+   end Strongly_Connected;
 
 end GAL.Graphs.Components;

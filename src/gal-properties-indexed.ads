@@ -59,12 +59,11 @@ package GAL.Properties.Indexed is
    end record;
    function Get (M : Map; K : Key_Type) return Element_Type;
    procedure Set (M : in out Map; K : Key_Type; Val : Element_Type);
-   procedure Clear (M : in out Map);
 
    function Create_Map (G : Container_Type) return Map;
    --  Create a new uninitialized map
 
-   package As_Map is new Maps (Map, Key_Type, Element_Type, Set, Get, Clear);
+   package As_Map is new Maps (Map, Key_Type, Element_Type, Set, Get);
    package As_Read_Only renames As_Map.As_Read_Only;
 
 end GAL.Properties.Indexed;

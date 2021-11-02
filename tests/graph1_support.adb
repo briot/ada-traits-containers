@@ -26,12 +26,12 @@ package body Graph1_Support is
 
    Output : constant Boolean := False;
 
-   procedure Set_Color (G : in out Graph; V : Vertex; C : Color) is
+   procedure Set_Color (G : in out Graph_Access; V : Vertex; C : Color) is
    begin
       G.Colors (V) := C;
    end Set_Color;
 
-   function Get_Color (G : Graph; V : Vertex) return Color is
+   function Get_Color (G : Graph_Access; V : Vertex) return Color is
    begin
       return G.Colors (V);
    end Get_Color;

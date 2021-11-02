@@ -155,19 +155,9 @@ package body GAL.Lists.Impl with SPARK_Mode => Off is
    -- Next --
    ----------
 
-   function Next
-     (Self : Base_List'Class; Position : Cursor) return Cursor is
-   begin
-      return (Current => Get_Next (Self, Position.Current));
-   end Next;
-
-   ----------
-   -- Next --
-   ----------
-
    procedure Next (Self : Base_List'Class; Position : in out Cursor) is
    begin
-      Position := Next (Self, Position);
+      Position.Current := Get_Next (Self, Position.Current);
    end Next;
 
    --------------------

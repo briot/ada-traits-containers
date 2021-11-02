@@ -156,7 +156,7 @@ package body Test_Graph_Adjlist is
          procedure Forward_Or_Cross_Edge is new Edge_Cb
             ("Forward_Or_Cross_Edge");
 
-         package Visitor is new Graphs.All_DFS.DFS_Visitor_Traits
+         package Visitor is new Graphs.DFS.DFS_Visitor_Traits
             (Visitor_Type          => Visit,
              Vertices_Initialized  => Vertices_Initialized,
              Initialize_Vertex     => Initialize_Vertex,
@@ -224,7 +224,7 @@ package body Test_Graph_Adjlist is
          null;
       end Finish_Vertex;
 
-      package Visitors is new Graphs.All_DFS.DFS_Visitor_Traits
+      package Visitors is new Graphs.DFS.DFS_Visitor_Traits
          (Visitor_Type  => My_Visit,
           Finish_Vertex => Finish_Vertex);
       procedure DFS is new Graphs.DFS.Search (Visitors);
