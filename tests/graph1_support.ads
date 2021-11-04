@@ -51,7 +51,6 @@ package Graph1_Support is
    type Graph is record
       Colors : Color_Map (1 .. Test_Support.Items_Count);
    end record;
-   type Graph_Access is access all Graph;
 
    function Get_Source (Ignored : Graph; E : Edge) return Vertex is (E.Source);
    function Get_Target (Ignored : Graph; E : Edge) return Vertex is (E.Target);
@@ -114,6 +113,14 @@ package Graph1_Support is
        Source            => Get_Source,
        Target            => Get_Target);
 
+   type Graph_Access is access all Graph;
+   function To_Graph
+      (G : Graph_Access) return not null access constant Graph
+      is (G)
+      with Inline_Always;
+   --  Because property maps are internal, we need write access to the graph
+   --  while performing DFS and other algorithms.
+
    ----------------
    -- Color maps --
    ----------------
@@ -123,15 +130,19 @@ package Graph1_Support is
    package Color_Maps is new GAL.Properties.Maps
       (Graph_Access, Vertex, Color, Set_Color, Get_Color);
 
-   function Create_Color_Map (G : Graph) return Graph_Access
-      is (G'Unrestricted_Access);
+   function Create_Color_Map
+      (G : Graph_Access; Default_Value : Color) return Graph_Access;
 
    ----------------------
    -- Incidence_Graphs --
    ----------------------
 
    package DFS is new GAL.Graphs.DFS
-      (Vertex_Lists, Incidence, Color_Maps, Create_Color_Map);
+      (Vertex_Lists, Incidence,
+       Color_Maps       => Color_Maps,
+       Create_Color_Map => Create_Color_Map,
+       Graph_Type       => Graph_Access,
+       To_Graph         => To_Graph);
 
    ----------------
    -- Algo --

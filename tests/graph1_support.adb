@@ -26,6 +26,14 @@ package body Graph1_Support is
 
    Output : constant Boolean := False;
 
+   function Create_Color_Map
+      (G : Graph_Access; Default_Value : Color) return Graph_Access
+   is
+   begin
+      G.Colors := (others => Default_Value);
+      return G;
+   end Create_Color_Map;
+
    procedure Set_Color (G : in out Graph_Access; V : Vertex; C : Color) is
    begin
       G.Colors (V) := C;

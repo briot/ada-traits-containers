@@ -166,7 +166,7 @@ package body GAL.Graphs.Components is
 
       procedure Back_Edge (Self : in out SCC_Visitor; E : Edge_Type) is
          V           : constant Vertex_Type :=
-            DFS.Incidence.Edge_Target (Self.Graph.all, E);
+            DFS.Incidence.Edge_Target (DFS.To_Graph (Self.Graph.all).all, E);
          V_DFS_Index : constant Integer :=
             Component_Maps.Get (Self.Components.all, V);
       begin

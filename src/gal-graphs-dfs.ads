@@ -38,12 +38,27 @@ generic
       (Graphs => Vertex_Lists.Graphs, others => <>);
    --  They also need to find all out-edges for a given vertex
 
+   type Graph_Type (<>) is limited private;
+   with function To_Graph (G : Graph_Type)
+      return not null access constant Vertex_Lists.Graphs.Graph_Type;
+   --  The functions below do not use Graphs.Graph_Type directly because in
+   --  some cases we need a writable version of the graph (case where the color
+   --  map is stored in the graph itself), while other times it is enough (and
+   --  more user-friendly) to take a read-only graph.
+   --  * For internal property maps:
+   --     Graph_Type would be an "access Graphs.Graph_Type"
+   --  * For external property maps:
+   --     Graph_Type would be "Graphs.Graph_Type" itself.
+   --  It is OK to return a 'Unrestricted_Access to G, since the result type
+   --  will never outlive G.
+
    with package Color_Maps is new GAL.Properties.Maps
      (Key_Type     => Vertex_Lists.Graphs.Vertex_Type,
       Element_Type => Color,
       others       => <>);
    with function Create_Color_Map
-      (G : Vertex_Lists.Graphs.Graph_Type) return Color_Maps.Map is <>;
+      (G             : Graph_Type;
+       Default_Value : Color) return Color_Maps.Map is <>;
    --  How to create a map to associate a color to each vertex.
    --  Some graph types might chose to store those colors directly in the
    --  vertices (interior map), others might chose to store this independently
@@ -54,7 +69,6 @@ generic
 package GAL.Graphs.DFS is
 
    package Graphs renames Vertex_Lists.Graphs;
-   subtype Graph_Type is Graphs.Graph;
    subtype Vertex_Type is Graphs.Vertex;
    subtype Edge_Type is Incidence.Edge;
 

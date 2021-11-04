@@ -40,11 +40,11 @@ package body GAL.Properties.Indexed is
       Idx : constant Index_Type := Get_Index (K);
    begin
       --  ??? We should have such an operation in the vector directly
-      if not (Value_Vectors.Vectors.To_Count (Idx) <= M.Values.Length) then
-         M.Values.Resize
-            (Length  => Value_Vectors.Vectors.To_Count (Idx),
-             Element => Default_Value);
-      end if;
+--      if not (Value_Vectors.Vectors.To_Count (Idx) <= M.Values.Length) then
+--         M.Values.Resize
+--            (Length  => Value_Vectors.Vectors.To_Count (Idx),
+--             Element => Default_Value);
+--      end if;
 
       M.Values.Replace_Element (Idx, Val);
    end Set;
@@ -53,7 +53,8 @@ package body GAL.Properties.Indexed is
    -- Create_Map --
    ----------------
 
-   function Create_Map (G : Container_Type) return Map is
+   function Create_Map
+      (G : Container_Type; Default_Value : Element_Type) return Map is
    begin
       return M : Map do
          M.Values.Resize (Length (G), Element => Default_Value);

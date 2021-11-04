@@ -273,11 +273,11 @@ package GAL.Graphs.Adjacency_List is
      (Container_Type      => Graph,
       Key_Type            => Vertex,
       Element_Type        => Color,
-      Default_Value       => White,
       Index_Type          => Vertex_Index,
       Get_Index           => Impl.Get_Index,
       Length              => Impl.Length);
-   function Create_Color_Map (G : Graph) return Color_Maps.Map
+   function Create_Color_Map
+      (G : Graph; Default_Value : Color) return Color_Maps.Map
       renames Color_Maps.Create_Map;
    --  Associates a "color" to a vertex.
    --  This is used for the duration of a number of algorithms to somehow
@@ -293,10 +293,12 @@ package GAL.Graphs.Adjacency_List is
      (Container_Type      => Graph,
       Key_Type            => Vertex,
       Element_Type        => Integer,
-      Default_Value       => -1,
       Index_Type          => Vertex_Index,
       Get_Index           => Impl.Get_Index,
       Length              => Impl.Length);
+   function Create_Integer_Map
+      (G : Graph; Default_Value : Integer) return Integer_Maps.Map
+      renames Integer_Maps.Create_Map;
    --  An integer map is mostly created by the application, since it holds the
    --  results of strongly connected components for instance. So we make it
    --  a controlled type (implicit Clear) if the graph itself is controlled,
@@ -306,11 +308,17 @@ package GAL.Graphs.Adjacency_List is
    --  Such a map is invalidated as soon as the structure of the graph
    --  changes (since vertex indices might change at that time).
 
+   function Identity (G : Graph) return not null access constant Graph
+      is (G'Unrestricted_Access)
+      with Inline_Always;
+
    package DFS is new GAL.Graphs.DFS
       (Vertex_Lists     => Vertex_Lists,
        Incidence        => Incidence,
        Color_Maps       => Color_Maps.As_Map,
-       Create_Color_Map => Create_Color_Map);
+       Create_Color_Map => Create_Color_Map,
+       Graph_Type       => Graph,
+       To_Graph         => Identity);
    package Strongly_Connected_Components is
       new GAL.Graphs.Components.Strongly_Connected
          (DFS            => DFS,

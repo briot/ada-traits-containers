@@ -35,7 +35,7 @@ package GAL.Graphs.Components is
 
    package Strongly_Connected is
       package Graphs renames DFS.Graphs;
-      subtype Graph_Type is Graphs.Graph;
+      subtype Graph_Type is DFS.Graph_Type;
 
       procedure Compute
         (G                : Graph_Type;
@@ -49,6 +49,9 @@ package GAL.Graphs.Components is
       --  algorithm sets the index of that component in the Components map,
       --  and returns the number of components that were found. In the
       --  Components, the indexes are in the range 1 .. Components_Count.
+      --
+      --  Components must have been initialized first (so that it has enough
+      --  entries for all vertices).
       --
       --  Each vertex that is not part of a vertex forms its own component.
       --

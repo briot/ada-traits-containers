@@ -35,12 +35,7 @@ generic
    type Key_Type (<>) is limited private;
    type Element_Type is private;
 
-   Default_Value : Element_Type;
-   --  These maps are implemented as vectors, and a default value is needed
-   --  when the vector is resized.
-
    type Index_Type is (<>);
-
    with function Get_Index (K : Key_Type) return Index_Type is <>;
    --  Maps the key to an index
 
@@ -60,7 +55,8 @@ package GAL.Properties.Indexed is
    function Get (M : Map; K : Key_Type) return Element_Type;
    procedure Set (M : in out Map; K : Key_Type; Val : Element_Type);
 
-   function Create_Map (G : Container_Type) return Map;
+   function Create_Map
+      (G : Container_Type; Default_Value : Element_Type) return Map;
    --  Create a new uninitialized map
 
    package As_Map is new Maps (Map, Key_Type, Element_Type, Set, Get);

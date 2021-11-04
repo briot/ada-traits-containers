@@ -38,7 +38,7 @@ package body Test_Graph_Adjlist is
    package Graphs is new GAL.Graphs.Adjacency_List
      (Vertex_Properties   => GAL.Elements.Null_Elements.Traits,
       Edge_Properties     => GAL.Elements.Null_Elements.Traits,
-      Container_Base_Type => GAL.Controlled_Base);
+      Container_Base_Type => GAL.Limited_Controlled_Base);
    package Generators is new GAL.Graphs.Generators
      (Vertex_Mutable      => Graphs.Vertex_Mutable,
       Edge_Mutable        => Graphs.Edge_Mutable);
@@ -59,7 +59,6 @@ package body Test_Graph_Adjlist is
 
    procedure Test is
       G   : Graphs.Graph;
-      Map : Graphs.Integer_Maps.Map;
       Count : Positive;
       Events : GNATCOLL.Strings.XString;
    begin
@@ -86,17 +85,22 @@ package body Test_Graph_Adjlist is
       G.Add_Edge (G.From_Index (8), G.From_Index (6));
       G.Add_Edge (G.From_Index (8), G.From_Index (8));
 
-      Graphs.Strongly_Connected_Components.Compute
-         (G, Map, Components_Count => Count);
-      Assert (Count, 4, "number of strongly connected components");
-      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (1)), 1);
-      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (2)), 1);
-      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (3)), 1);
-      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (4)), 3);
-      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (5)), 3);
-      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (6)), 2);
-      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (7)), 2);
-      Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (8)), 4);
+      declare
+         Map : Graphs.Integer_Maps.Map := Graphs.Create_Integer_Map
+            (G, Default_Value => -1);
+      begin
+         Graphs.Strongly_Connected_Components.Compute
+            (G, Map, Components_Count => Count);
+         Assert (Count, 4, "number of strongly connected components");
+         Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (1)), 1);
+         Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (2)), 1);
+         Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (3)), 1);
+         Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (4)), 3);
+         Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (5)), 3);
+         Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (6)), 2);
+         Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (7)), 2);
+         Assert (Graphs.Integer_Maps.Get (Map, G.From_Index (8)), 4);
+      end;
 
       G.Clear;
       Generators.Complete (G, N => 3);
@@ -267,7 +271,8 @@ package body Test_Graph_Adjlist is
 
       procedure Do_SCC;
       procedure Do_SCC is
-         M : Graphs.Integer_Maps.Map;
+         M : Graphs.Integer_Maps.Map := Graphs.Create_Integer_Map
+            (G, Default_Value => -1);
          Count : Integer;
       begin
          Graphs.Strongly_Connected_Components.Compute
@@ -366,20 +371,20 @@ package body Test_Graph_Adjlist is
       procedure Recursive is
         new Graph1_Support.DFS.Search_Recursive (My_Visitors2);
 
-      G     : Graph;
+      G     : aliased Graph;
 
       procedure Do_Search1;
       procedure Do_Search1 is
          V     : My_Visitor;
       begin
-         Search (G, V);
+         Search (G'Unchecked_Access, V);
       end Do_Search1;
 
       procedure Do_Recursive;
       procedure Do_Recursive is
          V     : My_Visitor2;
       begin
-         Recursive (G, V);
+         Recursive (G'Unchecked_Access, V);
       end Do_Recursive;
 
       procedure Time_Search1 is new Report.Timeit (Do_Search1);

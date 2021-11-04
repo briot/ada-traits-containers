@@ -38,12 +38,14 @@ package body GAL.Graphs.DFS is
    generic
       with package Visitors is new DFS_Visitor_Traits (others => <>);
       with function Impl
-         (Visit   : in out Visitors.Visitor_Type;
+         (G       : Vertex_Lists.Graphs.Graph_Type;
+          Visit   : in out Visitors.Visitor_Type;
           Colors  : in out Color_Maps.Map;
           Current : Vertex_Type) return Boolean;
       --  Returns True if user asked to stop
    procedure Explore
-     (G      : Graph_Type;
+     (G      : Vertex_Lists.Graphs.Graph_Type;
+      Colors : in out Color_Maps.Map;
       Visit  : in out Visitors.Visitor_Type;
       Source : Vertex_Type := Graphs.Null_Vertex);
 
@@ -52,11 +54,11 @@ package body GAL.Graphs.DFS is
    -------------
 
    procedure Explore
-     (G      : Graph_Type;
+     (G      : Vertex_Lists.Graphs.Graph_Type;
+      Colors : in out Color_Maps.Map;
       Visit  : in out Visitors.Visitor_Type;
       Source : Vertex_Type := Graphs.Null_Vertex)
    is
-      Colors  : Color_Maps.Map := Create_Color_Map (G); --  uninitialized map
       Count   : constant Count_Type := Vertex_Lists.Length (G);
       VC      : Vertex_Lists.Vertex_Cursors.Cursor;
       Current : Vertex_Type;
@@ -65,14 +67,8 @@ package body GAL.Graphs.DFS is
          return;
       end if;
 
-      --  Initialize the color map to White
-      --  ??? Fails if the graph is "infinite" (case of custom graphs)
-
       VC := Vertex_Lists.Vertex_Cursors.First (G);
       while Vertex_Lists.Vertex_Cursors.Has_Element (G, VC) loop
-         --  ??? map should have a way to initialize all values faster
-         Color_Maps.Set
-           (Colors, Vertex_Lists.Vertex_Maps.Get (G, VC), White);
          Visitors.Initialize_Vertex
             (Visit, Vertex_Lists.Vertex_Maps.Get (G, VC));
          Vertex_Lists.Vertex_Cursors.Next (G, VC);
@@ -92,7 +88,7 @@ package body GAL.Graphs.DFS is
       loop
          if Color_Maps.Get (Colors, Current) = White then
             Visitors.Start_Vertex (Visit, Current);
-            if Impl (Visit, Colors, Current) then
+            if Impl (G, Visit, Colors, Current) then
                return;
             end if;
          end if;
@@ -115,12 +111,14 @@ package body GAL.Graphs.DFS is
       Stack   : Vertex_Info_Vectors.Vector;
 
       function Impl
-         (Visit   : in out Visitors.Visitor_Type;
+         (G       : Vertex_Lists.Graphs.Graph_Type;
+          Visit   : in out Visitors.Visitor_Type;
           Colors  : in out Color_Maps.Map;
           Current : Vertex_Type)
          return Boolean;
       function Impl
-         (Visit   : in out Visitors.Visitor_Type;
+         (G       : Vertex_Lists.Graphs.Graph_Type;
+          Visit   : in out Visitors.Visitor_Type;
           Colors  : in out Color_Maps.Map;
           Current : Vertex_Type)
          return Boolean
@@ -201,6 +199,7 @@ package body GAL.Graphs.DFS is
       end Impl;
 
       procedure Expl is new Explore (Visitors, Impl);
+      Colors  : Color_Maps.Map := Create_Color_Map (G, Default_Value => White);
    begin
       --  Preallocate some space, to improve performance
       --  Unless the graph is a tree with depth n, we do not need as many
@@ -208,9 +207,9 @@ package body GAL.Graphs.DFS is
       --  a number somewhere in between, as an attempt to limit the number
       --  of allocations, and yet not allocating too much memory.
       Stack.Reserve_Capacity
-         (Count_Type'Min (100_000, Vertex_Lists.Length (G)));
+         (Count_Type'Min (100_000, Vertex_Lists.Length (To_Graph (G).all)));
 
-      Expl (G, Visit, Source);
+      Expl (To_Graph (G).all, Colors, Visit, Source);
    end Search;
 
    ----------------------
@@ -225,12 +224,14 @@ package body GAL.Graphs.DFS is
       Stop   : Boolean := False;
 
       function Impl
-         (Visit   : in out Visitors.Visitor_Type;
+         (G       : Vertex_Lists.Graphs.Graph_Type;
+          Visit   : in out Visitors.Visitor_Type;
           Colors  : in out Color_Maps.Map;
           Current : Vertex_Type)
          return Boolean;
       function Impl
-         (Visit   : in out Visitors.Visitor_Type;
+         (G       : Vertex_Lists.Graphs.Graph_Type;
+          Visit   : in out Visitors.Visitor_Type;
           Colors  : in out Color_Maps.Map;
           Current : Vertex_Type)
          return Boolean
@@ -252,7 +253,7 @@ package body GAL.Graphs.DFS is
                   case Color_Maps.Get (Colors, Target) is
                   when White =>
                      Visitors.Tree_Edge (Visit, E);
-                     if Impl (Visit, Colors, Target) then
+                     if Impl (G, Visit, Colors, Target) then
                         return True;
                      end if;
 
@@ -275,8 +276,9 @@ package body GAL.Graphs.DFS is
       end Impl;
 
       procedure Expl is new Explore (Visitors, Impl);
+      Colors  : Color_Maps.Map := Create_Color_Map (G, Default_Value => White);
    begin
-      Expl (G, Visit, Source);
+      Expl (To_Graph (G).all, Colors, Visit, Source);
    end Search_Recursive;
 
    ----------------
