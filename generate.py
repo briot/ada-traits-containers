@@ -31,16 +31,22 @@ header = """
 
 
 Base = Literal[
-    'GAL.Controlled_Base', 'GAL.Limited_Base', 'Container_Base_Type']
+    'GAL.Controlled_Base',
+    'GAL.Limited_Controlled_Base',
+    'GAL.Limited_Base',
+    'Container_Base_Type']
 Pkg = Literal['Unbounded', 'Bounded', 'Unbounded_SPARK']
 
 
+def is_limited(base: Base) -> bool:
+    return base in ('GAL.Limited_Controlled_Base', 'GAL.Limited_Base')
+
+
 def base_to_str(base: Base) -> str:
-    if base == 'GAL.Controlled_Base':
-        return ''
-    elif base == 'GAL.Limited_Base':
+    if is_limited(base):
         return ' limited'
-    raise Exception("unknown base %s" % base)
+    else:
+        return ''
 
 
 class Test:
@@ -162,7 +168,7 @@ class Storage:
         )
         self.subprograms = (
             ""
-            if base != 'GAL.Limited_Base'
+            if not is_limited(base)
             else
             "\n"
             f"   function Copy (Self : {container}'Class) return {container}'Class;\n"
@@ -176,7 +182,7 @@ class Storage:
         )
         self.body = (
             ""
-            if base != 'GAL.Limited_Base'
+            if not is_limited(base)
             else
             f"""
    function Copy (Self : {container}'Class) return {container}'Class is
@@ -350,7 +356,7 @@ class Vector_Test(Test):
         self.index: str = data[0]
         self.element: str = data[1]
         self.base: Optional[Base] = data[2]
-        self.favorite = ("True" if data[3] else "False")
+        self.favorite = data[3] is True
         self.category_name = data[4] or self.element
         self.container = container
         self.withs = set([
@@ -522,7 +528,7 @@ class List_Test(Test):
         self.container = container
         self.element = data[0]
         self.base = data[1]
-        self.favorite = ("True" if data[2] else "False")
+        self.favorite = data[2] is True
         self.category_name = data[3] or self.element
         self.withs: Set[str] = set(["Support_Lists"])
         if '.' in self.element:
@@ -693,7 +699,7 @@ class Map_Test(Test):
         self.key: str = data[0]
         self.element: str = data[1]
         self.base: Optional[Base] = data[2]
-        self.favorite = ("True" if data[3] else "False")
+        self.favorite = data[3] is True
         self.container = container
         self.withs: Set[str] = set(["Support_Maps"])
         if '.' in self.key:
@@ -933,7 +939,8 @@ containers = [
     List_Container(
         pkg_name="GAL.Lists.Definite_Bounded_Limited",
         elements=Definite_Elements(),
-        storage=Storage_List(pkg='Bounded', base='GAL.Limited_Base'),
+        storage=Storage_List(
+            pkg='Bounded', base='GAL.Limited_Controlled_Base'),
         tests=[("Integer", None, False, "Integer")],
     ),
     List_Container(
@@ -945,7 +952,8 @@ containers = [
     List_Container(
         pkg_name="GAL.Lists.Definite_Unbounded_Limited",
         elements=Definite_Elements(),
-        storage=Storage_List(pkg='Unbounded', base='GAL.Limited_Base'),
+        storage=Storage_List(
+            pkg='Unbounded', base='GAL.Limited_Controlled_Base'),
         tests=[("Integer", None, False, "Integer")],
     ),
     List_Container(

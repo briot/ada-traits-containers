@@ -40,7 +40,7 @@ package GAL.Lists.Definite_Unbounded_Limited with SPARK_Mode is
    package Storage is new GAL.Lists.Storage.Unbounded
       (Elements            => Elements.Traits,
        Pool                => GAL.Pools.Global_Pool,
-       Container_Base_Type => GAL.Limited_Base);
+       Container_Base_Type => GAL.Limited_Controlled_Base);
    package Lists is new GAL.Lists.Generics (Storage.Traits);
    package Cursors renames Lists.Cursors;  --  Forward, Bidirectional
    package Maps renames Lists.Maps;

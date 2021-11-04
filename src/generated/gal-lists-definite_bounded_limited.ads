@@ -38,7 +38,7 @@ package GAL.Lists.Definite_Bounded_Limited with SPARK_Mode is
       (Element_Type, Free => Free, Movable => True, Copyable => True);
    package Storage is new GAL.Lists.Storage.Bounded
       (Elements            => Elements.Traits,
-       Container_Base_Type => GAL.Limited_Base);
+       Container_Base_Type => GAL.Limited_Controlled_Base);
    package Lists is new GAL.Lists.Generics (Storage.Traits);
    package Cursors renames Lists.Cursors;  --  Forward, Bidirectional
    package Maps renames Lists.Maps;
