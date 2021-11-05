@@ -41,6 +41,10 @@ package GAL.Vectors.Impl with SPARK_Mode is
    No_Index : constant Extended_Index := Extended_Index'First;
    --  Index_Type with one more element to the left, used to represent
    --  invalid indexes
+   --
+   --  ??? Has_Element could be twice as efficient if No_Index was instead
+   --  Index_Type'Last and we did not allow that value as an index. This
+   --  would be incompatible with standard Ada containers though.
 
    subtype Element_Type is Storage.Elements.Element_Type;
    subtype Returned_Type is Storage.Elements.Returned_Type;
@@ -190,15 +194,6 @@ package GAL.Vectors.Impl with SPARK_Mode is
        Post   => Has_Element'Result =
                            (Position in Index_Type'First .. Self.Last);
    pragma Annotate (GNATprove, Inline_For_Proof, Entity => Has_Element);
-
-   function Has_Element_For_Loops
-     (Ignored : Base_Vector'Class; Position : Cursor) return Boolean
-     is (Position /= No_Element)
-     with Inline, Global => null;
-   --  A faster version of Has_Element, suitable for use in loops when the
-   --  position is only manipulated via First, Next or Previous. Since those
-   --  functions always set invalid position to No_Element, we do not need
-   --  to check this again here.
 
    procedure Next (Self : Base_Vector'Class; Position : in out Cursor)
    --  See documentation in conts-vectors-generics.ads
@@ -482,42 +477,6 @@ package GAL.Vectors.Impl with SPARK_Mode is
              S2 => Model (Self)'Old,
              X  => Left,
              Y  => Right);
-
-   function First_Primitive (Self : Base_Vector) return Cursor
-   --  See documentation in conts-vectors-generics.ads
-     is (First (Self))
-     with Inline;
-
-   function Element_Primitive
-     (Self : Base_Vector; Position : Cursor) return Constant_Returned_Type
-   --  See documentation in conts-vectors-generics.ads
-     is (Element (Self, Position))
-     with
-       Inline,
-       Pre'Class => Has_Element (Self, Position),
-       Post      => Storage.Elements.To_Element (Element_Primitive'Result) =
-          Element (Model (Self), Position);
-
-   function Has_Element_For_Loops_Primitive
-     (Self : Base_Vector; Position : Cursor) return Boolean
-   --  See documentation in conts-vectors-generics.ads
-     is (Has_Element_For_Loops (Self, Position))
-     with
-       Inline,
-   Post => Has_Element_For_Loops_Primitive'Result =
-                  (Position in Index_Type'First .. Self.Last);
-   pragma Annotate
-      (GNATprove, Inline_For_Proof, Has_Element_For_Loops_Primitive);
-
-   function Next_Primitive
-     (Self : Base_Vector; Position : Cursor) return Cursor
-   --  These are only needed because the Iterable aspect expects a parameter
-   --  of type List instead of List'Class. But then it means that the loop
-   --  is doing a lot of dynamic dispatching, and is twice as slow as a loop
-   --  using an explicit cursor.
-     with
-       Inline,
-       Pre'Class => Has_Element (Self, Position);
 
 private
    pragma SPARK_Mode (Off);

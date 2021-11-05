@@ -73,19 +73,6 @@ package body GAL.Vectors.Impl with SPARK_Mode => Off is
       end if;
    end Next;
 
-   --------------------
-   -- Next_Primitive --
-   --------------------
-
-   function Next_Primitive
-     (Self : Base_Vector; Position : Cursor) return Cursor
-   is
-      P : Cursor := Position;
-   begin
-      Next (Self, P);
-      return P;
-   end Next_Primitive;
-
    --------------
    -- Previous --
    --------------

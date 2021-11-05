@@ -196,9 +196,16 @@ package GAL.Vectors.Generics with SPARK_Mode is
    procedure Previous
      (Self : Base_Vector'Class; Position : in out Cursor)
      renames Impl.Previous;
-   --  We pass the container explicitly for the sake of writing the pre
-   --  and post conditions.
    --  Complexity: constant for all cursor operations.
+
+   function Has_Element_For_Loops
+     (Ignored : Base_Vector'Class; Position : Cursor) return Boolean
+     is (Position /= No_Element)
+     with Inline, Global => null;
+   --  A faster version of Has_Element, suitable for use in loops when the
+   --  position is only manipulated via First, Next or Previous. Since those
+   --  functions always set invalid position to No_Element, we do not need
+   --  to check this again here.
 
    function Reference
      (Self : in out Base_Vector'Class; Position : Index_Type)
@@ -232,6 +239,33 @@ package GAL.Vectors.Generics with SPARK_Mode is
      (Self : Vector; Position : Index_Type) return Constant_Returned_Type
      is (Element (Self, Position))
      with Inline, Pre'Class => Position <= Last (Self);
+
+   function First_Primitive (Self : Vector) return Cursor is (First (Self));
+   function Element_Primitive
+     (Self : Vector; Position : Cursor) return Constant_Returned_Type
+     is (Element (Self, Position))
+     with
+       Inline,
+       Pre'Class => Has_Element (Self, Position),
+       Post      => Storage.Elements.To_Element (Element_Primitive'Result) =
+          Element (Model (Self), Position);
+   function Has_Element_For_Loops_Primitive
+     (Self : Vector; Position : Cursor) return Boolean
+     is (Has_Element_For_Loops (Self, Position))
+     with
+       Inline,
+       Post => Has_Element_For_Loops_Primitive'Result =
+          (Position in Index_Type'First .. Self.Last);
+   pragma Annotate
+      (GNATprove, Inline_For_Proof, Has_Element_For_Loops_Primitive);
+
+   function Next_Primitive
+     (Self : Vector; Position : Cursor) return Cursor
+     with Inline, Pre'Class => Has_Element (Self, Position);
+   --  These are only needed because the Iterable aspect expects a parameter
+   --  of type List instead of List'Class. But then it means that the loop
+   --  is doing a lot of dynamic dispatching, and is twice as slow as a loop
+   --  using an explicit cursor.
 
    -----------
    -- Model --
@@ -284,7 +318,7 @@ package GAL.Vectors.Generics with SPARK_Mode is
          No_Element     => No_Element,
          First          => First,
          Last           => Last,
-         Has_Element    => Impl.Has_Element_For_Loops,
+         Has_Element    => Has_Element_For_Loops,
          Next           => Next,
          Previous       => Previous);
       package Forward renames Bidirectional.Forward;
