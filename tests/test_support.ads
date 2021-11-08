@@ -38,9 +38,11 @@ package Test_Support is
    function Hash (Value : GNATCOLL.Strings.XString) return GAL.Hash_Type
       is (GNATCOLL.Strings.Hash (Value));
 
-   function Check_Element (Value : Integer) return Boolean;
-   function Check_Element (Value : String) return Boolean;
-   function Check_Element (Value : GNATCOLL.Strings.XString) return Boolean;
+   function Check_Element (Value : Integer) return Boolean is (Value > 0);
+   function Check_Element (Value : String) return Boolean
+      is (Value'Length > 0);
+   function Check_Element (Value : GNATCOLL.Strings.XString) return Boolean
+      is (Value.Length > 0);
    --  Perform trivial check on Value
 
    -----------------
