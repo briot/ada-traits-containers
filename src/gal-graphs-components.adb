@@ -185,7 +185,7 @@ package body GAL.Graphs.Components is
           Discover_Vertex      => Discover_Vertex,
           Finish_Vertex        => Finish_Vertex,
           Back_Edge            => Back_Edge);
-      procedure Search is new DFS.Search (Visitors);
+      procedure Search is new DFS.Depth_First_Search (Visitors);
 
       -------------
       -- Compute --

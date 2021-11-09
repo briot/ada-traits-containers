@@ -99,11 +99,11 @@ package body GAL.Graphs.DFS is
       end loop;
    end Explore;
 
-   ------------
-   -- Search --
-   ------------
+   ------------------------
+   -- Depth_First_Search --
+   ------------------------
 
-   procedure Search
+   procedure Depth_First_Search
      (G      : Graph_Type;
       Visit  : in out Visitors.Visitor_Type;
       Source : Vertex_Type := Graphs.Null_Vertex)
@@ -210,13 +210,13 @@ package body GAL.Graphs.DFS is
          (Count_Type'Min (100_000, Vertex_Lists.Length (To_Graph (G).all)));
 
       Expl (To_Graph (G).all, Colors, Visit, Source);
-   end Search;
+   end Depth_First_Search;
 
-   ----------------------
-   -- Search_Recursive --
-   ----------------------
+   ----------------------------------
+   -- Depth_First_Search_Recursive --
+   ----------------------------------
 
-   procedure Search_Recursive
+   procedure Depth_First_Search_Recursive
      (G      : Graph_Type;
       Visit  : in out Visitors.Visitor_Type;
       Source : Vertex_Type := Graphs.Null_Vertex)
@@ -279,7 +279,7 @@ package body GAL.Graphs.DFS is
       Colors  : Color_Maps.Map := Create_Color_Map (G, Default_Value => White);
    begin
       Expl (To_Graph (G).all, Colors, Visit, Source);
-   end Search_Recursive;
+   end Depth_First_Search_Recursive;
 
    ----------------
    -- Is_Acyclic --
@@ -315,7 +315,7 @@ package body GAL.Graphs.DFS is
          (Visitor_Type    => Visitor_Type,
           Back_Edge       => Back_Edge,
           Discover_Vertex => Discover_Vertex);
-      procedure DFS is new Search (Visitors);
+      procedure DFS is new Depth_First_Search (Visitors);
       V   : Visitor_Type;
    begin
       DFS (G, V);
@@ -350,7 +350,7 @@ package body GAL.Graphs.DFS is
          (Visitor_Type  => TS_Visitor,
           Back_Edge     => Back_Edge,
           Finish_Vertex => Finish_Vertex);
-      procedure DFS is new Search (Visitors);
+      procedure DFS is new Depth_First_Search (Visitors);
 
       V : TS_Visitor;
    begin

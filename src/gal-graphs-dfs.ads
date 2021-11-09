@@ -166,7 +166,7 @@ package GAL.Graphs.DFS is
 
    generic
       with package Visitors is new DFS_Visitor_Traits (others => <>);
-   procedure Search
+   procedure Depth_First_Search
      (G      : Graph_Type;
       Visit  : in out Visitors.Visitor_Type;
       Source : Vertex_Type := Graphs.Null_Vertex);
@@ -186,7 +186,7 @@ package GAL.Graphs.DFS is
    --  Depth First Search is a basic block for a lot of other algorithms.
    --  However, it is also useful on its own:
    --    * compute whether a vertex is reachable from another vertex
-   --    * detect cycles in a graph
+   --    * detect cycles in a graph (see Is_Acyclic below)
    --
    --  This algorithm needs to mark visited vertices with colors, using the
    --  provided map.
@@ -199,7 +199,7 @@ package GAL.Graphs.DFS is
 
    generic
       with package Visitors is new DFS_Visitor_Traits (others => <>);
-   procedure Search_Recursive
+   procedure Depth_First_Search_Recursive
      (G      : Graph_Type;
       Visit  : in out Visitors.Visitor_Type;
       Source : Vertex_Type := Graphs.Null_Vertex);

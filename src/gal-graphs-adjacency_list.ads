@@ -323,4 +323,10 @@ package GAL.Graphs.Adjacency_List is
       new GAL.Graphs.Components.Strongly_Connected
          (DFS            => DFS,
           Component_Maps => Integer_Maps.As_Map);
+   function Is_Acyclic (G : Graph) return Boolean
+      renames DFS.Is_Acyclic;
+   generic procedure Depth_First_Search
+      renames DFS.Depth_First_Search;
+   generic procedure Reverse_Topological_Sort
+      renames DFS.Reverse_Topological_Sort;
 end GAL.Graphs.Adjacency_List;

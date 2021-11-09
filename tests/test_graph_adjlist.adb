@@ -172,11 +172,11 @@ package body Test_Graph_Adjlist is
              Back_Edge             => Back_Edge,
              Forward_Or_Cross_Edge => Forward_Or_Cross_Edge,
              Finish_Edge           => Finish_Edge);
-         procedure Search is new Graphs.DFS.Search (Visitor);
+         procedure DFS_Search is new Graphs.Depth_First_Search (Visitor);
 
          V : Visit;
       begin
-         Search (G, V);
+         DFS_Search (G, V);
          Asserts.Strings.Assert
             (Events.To_String,
              "Initialize_Vertex 1" & ASCII.LF &
@@ -231,8 +231,9 @@ package body Test_Graph_Adjlist is
       package Visitors is new Graphs.DFS.DFS_Visitor_Traits
          (Visitor_Type  => My_Visit,
           Finish_Vertex => Finish_Vertex);
-      procedure DFS is new Graphs.DFS.Search (Visitors);
-      procedure DFS_Recursive is new Graphs.DFS.Search_Recursive (Visitors);
+      procedure DFS is new Graphs.DFS.Depth_First_Search (Visitors);
+      procedure DFS_Recursive is
+         new Graphs.DFS.Depth_First_Search_Recursive (Visitors);
 
       G : Graphs.Graph;
       Acyclic : Boolean;
@@ -367,9 +368,10 @@ package body Test_Graph_Adjlist is
       Container : constant String := "custom graph";
       Category  : constant String := "Integer Graph (chain)";
 
-      procedure Search is new Graph1_Support.DFS.Search (My_Visitors);
+      procedure Search is
+         new Graph1_Support.DFS.Depth_First_Search (My_Visitors);
       procedure Recursive is
-        new Graph1_Support.DFS.Search_Recursive (My_Visitors2);
+         new Graph1_Support.DFS.Depth_First_Search_Recursive (My_Visitors2);
 
       G     : aliased Graph;
 
