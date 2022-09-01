@@ -1,17 +1,19 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Design considerations &#8212; Generic Ada Library (GAL) 0.1 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Graph algorithms" href="graph_algorithms.html" />
@@ -156,7 +158,7 @@ as a formal parameter. The following invalid code would be interesting:</p>
 <p>This is however invalid for two reasons:</p>
 <blockquote>
 <div><ul>
-<li><p>As we saw before, we cannot use partial instantiation, so we need to also
+<li><p class="first">As we saw before, we cannot use partial instantiation, so we need to also
 have an instance of <cite>Color_Property_Maps</cite> as a parameter:</p>
 <div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
    <span class="kn">with</span> <span class="nn">package</span> <span class="n">Graphs</span> <span class="kr">is</span> <span class="kr">new</span> <span class="n">Graph_Traits</span> <span class="p">(&lt;&gt;);</span>
@@ -175,7 +177,7 @@ have an instance of <cite>Color_Property_Maps</cite> as a parameter:</p>
 </pre></div>
 </div>
 </li>
-<li><p>In fact, as opposed to formal packages, Ada does not let us indicate that a
+<li><p class="first">In fact, as opposed to formal packages, Ada does not let us indicate that a
 formal parameter is an instance of a specific generic subprogram.</p>
 <p>The simpler approach would be to let any value for <cite>Acyclic</cite>, as in:</p>
 <div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">generic</span>
@@ -295,17 +297,17 @@ places in this library.</p>
 <p>There are various ideas on the subject though:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>a container that is written to from a single task, should be
+<li>a container that is written to from a single task, should be
 safe to read from multiple tasks. This is not the case with the
 standard Ada containers, since even in “read-only” mode they
-still modify their tampering flags.</p></li>
-<li><p>we will likely introduce a new <cite>Tasking_Policy</cite> package to help
+still modify their tampering flags.</li>
+<li>we will likely introduce a new <cite>Tasking_Policy</cite> package to help
 control locking of the data structure: the default implementation
 would do nothing, providing maximum efficiency, but other
-implementation could use locks implemented in different ways.</p></li>
-<li><p>Likewise, we could use atomic counters for reference-counted types,
+implementation could use locks implemented in different ways.</li>
+<li>Likewise, we could use atomic counters for reference-counted types,
 and through a policy use standard integers if task-safety is not
-an issue.</p></li>
+an issue.</li>
 </ul>
 </div></blockquote>
 </div>
@@ -358,9 +360,9 @@ storage_pool is always the default global pool.</p>
 <p>Example of use for custom pools:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>more efficient pool in some contexts</p></li>
-<li><p>persistent containers, by having a pool allocating a large buffer with
-mmap, and then using this buffer when allocating small blocks.</p></li>
+<li>more efficient pool in some contexts</li>
+<li>persistent containers, by having a pool allocating a large buffer with
+mmap, and then using this buffer when allocating small blocks.</li>
 </ul>
 </div></blockquote>
 </div>
@@ -373,7 +375,7 @@ representation of containers used in these annotations and explain how it can be
 used to annotate user code.</p>
 <blockquote>
 <div><ul>
-<li><p>The Notion of Models</p>
+<li><p class="first">The Notion of Models</p>
 <p>The most straight forward way of annotating a subprogram dealing with
 containers is by reusing the API subprograms. For example, here we have
 annotated a procedure that resets every element of a vector to zero using
@@ -425,7 +427,7 @@ from the final executable by the compiler:</p>
 </pre></div>
 </div>
 </li>
-<li><p>Functional Containers</p>
+<li><p class="first">Functional Containers</p>
 <p>To model classical imperative containers, we introduce new simpler,
 mathematical like containers. They are unbounded and may contain indefinite
 elements. Furthermore, to be usable in every context, they are neither
@@ -480,13 +482,13 @@ sequence of available ressources:</p>
 </pre></div>
 </div>
 </li>
-<li><p>Models of Imperative Containers</p>
+<li><p class="first">Models of Imperative Containers</p>
 <p>For each container type, the library provides model functions that are used
 to annotate subprograms from the API. The different models supply different
 levels of abstraction of the container’s functionalities.</p>
 <blockquote>
 <div><ul>
-<li><p>The higher level view of a container is usually the mathematical
+<li><p class="first">The higher level view of a container is usually the mathematical
 structure of element it represents. We use a sequence for ordered
 containers such as list and vectors and a mathematical map for imperative
 maps. This allows us to specify the effects of a subprogram in a very high
@@ -502,7 +504,7 @@ map:</p>
 </pre></div>
 </div>
 </li>
-<li><p>For maps, there is a lower level model representing the underlying order
+<li><p class="first">For maps, there is a lower level model representing the underlying order
 used for iteration in the map. It is a sequence of keys. We can use it if
 we want to specify in <code class="docutils literal notranslate"><span class="pre">Increment_All</span></code> on maps that the order in the keys
 are preserved:</p>
@@ -513,7 +515,7 @@ are preserved:</p>
 </pre></div>
 </div>
 </li>
-<li><p>Finally, cursors are modeled using a functional map linking them to their
+<li><p class="first">Finally, cursors are modeled using a functional map linking them to their
 position in the container. For example, we can state that the positions
 of cursors in a list are not modified by a call to <code class="docutils literal notranslate"><span class="pre">Increment_All</span></code>:</p>
 <div class="highlight-ada notranslate"><div class="highlight"><pre><span></span><span class="kd">procedure</span> <span class="nf">Increment_All</span> <span class="p">(</span><span class="nv">L</span> <span class="p">: </span><span class="nv">in</span> <span class="nv">out</span> <span class="nv">List</span><span class="p">)</span> <span class="kn">with</span>
@@ -581,15 +583,17 @@ of cursors in a list are not modified by a call to <code class="docutils literal
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -598,7 +602,7 @@ of cursors in a list are not modified by a call to <code class="docutils literal
       &copy;2016, AdaCore.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
       
       |

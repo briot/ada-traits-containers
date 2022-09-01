@@ -1,17 +1,19 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Cursors and Properties &#8212; Generic Ada Library (GAL) 0.1 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Element Traits" href="elements.html" />
@@ -59,28 +61,25 @@ one of the traits packages defined in <code class="file docutils literal notrans
 <div><p><code class="docutils literal notranslate"><span class="pre">Forward_Cursors</span></code></p>
 <blockquote>
 <div><blockquote>
-<div><p>are the least capable. They are mostly meant to iterate all elements
+<div>are the least capable. They are mostly meant to iterate all elements
 of the container in a container-defined order, from beginning to end,
 with no possibility to move backward. Algorithms should use those if
 all they need it to look at each element of the container at most
-once.</p>
-</div></blockquote>
+once.</div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">Bidirectional_Cursors</span></code></p>
 <blockquote>
-<div><p>allow traversing in both directions (forward or backward). They are
+<div>allow traversing in both directions (forward or backward). They are
 slightly more flexible that forward_cursors. They are often implemented
 by all containers that store their data in memory. But they would not
 be applicable when accessing an element also removes it from the
-container, like reading from a socket for instance.</p>
-</div></blockquote>
+container, like reading from a socket for instance.</div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">Random_Access_Cursors</span></code></p>
 <blockquote>
-<div><p>let users access elements in any direction and at any place within the
+<div>let users access elements in any direction and at any place within the
 container. Those cursors generally take the form of an index, so are
 easy to manipulate and create by application. They apply to array-like
 containers where the position of an element in memory can easily be
-computed.</p>
-</div></blockquote>
+computed.</div></blockquote>
 </div></blockquote>
 </div></blockquote>
 <p>Note that it would often be possible to emulate a random_access cursor from a
@@ -216,15 +215,17 @@ need to look up those properties in a separate container.</p>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -233,7 +234,7 @@ need to look up those properties in a separate container.</p>
       &copy;2016, AdaCore.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
       
       |

@@ -1,17 +1,19 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Element Traits &#8212; Generic Ada Library (GAL) 0.1 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Vector data type" href="vectors.html" />
@@ -35,25 +37,25 @@
 There are a number of specificities to take into account:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><p><em>Scalar types</em> can be stored directly in a record or an array. They can be
+<li><em>Scalar types</em> can be stored directly in a record or an array. They can be
 safely copied, and are small enough that they can be returned from
-functions without impacting performance.</p></li>
-<li><p><em>Unconstrained types</em> like arrays, strings or class-wide types cannot be
+functions without impacting performance.</li>
+<li><em>Unconstrained types</em> like arrays, strings or class-wide types cannot be
 stored in a record. Instead, they must be allocated on the heap, and a
 pointer to them stored in the record. Of course, one needs to free the
 pointer when it is no longer needed. We cannot simply duplicate the
 pointer in another record, since we end up with aliasing and freeing one
 of the pointers will result in an invalid memory access when the copy is
-accessed.</p></li>
-<li><p><em>Controlled types</em> must be copied so that their primitive operations
-<code class="docutils literal notranslate"><span class="pre">Adjust</span></code> and <code class="docutils literal notranslate"><span class="pre">Finalize</span></code> are called as expected.</p></li>
-<li><p><em>Limited types</em> cannot be copied, and in general cannot be stored in
+accessed.</li>
+<li><em>Controlled types</em> must be copied so that their primitive operations
+<code class="docutils literal notranslate"><span class="pre">Adjust</span></code> and <code class="docutils literal notranslate"><span class="pre">Finalize</span></code> are called as expected.</li>
+<li><em>Limited types</em> cannot be copied, and in general cannot be stored in
 containers anyway. They are manipulated via one level of indirection and a
-pointer.</p></li>
-<li><p>Some types need to know their address (a record containing a field that
+pointer.</li>
+<li>Some types need to know their address (a record containing a field that
 itself has a discriminant pointing to the parent record for instance).
 Such types are fairly rare, but cannot be moved in memory, so they need
-to be copied (and the old copy deleted).</p></li>
+to be copied (and the old copy deleted).</li>
 </ol>
 </div></blockquote>
 <p>Performance is important, and a large part of it depends on the number of
@@ -79,41 +81,36 @@ information:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">Element_Type</span></code></p>
 <blockquote>
-<div><p>The type of element as manipulated by the user. It can be any type of
+<div>The type of element as manipulated by the user. It can be any type of
 element (scalar, unconstrained, controlled,…) except a limited type
-since it needs to be copied into the container.</p>
-</div></blockquote>
+since it needs to be copied into the container.</div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">Stored_Type</span></code></p>
 <blockquote>
-<div><p>The type that is actually stored in the container. For constrained types
+<div>The type that is actually stored in the container. For constrained types
 (records for instance) and scalar types, this can be the type itself. For
-unconstrained types, this will be a newly allocated pointer for instance.</p>
-</div></blockquote>
+unconstrained types, this will be a newly allocated pointer for instance.</div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">Returned_Type</span></code></p>
 <blockquote>
-<div><p>The type returned by the container. In general, this will be
+<div>The type returned by the container. In general, this will be
 <code class="docutils literal notranslate"><span class="pre">Element_Type</span></code> itself. However, when the type might be large (a string
 for instance), it is more efficient to return a reference type (as
 introduced in Ada 2012). Such a reference type is automatically
 derefenreced, and therefore is similar to <code class="docutils literal notranslate"><span class="pre">Element_Type</span></code> for the
 application point of view, in most cases. We do not recommend returning
 the access type itself, since it might be possible for users to
-inadvertently free it.</p>
-</div></blockquote>
+inadvertently free it.</div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">To_Stored</span></code>, <code class="docutils literal notranslate"><span class="pre">To_Return</span></code> and <code class="docutils literal notranslate"><span class="pre">To_Element</span></code></p>
 <blockquote>
-<div><p>These are conversion functions between the three types declared above.
+<div>These are conversion functions between the three types declared above.
 It is fine for <code class="docutils literal notranslate"><span class="pre">To_Stored</span></code> to allocate memory, since that can be
 freed by <code class="docutils literal notranslate"><span class="pre">Release</span></code> (see below). The others should not, in general,
-allocate memory.</p>
-</div></blockquote>
+allocate memory.</div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">Release</span></code></p>
 <blockquote>
-<div><p>Releases the memory used by <code class="docutils literal notranslate"><span class="pre">Stored_Type</span></code>. Most of the time, it will
+<div>Releases the memory used by <code class="docutils literal notranslate"><span class="pre">Stored_Type</span></code>. Most of the time, it will
 free the memory, but the more general term release was used since it
 might be decrementing a refcount, or freeing the memory used by some
-internal field, or any other possibility.</p>
-</div></blockquote>
+internal field, or any other possibility.</div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">Copy</span></code> and <code class="docutils literal notranslate"><span class="pre">Copyable</span></code></p>
 <blockquote>
 <div><p>When a stored element can be copied via the default Ada assignment
@@ -128,14 +125,13 @@ provide your own copy operation.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">Movable</span></code></p>
 <blockquote>
-<div><p>As mentioned above, this library will try to use <code class="docutils literal notranslate"><span class="pre">realloc</span></code> when
+<div>As mentioned above, this library will try to use <code class="docutils literal notranslate"><span class="pre">realloc</span></code> when
 possible to improve performance. It is possible that this function,
 though, will need to move the elements in memory. Since this is a C
 function, it knows nothing about controlled types, for instance.  In such
 a case, the element should be marked as not movable. This will force the
 library not to use <code class="docutils literal notranslate"><span class="pre">realloc</span></code>, and explicit allocate a new copy, copy
-all the elements, and free the old ones.</p>
-</div></blockquote>
+all the elements, and free the old ones.</div></blockquote>
 </div></blockquote>
 <p>As you can see, there is a large number of information to provide. These are in
 general very simple implementations (expression functions will often be
@@ -144,43 +140,37 @@ make it even easier:</p>
 <blockquote>
 <div><p><code class="file docutils literal notranslate"><span class="pre">conts-elements-definite.ads</span></code></p>
 <blockquote>
-<div><p>A simple generic package that only requires an <code class="docutils literal notranslate"><span class="pre">Element_Type</span></code> and
+<div>A simple generic package that only requires an <code class="docutils literal notranslate"><span class="pre">Element_Type</span></code> and
 provides all the other fields. It is suitable for scalars and simple
 records, but not for pointer types (since it copies the elements
-directly).</p>
-</div></blockquote>
+directly).</div></blockquote>
 <p><code class="file docutils literal notranslate"><span class="pre">conts-elements-indefinite.ads</span></code></p>
 <blockquote>
-<div><p>A simple generic package that only requires an <code class="docutils literal notranslate"><span class="pre">Element_Type</span></code>, which
+<div>A simple generic package that only requires an <code class="docutils literal notranslate"><span class="pre">Element_Type</span></code>, which
 could be any type (unconstrained, class-wide, …). It will allocate
-memory to store the element in containers.</p>
-</div></blockquote>
+memory to store the element in containers.</div></blockquote>
 <p><code class="file docutils literal notranslate"><span class="pre">conts-elements-indefinite_ref.ads</span></code></p>
 <blockquote>
-<div><p>Similar to <code class="file docutils literal notranslate"><span class="pre">conts-elements-indefinite.ads</span></code>, but returns a
+<div>Similar to <code class="file docutils literal notranslate"><span class="pre">conts-elements-indefinite.ads</span></code>, but returns a
 reference type rather than the type itself. This will often be more
-efficient.</p>
-</div></blockquote>
+efficient.</div></blockquote>
 <p><code class="file docutils literal notranslate"><span class="pre">conts-elements-indefinte_spark.ads</span></code></p>
 <blockquote>
-<div><p>Similar to <code class="file docutils literal notranslate"><span class="pre">conts-elements-indefinite.ads</span></code>, but hides the
-access types. This is suitable for use with the SPARK language.</p>
-</div></blockquote>
+<div>Similar to <code class="file docutils literal notranslate"><span class="pre">conts-elements-indefinite.ads</span></code>, but hides the
+access types. This is suitable for use with the SPARK language.</div></blockquote>
 <p><code class="file docutils literal notranslate"><span class="pre">conts-elements-null_elements.ads</span></code></p>
 <blockquote>
-<div><p>Storing a null record. This can be used when no additional information
+<div>Storing a null record. This can be used when no additional information
 is needed in fact. For instance, a graph associates some information with
 each of its vertices. But sometimes you have no need for that, and you
-can simply use this package for the type of the extra information.</p>
-</div></blockquote>
+can simply use this package for the type of the extra information.</div></blockquote>
 <p><code class="file docutils literal notranslate"><span class="pre">conts-elements-arrays.ads</span></code></p>
 <blockquote>
-<div><p>Similar to <code class="file docutils literal notranslate"><span class="pre">conts-elements-indefinite.ads</span></code>, but slightly optimized
+<div>Similar to <code class="file docutils literal notranslate"><span class="pre">conts-elements-indefinite.ads</span></code>, but slightly optimized
 for arrays. In particular, this will avoid allocating memory when the
 array is small, which might in some cases improve efficiency (although
 the data structure will be bigger, so you should measure whether you
-do get the expected improvement).</p>
-</div></blockquote>
+do get the expected improvement).</div></blockquote>
 </div></blockquote>
 </div>
 
@@ -224,15 +214,17 @@ do get the expected improvement).</p>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -241,7 +233,7 @@ do get the expected improvement).</p>
       &copy;2016, AdaCore.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
       
       |

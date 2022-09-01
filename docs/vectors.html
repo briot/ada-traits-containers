@@ -1,17 +1,19 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Vector data type &#8212; Generic Ada Library (GAL) 0.1 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="List data type" href="lists.html" />
@@ -54,10 +56,9 @@ the vectors:</p>
 <blockquote>
 <div><p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-unbounded.ads</span></code></p>
 <blockquote>
-<div><p>This is the type of nodes that should be used for <strong>unbounded vectors</strong>,
+<div>This is the type of nodes that should be used for <strong>unbounded vectors</strong>,
 that will grow automatically as more elements are added to it. See the
-<a class="reference internal" href="#vector-resizing-strategy"><span class="std std-ref">Resizing strategy</span></a> section below.</p>
-</div></blockquote>
+<a class="reference internal" href="#vector-resizing-strategy"><span class="std std-ref">Resizing strategy</span></a> section below.</div></blockquote>
 <p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-bounded.ads</span></code></p>
 <blockquote>
 <div><p>This package provides support for <strong>bounded vectors</strong>. Such vectors have a
@@ -79,9 +80,8 @@ generic:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">Elements</span></code></p>
 <blockquote>
-<div><p>This is an instance of the element traits package (<a class="reference internal" href="elements.html#element-traits"><span class="std std-ref">Element Traits</span></a>),
-which describes which elements are stored in the vector, and how to do so.</p>
-</div></blockquote>
+<div>This is an instance of the element traits package (<a class="reference internal" href="elements.html#element-traits"><span class="std std-ref">Element Traits</span></a>),
+which describes which elements are stored in the vector, and how to do so.</div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">Container_Base_Type</span></code></p>
 <blockquote>
 <div><p>A vector is always implemented as a <a class="reference internal" href="conventions.html#tagged-and-controlled-types"><span class="std std-ref">tagged type</span></a>. But sometimes applications will want them
@@ -109,10 +109,9 @@ but you get full control via</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">Resizing_Strategy</span></code></p>
 <blockquote>
-<div><p>A generic traits package that provides two operators <code class="docutils literal notranslate"><span class="pre">Grow</span></code> and
+<div>A generic traits package that provides two operators <code class="docutils literal notranslate"><span class="pre">Grow</span></code> and
 <code class="docutils literal notranslate"><span class="pre">Shrink</span></code>. Given the current capacity of a vector and the minimal
-expected size, they return the new capacity that shoud be allocated.</p>
-</div></blockquote>
+expected size, they return the new capacity that shoud be allocated.</div></blockquote>
 </div></blockquote>
 </div>
 <div class="section" id="generic-vectors">
@@ -138,10 +137,9 @@ the base type has one more element, as in:</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">Storage</span></code></p>
 <blockquote>
-<div><p>This is the choice of the vector nodes package for the low-level
+<div>This is the choice of the vector nodes package for the low-level
 implementation, as described above. This lets you chose between
-<strong>bounded</strong> and <strong>unbounded</strong> vectors.</p>
-</div></blockquote>
+<strong>bounded</strong> and <strong>unbounded</strong> vectors.</div></blockquote>
 </div></blockquote>
 <p>The following operations are provided for vectors:</p>
 <blockquote>
@@ -186,20 +184,17 @@ need to allocate any memory, so are very efficient.</p>
 </div></blockquote>
 <p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-definite_unbounded.ads</span></code></p>
 <blockquote>
-<div><p>Support for unbounded containers of definite elements. They need to
+<div>Support for unbounded containers of definite elements. They need to
 allocate memory for the low-level array, but not for the elements
-themselves. The vector will grow as needed.</p>
-</div></blockquote>
+themselves. The vector will grow as needed.</div></blockquote>
 <p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-indefinite_unbounded.ads</span></code></p>
 <blockquote>
-<div><p>Support for unbounded containers of indefinite elements. Memory is
-allocated for both the low-level array and for each of the elements.</p>
-</div></blockquote>
+<div>Support for unbounded containers of indefinite elements. Memory is
+allocated for both the low-level array and for each of the elements.</div></blockquote>
 <p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-indefinte_unbounded_ref.ads</span></code></p>
 <blockquote>
-<div><p>Similar to the previous one, but the elements are returned as
-reference types, which might be more efficent in general.</p>
-</div></blockquote>
+<div>Similar to the previous one, but the elements are returned as
+reference types, which might be more efficent in general.</div></blockquote>
 </div></blockquote>
 <p>All these packages improve on the generic vector by also providing the
 necessary aspects to support Ada’s <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">E</span> <span class="pre">of</span> <span class="pre">Vec</span></code> loops, as well as
@@ -255,15 +250,17 @@ in the algorithms.</p>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -272,7 +269,7 @@ in the algorithms.</p>
       &copy;2016, AdaCore.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
       
       |
