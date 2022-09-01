@@ -44,7 +44,7 @@ package GAL.Maps.Indef_Def_Unbounded with SPARK_Mode is
    package Elements is new GAL.Elements.Definite
       (Element_Type, Free => Free, Movable => True, Copyable => True);
 
-   function "=" (Left : Key_Type; Right : Keys.Traits.Stored) return Boolean
+   function "=" (Left : Key_Type; Right : Keys.Traits.Stored_Type) return Boolean
         is (Left = Right.all) with Inline;
 
    package Impl is new GAL.Maps.Generics

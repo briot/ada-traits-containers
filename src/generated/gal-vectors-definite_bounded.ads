@@ -62,7 +62,7 @@ package GAL.Vectors.Definite_Bounded with SPARK_Mode is
    subtype Element_Sequence is Vectors.Impl.M.Sequence with Ghost;
    package Content_Models is new GAL.Properties.SPARK.Content_Models
         (Map_Type     => Vectors.Base_Vector'Class,
-         Element_Type => Elements.Traits.Element,
+         Element_Type => Element_Type,
          Model_Type   => Element_Sequence,
          Index_Type   => Vectors.Impl.M.Extended_Index,
          Model        => Vectors.Impl.Model,

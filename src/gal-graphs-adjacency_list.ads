@@ -94,7 +94,7 @@ package GAL.Graphs.Adjacency_List is
       procedure Add_Vertices (Self : in out Graph; Count : Count_Type);
       function Add_Vertex
          (Self  : in out Graph;
-          Props : Vertex_Properties.Element) return Vertex;
+          Props : Vertex_Properties.Element_Type) return Vertex;
       --  Add a new vertex to the graph.
       --  Its associated properties are left uninitialized when the subprogram
       --  has no Props parameter. Your code should immediately set them.
@@ -102,7 +102,7 @@ package GAL.Graphs.Adjacency_List is
       procedure Set
          (Self  : in out Graph;
           V     : Vertex;
-          Props : Vertex_Properties.Element);
+          Props : Vertex_Properties.Element_Type);
       --  Modify the properties associated with a vertex
 
       function Add_Edge (Self : in out Graph; From, To : Vertex) return Edge;
@@ -110,7 +110,7 @@ package GAL.Graphs.Adjacency_List is
       function Add_Edge
          (Self     : in out Graph;
           From, To : Vertex;
-          Props    : Edge_Properties.Element) return Edge;
+          Props    : Edge_Properties.Element_Type) return Edge;
       --  Add a new edge to the graph.
       --  Its associated element is left uninitialized, your code should
       --  immediately set it.
@@ -118,7 +118,7 @@ package GAL.Graphs.Adjacency_List is
       procedure Set
          (Self  : in out Graph;
           E     : Edge;
-          Props : Edge_Properties.Element);
+          Props : Edge_Properties.Element_Type);
       --  Set the properties for the edge
 
       procedure Clear (Self : in out Graph);

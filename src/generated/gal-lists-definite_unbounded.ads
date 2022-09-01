@@ -62,7 +62,7 @@ package GAL.Lists.Definite_Unbounded with SPARK_Mode is
    subtype Cursor_Position_Map is Lists.Impl.P_Map with Ghost;
    package Content_Models is new GAL.Properties.SPARK.Content_Models
         (Map_Type     => Lists.Base_List'Class,
-         Element_Type => Elements.Traits.Element,
+         Element_Type => Element_Type,
          Model_Type   => Element_Sequence,
          Index_Type   => Lists.Impl.M.Extended_Index,
          Model        => Lists.Impl.Model,

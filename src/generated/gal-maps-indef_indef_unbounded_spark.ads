@@ -41,7 +41,7 @@ package GAL.Maps.Indef_Indef_Unbounded_SPARK with SPARK_Mode is
    package Elements is new GAL.Elements.Indefinite_SPARK
       (Element_Type, Pool => GAL.Pools.Global_Pool);
 
-   function "=" (Left : Key_Type; Right : Keys.Stored) return Boolean
+   function "=" (Left : Key_Type; Right : Keys.Stored_Type) return Boolean
         is (Left = Keys.Impl.To_Element (Right))
         with Inline;
 

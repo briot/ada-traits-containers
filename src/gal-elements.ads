@@ -89,7 +89,6 @@ package GAL.Elements with SPARK_Mode is
       --  original element is deleted.
 
    package Traits is
-      subtype Element is Element_Type;
       subtype Stored is Stored_Type;
       subtype Returned is Returned_Type;
       subtype Constant_Returned is Constant_Returned_Type;

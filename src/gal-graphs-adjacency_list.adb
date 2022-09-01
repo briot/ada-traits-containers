@@ -89,7 +89,7 @@ package body GAL.Graphs.Adjacency_List is
 
       function Add_Vertex
          (Self  : in out Graph;
-          Props : Vertex_Properties.Element) return Vertex
+          Props : Vertex_Properties.Element_Type) return Vertex
       is
          V : Vertex_Details_Type;
       begin
@@ -105,7 +105,7 @@ package body GAL.Graphs.Adjacency_List is
       procedure Set
          (Self  : in out Graph;
           V     : Vertex;
-          Props : Vertex_Properties.Element) is
+          Props : Vertex_Properties.Element_Type) is
       begin
          --  ??? What happens if it was never initialized by Add_Vertex
          Vertex_Properties.Release
@@ -134,7 +134,7 @@ package body GAL.Graphs.Adjacency_List is
       function Add_Edge
          (Self     : in out Graph;
           From, To : Vertex;
-          Props    : Edge_Properties.Element) return Edge
+          Props    : Edge_Properties.Element_Type) return Edge
       is
          D : Edge_Details_Type :=
             (From  => Vertex_Index (From),
@@ -166,7 +166,7 @@ package body GAL.Graphs.Adjacency_List is
       procedure Set
          (Self  : in out Graph;
           E     : Edge;
-          Props : Edge_Properties.Element) is
+          Props : Edge_Properties.Element_Type) is
       begin
          --  ??? What happens if it was never initialized by Add_Edge
          Edge_Properties.Release (Self.Edges.Reference (E.Current).Props);
