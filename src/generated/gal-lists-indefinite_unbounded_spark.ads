@@ -20,6 +20,32 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+--  GAL.Lists.Indefinite_Unbounded_SPARK
+--  ====================================
+--
+--  This package is a high level version of the lists. It uses a limited number
+--  of formal parameters to make instantiation easier and uses default choices
+--  for all other parameters. If you need full control over how memory is
+--  allocated, whether to use controlled types or not, and so on, please
+--  consider using the low-level packages instead.
+--
+--  Unbounded SPARK:
+--  ----------
+--  This container can store any number of elements, and will grow as needed.
+--  It requires memory allocations for the container itself.
+--  Internally, memory is managed as a single big array so that we can have
+--  SPARK pre and post conditions.
+
+--
+--  Indefinite SPARK elements:
+--  -------------------------
+--  These lists can store indefinite elements, for which the size is not known
+--  at runtime. This includes strings, arrays, class wide types and so on. In
+--  exchange for this generality, each elements will require extra memory
+--  allocations.
+--  For compatibility with SPARK, we hide the internal access types, and always
+--  return a copy of the elements rather than an access to it.
+
 pragma Ada_2012;
 with GAL.Elements.Indefinite_SPARK;
 with GAL.Lists.Generics;
@@ -34,6 +60,10 @@ package GAL.Lists.Indefinite_Unbounded_SPARK with SPARK_Mode is
    pragma Assertion_Policy
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
+   --------------------
+   -- Instantiations --
+   --------------------
+
    package Elements is new GAL.Elements.Indefinite_SPARK
       (Element_Type, Pool => GAL.Pools.Global_Pool);
    package Storage is new GAL.Lists.Storage.Unbounded_SPARK
@@ -41,7 +71,11 @@ package GAL.Lists.Indefinite_Unbounded_SPARK with SPARK_Mode is
        Container_Base_Type => GAL.Limited_Base);
    package Lists is new GAL.Lists.Generics (Storage.Traits);
    package Cursors renames Lists.Cursors;  --  Forward, Bidirectional
-   package Maps renames Lists.Maps;
+   package Maps renames Lists.Maps;        --  From cursors to elements
+
+   --------------------------
+   -- Types and Operations --
+   --------------------------
 
    subtype List is Lists.List;
    subtype Cursor is Lists.Cursor;
@@ -51,12 +85,16 @@ package GAL.Lists.Indefinite_Unbounded_SPARK with SPARK_Mode is
    No_Element : Cursor renames Lists.No_Element;
 
    procedure Swap
-      (Self : in out Cursors.Forward.Container;
+      (Self        : in out Cursors.Forward.Container;  --  List
        Left, Right : Cursor)
       renames Lists.Swap;
 
    function Copy (Self : List'Class) return List'Class;
    --  Return a deep copy of Self
+
+   -------------------
+   -- SPARK support --
+   -------------------
 
    subtype Element_Sequence is Lists.Impl.M.Sequence with Ghost;
    subtype Cursor_Position_Map is Lists.Impl.P_Map with Ghost;
@@ -69,5 +107,4 @@ package GAL.Lists.Indefinite_Unbounded_SPARK with SPARK_Mode is
          Get          => Lists.Impl.M.Get,
          First        => Lists.Impl.M.First,
          Last         => Lists.Impl.M.Last);
-   --  For SPARK proofs
 end GAL.Lists.Indefinite_Unbounded_SPARK;

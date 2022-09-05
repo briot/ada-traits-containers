@@ -20,6 +20,27 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+--  GAL.Vectors.Indefinite_Bounded
+--  ==============================
+--
+--  This package is a high level version of the vectors. It uses a limited
+--  number of formal parameters to make instantiation easier and uses
+--  default choices for all other parameters. If you need full control over
+--  how memory is allocated, whether to use controlled types or not, the growth
+--  strategy and so on, please consider using the low-level packages instead.
+--
+--  Bounded:
+--  ----------
+--  This container can store up to a maximum number of elements, as specified
+--  by the discriminant. As a result, it doesn't need memory allocations for
+--  the container itself.
+--
+--  Indefinite elements:
+--  -------------------
+--  These lists can store indefinite elements, for which the size is not known
+--  at runtime. This includes strings, arrays, class wide types and so on. In
+--  exchange for this generality, each elements will require extra memory
+--  allocations.
 pragma Ada_2012;
 with GAL.Elements.Indefinite;
 with GAL.Pools;

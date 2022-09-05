@@ -20,6 +20,26 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+--  GAL.Vectors.Definite_Bounded
+--  ============================
+--
+--  This package is a high level version of the vectors. It uses a limited
+--  number of formal parameters to make instantiation easier and uses
+--  default choices for all other parameters. If you need full control over
+--  how memory is allocated, whether to use controlled types or not, the growth
+--  strategy and so on, please consider using the low-level packages instead.
+--
+--  Bounded:
+--  ----------
+--  This container can store up to a maximum number of elements, as specified
+--  by the discriminant. As a result, it doesn't need memory allocations for
+--  the container itself.
+--
+--  Definite elements:
+--  ------------------
+--  This container can only store elements whose size is known at compile time.
+--  In exchange, it doesn't need any memory allocation when adding new
+--  elements.
 pragma Ada_2012;
 with GAL.Elements.Definite;
 with GAL.Properties.SPARK;

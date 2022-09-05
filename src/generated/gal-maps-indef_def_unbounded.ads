@@ -20,6 +20,32 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+--  GAL.Maps.Indef_Def_Unbounded
+--  ============================
+--
+--  This package is a high level version of the maps. It uses a limited
+--  number of formal parameters to make instantiation easier and uses
+--  default choices for all other parameters. If you need full control over
+--  how memory is allocated, whether to use controlled types or not
+--  and so on, please consider using the low-level packages instead.
+--
+--  Unbounded:
+--  ----------
+--  This container can store any number of elements, and will grow as needed.
+--  It requires memory allocations for the container itself.
+--
+--  Indefinite keys:
+--  ---------------
+--  These lists can store indefinite keys, for which the size is not known
+--  at runtime. This includes strings, arrays, class wide types and so on. In
+--  exchange for this generality, each keys will require extra memory
+--  allocations.
+--
+--  Definite elements:
+--  ------------------
+--  This container can only store elements whose size is known at compile time.
+--  In exchange, it doesn't need any memory allocation when adding new
+--  elements.
 pragma Ada_2012;
 with GAL.Elements.Definite;
 with GAL.Elements.Indefinite;
@@ -44,7 +70,7 @@ package GAL.Maps.Indef_Def_Unbounded with SPARK_Mode is
    package Elements is new GAL.Elements.Definite
       (Element_Type, Free => Free, Movable => True, Copyable => True);
 
-   function "=" (Left : Key_Type; Right : Keys.Traits.Stored_Type) return Boolean
+   function "=" (Left : Key_Type; Right : Keys.Traits.Stored) return Boolean
         is (Left = Right.all) with Inline;
 
    package Impl is new GAL.Maps.Generics

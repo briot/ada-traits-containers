@@ -20,6 +20,27 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+--  GAL.Lists.Definite_Bounded
+--  ==========================
+--
+--  This package is a high level version of the lists. It uses a limited number
+--  of formal parameters to make instantiation easier and uses default choices
+--  for all other parameters. If you need full control over how memory is
+--  allocated, whether to use controlled types or not, and so on, please
+--  consider using the low-level packages instead.
+--
+--  Bounded:
+--  ----------
+--  This container can store up to a maximum number of elements, as specified
+--  by the discriminant. As a result, it doesn't need memory allocations for
+--  the container itself.
+--
+--  Definite elements:
+--  ------------------
+--  This container can only store elements whose size is known at compile time.
+--  In exchange, it doesn't need any memory allocation when adding new
+--  elements.
+
 pragma Ada_2012;
 with GAL.Elements.Definite;
 with GAL.Lists.Generics;
@@ -34,6 +55,10 @@ package GAL.Lists.Definite_Bounded with SPARK_Mode is
    pragma Assertion_Policy
       (Pre => Suppressible, Ghost => Suppressible, Post => Ignore);
 
+   --------------------
+   -- Instantiations --
+   --------------------
+
    package Elements is new GAL.Elements.Definite
       (Element_Type, Free => Free, Movable => True, Copyable => True);
    package Storage is new GAL.Lists.Storage.Bounded
@@ -41,7 +66,11 @@ package GAL.Lists.Definite_Bounded with SPARK_Mode is
        Container_Base_Type => GAL.Controlled_Base);
    package Lists is new GAL.Lists.Generics (Storage.Traits);
    package Cursors renames Lists.Cursors;  --  Forward, Bidirectional
-   package Maps renames Lists.Maps;
+   package Maps renames Lists.Maps;        --  From cursors to elements
+
+   --------------------------
+   -- Types and Operations --
+   --------------------------
 
    subtype List is Lists.List;
    subtype Cursor is Lists.Cursor;
@@ -51,9 +80,13 @@ package GAL.Lists.Definite_Bounded with SPARK_Mode is
    No_Element : Cursor renames Lists.No_Element;
 
    procedure Swap
-      (Self : in out Cursors.Forward.Container;
+      (Self        : in out Cursors.Forward.Container;  --  List
        Left, Right : Cursor)
       renames Lists.Swap;
+
+   -------------------
+   -- SPARK support --
+   -------------------
 
    subtype Element_Sequence is Lists.Impl.M.Sequence with Ghost;
    subtype Cursor_Position_Map is Lists.Impl.P_Map with Ghost;
@@ -66,5 +99,4 @@ package GAL.Lists.Definite_Bounded with SPARK_Mode is
          Get          => Lists.Impl.M.Get,
          First        => Lists.Impl.M.First,
          Last         => Lists.Impl.M.Last);
-   --  For SPARK proofs
 end GAL.Lists.Definite_Bounded;

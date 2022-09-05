@@ -20,6 +20,25 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+--  GAL.Vectors.Unmovable_Definite_Unbounded
+--  ========================================
+--
+--  This package is a high level version of the vectors. It uses a limited
+--  number of formal parameters to make instantiation easier and uses
+--  default choices for all other parameters. If you need full control over
+--  how memory is allocated, whether to use controlled types or not, the growth
+--  strategy and so on, please consider using the low-level packages instead.
+--
+--  Unbounded:
+--  ----------
+--  This container can store any number of elements, and will grow as needed.
+--  It requires memory allocations for the container itself.
+--
+--  Definite elements:
+--  ------------------
+--  This container can only store elements whose size is known at compile time.
+--  In exchange, it doesn't need any memory allocation when adding new
+--  elements.
 pragma Ada_2012;
 with GAL.Elements.Definite;
 with GAL.Properties.SPARK;

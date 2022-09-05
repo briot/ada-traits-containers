@@ -20,6 +20,40 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+--  GAL.Maps.Indef_Indef_Unbounded_SPARK
+--  ====================================
+--
+--  This package is a high level version of the maps. It uses a limited
+--  number of formal parameters to make instantiation easier and uses
+--  default choices for all other parameters. If you need full control over
+--  how memory is allocated, whether to use controlled types or not
+--  and so on, please consider using the low-level packages instead.
+--
+--  Unbounded SPARK:
+--  ----------
+--  This container can store any number of elements, and will grow as needed.
+--  It requires memory allocations for the container itself.
+--  Internally, memory is managed as a single big array so that we can have
+--  SPARK pre and post conditions.
+
+--
+--  Indefinite SPARK keys:
+--  ---------------------
+--  These lists can store indefinite keys, for which the size is not known
+--  at runtime. This includes strings, arrays, class wide types and so on. In
+--  exchange for this generality, each keys will require extra memory
+--  allocations.
+--  For compatibility with SPARK, we hide the internal access types, and always
+--  return a copy of the keys rather than an access to it.
+--
+--  Indefinite SPARK elements:
+--  -------------------------
+--  These lists can store indefinite elements, for which the size is not known
+--  at runtime. This includes strings, arrays, class wide types and so on. In
+--  exchange for this generality, each elements will require extra memory
+--  allocations.
+--  For compatibility with SPARK, we hide the internal access types, and always
+--  return a copy of the elements rather than an access to it.
 pragma Ada_2012;
 with GAL.Elements.Indefinite_SPARK;
 with GAL.Maps.Generics;
@@ -41,7 +75,7 @@ package GAL.Maps.Indef_Indef_Unbounded_SPARK with SPARK_Mode is
    package Elements is new GAL.Elements.Indefinite_SPARK
       (Element_Type, Pool => GAL.Pools.Global_Pool);
 
-   function "=" (Left : Key_Type; Right : Keys.Stored_Type) return Boolean
+   function "=" (Left : Key_Type; Right : Keys.Stored) return Boolean
         is (Left = Keys.Impl.To_Element (Right))
         with Inline;
 
