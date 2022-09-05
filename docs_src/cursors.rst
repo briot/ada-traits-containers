@@ -34,7 +34,7 @@ used with any kind of container, even those not provided in this library.
 
 For this, the algorithms need general notions like "give me all elements in
 the container". As you might have guessed, this is provided by the use of
-one of the traits packages defined in :file:`conts-cursors.ads`:
+one of the traits packages defined in :file:`gal-cursors.ads`:
 
   ``Forward_Cursors``
 

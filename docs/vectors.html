@@ -54,12 +54,12 @@ actual vector, but not meant to be used directly by applications.</p>
 <p>Instead, it lets you chose between various possible implementations for
 the vectors:</p>
 <blockquote>
-<div><p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-unbounded.ads</span></code></p>
+<div><p><code class="file docutils literal notranslate"><span class="pre">gal-vectors-unbounded.ads</span></code></p>
 <blockquote>
 <div>This is the type of nodes that should be used for <strong>unbounded vectors</strong>,
 that will grow automatically as more elements are added to it. See the
 <a class="reference internal" href="#vector-resizing-strategy"><span class="std std-ref">Resizing strategy</span></a> section below.</div></blockquote>
-<p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-bounded.ads</span></code></p>
+<p><code class="file docutils literal notranslate"><span class="pre">gal-vectors-bounded.ads</span></code></p>
 <blockquote>
 <div><p>This package provides support for <strong>bounded vectors</strong>. Such vectors have a
 statically known maximal capacity, and no more than this many elements can
@@ -118,7 +118,7 @@ expected size, they return the new capacity that shoud be allocated.</div></bloc
 <h2>Generic vectors<a class="headerlink" href="#generic-vectors" title="Permalink to this headline">¶</a></h2>
 <p>If you need full control on the implementation of your vector packages, you
 might chose to directly instantiate the package
-<code class="file docutils literal notranslate"><span class="pre">conts-vector-generics.ads</span></code>. This package requires two pieces of
+<code class="file docutils literal notranslate"><span class="pre">gal-vector-generics.ads</span></code>. This package requires two pieces of
 information:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">Index_Type</span></code></p>
@@ -174,7 +174,7 @@ not compatible with the standard Ada vectors.</p>
 <p>For this, this library provides a set of packages that are easier to
 instantiate:</p>
 <blockquote>
-<div><p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-definite_bounded.ads</span></code></p>
+<div><p><code class="file docutils literal notranslate"><span class="pre">gal-vectors-definite_bounded.ads</span></code></p>
 <blockquote>
 <div><p>Support for bounded containers of definite elements. Such vectors never
 need to allocate any memory, so are very efficient.</p>
@@ -182,16 +182,16 @@ need to allocate any memory, so are very efficient.</p>
 </pre></div>
 </div>
 </div></blockquote>
-<p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-definite_unbounded.ads</span></code></p>
+<p><code class="file docutils literal notranslate"><span class="pre">gal-vectors-definite_unbounded.ads</span></code></p>
 <blockquote>
 <div>Support for unbounded containers of definite elements. They need to
 allocate memory for the low-level array, but not for the elements
 themselves. The vector will grow as needed.</div></blockquote>
-<p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-indefinite_unbounded.ads</span></code></p>
+<p><code class="file docutils literal notranslate"><span class="pre">gal-vectors-indefinite_unbounded.ads</span></code></p>
 <blockquote>
 <div>Support for unbounded containers of indefinite elements. Memory is
 allocated for both the low-level array and for each of the elements.</div></blockquote>
-<p><code class="file docutils literal notranslate"><span class="pre">conts-vectors-indefinte_unbounded_ref.ads</span></code></p>
+<p><code class="file docutils literal notranslate"><span class="pre">gal-vectors-indefinte_unbounded_ref.ads</span></code></p>
 <blockquote>
 <div>Similar to the previous one, but the elements are returned as
 reference types, which might be more efficent in general.</div></blockquote>

@@ -71,7 +71,7 @@ package GAL.Lists.Impl with SPARK_Mode is
    function Is_Empty (Self : Base_List'Class) return Boolean
       is (Length (Self) = 0)
       with Inline;
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
 
    ------------------
    -- Formal Model --
@@ -164,7 +164,7 @@ package GAL.Lists.Impl with SPARK_Mode is
 
    function Has_Element
      (Self : Base_List'Class; Position : Cursor) return Boolean
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
      with
        Inline,
        Global => null,
@@ -173,7 +173,7 @@ package GAL.Lists.Impl with SPARK_Mode is
    pragma Annotate (GNATprove, Inline_For_Proof, Entity => Has_Element);
 
    function First (Self : Base_List'Class) return Cursor
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
      with
        Inline,
        Global         => null,
@@ -184,7 +184,7 @@ package GAL.Lists.Impl with SPARK_Mode is
 
    procedure Previous
      (Self : Base_List'Class; Position : in out Cursor)
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
      with
        Inline,
        Global         => null,
@@ -197,7 +197,7 @@ package GAL.Lists.Impl with SPARK_Mode is
                P_Get (Positions (Self), Position'Old) - 1);
 
    procedure Next (Self : Base_List'Class; Position : in out Cursor)
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
      with
        Inline,
        Global => null,
@@ -211,7 +211,7 @@ package GAL.Lists.Impl with SPARK_Mode is
               Impl.P_Get (Impl.Positions (Self), Position'Old) + 1);
 
    function Last (Self : Base_List'Class) return Cursor
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
      with
        Global         => null,
        Contract_Cases =>
@@ -242,14 +242,14 @@ package GAL.Lists.Impl with SPARK_Mode is
      with Global => null;
 
    procedure Clear (Self : in out Base_List'Class)
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
      with
        Post => Capacity (Self) = Capacity (Self)'Old
           and then Length (Self) = 0;
 
    procedure Assign
      (Self : in out Base_List'Class; Source : Base_List'Class)
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
      with
        Global => null,
        Post   => Length (Self) = Length (Source)
@@ -302,7 +302,7 @@ package GAL.Lists.Impl with SPARK_Mode is
      (Self    : in out Base_List'Class;
       Element : Element_Type;
       Count   : Count_Type := 1)
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
      with
        Global         => null,
        Pre            => Length (Self) <= Capacity (Self) - Count,
@@ -366,7 +366,7 @@ package GAL.Lists.Impl with SPARK_Mode is
      (Self     : in out Base_List'Class;
       Position : in out Cursor;
       Count    : Count_Type := 1)
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
      with
        Global       => null,
        Pre          => P_Mem (Positions (Self), Position),
@@ -417,7 +417,7 @@ package GAL.Lists.Impl with SPARK_Mode is
       Before  : Cursor;
       Element : Element_Type;
       Count   : Count_Type := 1)
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
      with
        Global         => null,
        Pre            => Length (Self) <= Capacity (Self) - Count
@@ -499,15 +499,15 @@ package GAL.Lists.Impl with SPARK_Mode is
                         P_Get (Positions (Self), Position),
                         Element,
                         Model (Self));
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
 
    function First_Primitive (Self : Base_List) return Cursor
      is (First (Self)) with Inline;
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
 
    function Element_Primitive
      (Self : Base_List; Position : Cursor) return Constant_Returned_Type
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
      is (Element (Self, Position))
      with
        Inline,
@@ -517,7 +517,7 @@ package GAL.Lists.Impl with SPARK_Mode is
 
    function Has_Element_Primitive
      (Self : Base_List; Position : Cursor) return Boolean
-   --  See documentation in conts-lists-generics.ads
+   --  See documentation in gal-lists-generics.ads
      is (Has_Element (Self, Position))
      with
        Inline,

@@ -23,7 +23,7 @@
 --  This package hides the access types.
 --  Reference types are not possible with SPARK, so this package always
 --  return a copy of the element (as opposed to what's done in
---  conts-elements-indefinite.ads)
+--  gal-elements-indefinite.ads)
 
 pragma Ada_2012;
 with GAL.Pools;

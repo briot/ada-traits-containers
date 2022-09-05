@@ -27,13 +27,13 @@ actual vector, but not meant to be used directly by applications.
 Instead, it lets you chose between various possible implementations for
 the vectors:
 
-  :file:`conts-vectors-unbounded.ads`
+  :file:`gal-vectors-unbounded.ads`
 
      This is the type of nodes that should be used for **unbounded vectors**,
      that will grow automatically as more elements are added to it. See the
      :ref:`vector_resizing_strategy` section below.
 
-  :file:`conts-vectors-bounded.ads`
+  :file:`gal-vectors-bounded.ads`
 
      This package provides support for **bounded vectors**. Such vectors have a
      statically known maximal capacity, and no more than this many elements can
@@ -100,7 +100,7 @@ Generic vectors
 
 If you need full control on the implementation of your vector packages, you
 might chose to directly instantiate the package
-:file:`conts-vector-generics.ads`. This package requires two pieces of
+:file:`gal-vector-generics.ads`. This package requires two pieces of
 information:
 
    ``Index_Type``
@@ -172,7 +172,7 @@ not compatible with the standard Ada vectors.
 For this, this library provides a set of packages that are easier to
 instantiate:
 
-  :file:`conts-vectors-definite_bounded.ads`
+  :file:`gal-vectors-definite_bounded.ads`
 
      Support for bounded containers of definite elements. Such vectors never
      need to allocate any memory, so are very efficient.
@@ -181,18 +181,18 @@ instantiate:
 
         --  show an example on how to specify the capacity
 
-  :file:`conts-vectors-definite_unbounded.ads`
+  :file:`gal-vectors-definite_unbounded.ads`
 
      Support for unbounded containers of definite elements. They need to
      allocate memory for the low-level array, but not for the elements
      themselves. The vector will grow as needed.
 
-  :file:`conts-vectors-indefinite_unbounded.ads`
+  :file:`gal-vectors-indefinite_unbounded.ads`
 
      Support for unbounded containers of indefinite elements. Memory is
      allocated for both the low-level array and for each of the elements.
 
-  :file:`conts-vectors-indefinte_unbounded_ref.ads`
+  :file:`gal-vectors-indefinte_unbounded_ref.ads`
 
      Similar to the previous one, but the elements are returned as
      reference types, which might be more efficent in general.

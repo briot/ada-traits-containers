@@ -6,12 +6,12 @@ PREFIX=
 # In our automatic nightly builds, we want to consider the source
 # directory as read-only, and build in another directory.
 ifeq (${SOURCE_DIR},)
-GPR_CONTS=src/gal.gpr
+GPR_GAL=src/gal.gpr
 GPR_ROOT=root.gpr
 SOURCE_DIR=$(shell pwd)
 RBD=
 else
-GPR_CONTS=$(SOURCE_DIR)/src/gal.gpr
+GPR_GAL=$(SOURCE_DIR)/src/gal.gpr
 GPR_ROOT=${SOURCE_DIR}/root.gpr
 RBD=--relocate-build-tree
 endif
@@ -35,7 +35,7 @@ generate: ./generate.py
 	-python3 ./generate.py
 
 build: generate
-	${GPRBUILD} -P${GPR_CONTS} -XBUILD=${BUILD}
+	${GPRBUILD} -P${GPR_GAL} -XBUILD=${BUILD}
 
 build_test_debug: generate
 	${GPRBUILD} -XBUILD=Debug tests/tests.gpr
@@ -47,7 +47,7 @@ docs:
 	${MAKE} -C docs_src SPHINXOPTS=-q html
 
 install:
-	${GPRINSTALL} -P${GPR_CONTS} --prefix=${PREFIX}
+	${GPRINSTALL} -P${GPR_GAL} --prefix=${PREFIX}
 
 test_debug: build_test_debug
 	tests/obj/Debug/main

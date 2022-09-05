@@ -51,7 +51,7 @@ can be edited with any text editor.
    to only keep the n first elements of the range, or Group_By.
    http://www.informit.com/articles/printerfriendly/1407357
 
-   See Conts.Algorithms.Ranged_Random_Access_Cursors
+   See gal.Algorithms.Ranged_Random_Access_Cursors
    Ranges are simply wrappers around the base cursors classes, but the
    drawback is that they require separate instantiations. No need to change
    anything to the algorithms, although they need to be instantiated for
@@ -77,7 +77,7 @@ can be edited with any text editor.
    so "=" applies to integers, and we can use this to find all persons aged
    42 in the vector (T is a person, P is the age, extracted from the person).
 
-   Seems like this can already be done via our Conts.Properties maps.
+   Seems like this can already be done via our gal.Properties maps.
 
 * Task safe containers
 
@@ -137,7 +137,7 @@ can be edited with any text editor.
 
 * Elements traits
 
-** TODO Review =Conts.Elements.Arrays=
+** TODO Review =gal.Elements.Arrays=
    It might be more efficient in some cases, but currently leads to a
    =Storage_Error= since we are doing low-level manipulations.
 
@@ -164,20 +164,20 @@ can be edited with any text editor.
       generic
          with function "<" (Left, Right : Element_Type) return Boolean is <>;
       package Sort is
-         procedure Quicksort is new Conts.Algorithms.Quicksort
+         procedure Quicksort is new gal.Algorithms.Quicksort
            (Cursors.Random_Access, Maps.Element, "<", Swap => Swap);
       end Sort;
       --  Users then have to use    Sort.Quicksort.
    end Vectors.Definite_Unbounded;
 
-** BUG conts-properties need to rename Get into Value
+** BUG gal-properties need to rename Get into Value
    This is then use in the implementation of Quicksort. For some reason, we
    can't use Getters.Get directly when a local instance of Shell_Sort is
    done. This seems like a bug in the compiler.
 
 ** TODO Ranged_Random_Access_Cursors part of the containers
    Should the containers provide these directly, rather than have a separate
-   package (which requires its own instantiation) in conts-algorithms ?
+   package (which requires its own instantiation) in gal-algorithms ?
 
 ** TODO =Equal=
    Compares two containers, ignore order when relevant.
@@ -402,7 +402,7 @@ http://ootips.org/yonat/4dev/smart-pointers.html
    Newer versions of the stl no longer use copy-on-write for std::string, since
    that doesn't always work correctly with threads.
    However, they have an optimization in place so that small strings do not
-   require malloc. This is what we are doing in =Conts.Elements.Arrays=, but
+   require malloc. This is what we are doing in =gal.Elements.Arrays=, but
    with lots of space optimization as well.
    Some implementations do this by using one bit to store whether this is a
    long or short string, and this bit is stored as part of the size.
@@ -449,3 +449,6 @@ http://ootips.org/yonat/4dev/smart-pointers.html
 ** Stream operations as separate algorithms on type
    We do not want them by default, since they add significant amount of code
    for each instantiation.
+
+
+* See Ada Rationale 12.4.3 for examples of signature packages

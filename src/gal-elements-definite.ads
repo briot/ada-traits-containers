@@ -28,10 +28,6 @@ pragma Ada_2012;
 
 generic
    type Element_Type is private;
-   --  Must be a copyable type (as defined in conts-elements.ads), and
-   --  therefore not a pointer type. In such a case, use
-   --  conts-elements-indefinite.ads instead, and let it do the allocations
-   --  itself.
 
    with procedure Free (E : in out Element_Type) is null;
    --  Free is called when the element is no longer used (removed from
@@ -40,7 +36,10 @@ generic
    --  access type that you want to deallocate.
 
    Movable  : Boolean := True;    --  should be False for controlled types
-   Copyable : Boolean := True;    --  should be False for controlled types
+
+   Copyable : Boolean := True;
+   --  should be False for controlled types and access types. For such types,
+   --  use gal-elements-indefinite.ads instead and let it do the allocations.
 
 package GAL.Elements.Definite with SPARK_Mode is
 

@@ -149,7 +149,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
    function Element
      (Self : Base_Vector'Class; Position : Index_Type)
      return Constant_Returned_Type
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Inline,
        Global => null,
@@ -160,7 +160,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
    function Reference
      (Self : in out Base_Vector'Class; Position : Index_Type)
      return Returned_Type
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Inline,
        Global => null,
@@ -168,14 +168,14 @@ package GAL.Vectors.Impl with SPARK_Mode is
 
    function Last_Element
      (Self : Base_Vector'Class) return Constant_Returned_Type
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Global => null,
        Pre    => Length (Self) > 0,
        Post   => Last_Element'Result = Element (Self, Last (Self));
 
    function First (Self : Base_Vector'Class) return Cursor
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Inline,
        Global         => null,
@@ -187,7 +187,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
    function Has_Element
      (Self : Base_Vector'Class; Position : Cursor) return Boolean
      is (Position >= Index_Type'First and then Position <= Self.Last)
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Inline,
        Global => null,
@@ -196,7 +196,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
    pragma Annotate (GNATprove, Inline_For_Proof, Entity => Has_Element);
 
    procedure Next (Self : Base_Vector'Class; Position : in out Cursor)
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Inline,
        Global => null,
@@ -208,7 +208,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
 
    procedure Previous
      (Self : Base_Vector'Class; Position : in out Cursor)
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Inline,
        Global         => null,
@@ -266,7 +266,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
      (Self    : in out Base_Vector'Class;
       Length  : Count_Type;
       Element : Storage.Elements.Element_Type)
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Global => null,
        Pre    => Length <= Max_Capacity (Self),
@@ -292,7 +292,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
                                       E   => Element));
 
    procedure Clear (Self : in out Base_Vector'Class)
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Global => null,
        Post   => Length (Self) = 0;
@@ -301,7 +301,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
      (Self    : in out Base_Vector'Class;
       Element : Element_Type;
       Count   : Count_Type := 1)
-     --  See documentation in conts-vectors-generics.ads
+     --  See documentation in gal-vectors-generics.ads
      with
        Global => null,
        Pre    => Length (Self) <= Max_Capacity (Self) - Count,
@@ -324,7 +324,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
       Before  : Extended_Index;
       Element : Element_Type;
       Count   : Count_Type := 1)
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Global  => null,
        Pre     => Length (Self) <= Max_Capacity (Self) - Count
@@ -356,7 +356,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
 
    procedure Assign
      (Self : in out Base_Vector'Class; Source : Base_Vector'Class)
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Global => null,
        Post   => Model (Self) = Model (Source);
@@ -364,7 +364,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
    function Is_Empty (Self : Base_Vector'Class) return Boolean
      is (Length (Self) = 0)
      with Inline;
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
 
    procedure Replace_Element
      (Self     : in out Base_Vector'Class;
@@ -399,7 +399,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
      (Self  : in out Base_Vector'Class;
       Index : Index_Type;
       Count : Count_Type := 1)
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Global         => null,
        Pre            => Index <= Last (Self),
@@ -432,7 +432,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
            Offset => Count));
 
    procedure Delete_Last (Self : in out Base_Vector'Class)
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Global => null,
        Pre    => Length (Self) > 0,
@@ -461,7 +461,7 @@ package GAL.Vectors.Impl with SPARK_Mode is
    procedure Swap
      (Self        : in out Base_Vector'Class;
       Left, Right : Index_Type)
-   --  See documentation in conts-vectors-generics.ads
+   --  See documentation in gal-vectors-generics.ads
      with
        Global => null,
        Pre    => Left <= Last (Self) and then Right <= Last (Self),

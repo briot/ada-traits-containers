@@ -159,7 +159,7 @@ package GAL.Cursors with SPARK_Mode is
         (Self : Container_Type; Idx : Index_Type) return Boolean
         is (Idx >= First (Self) and then Idx <= Last (Self)) with Inline;
       --  This might be made efficient if you pass a First function that
-      --  returns a constant and if this contstant is Index_Type'First then
+      --  returns a constant and if this constant is Index_Type'First then
       --  the compiler can simply remove the test.
 
       --  A random cursor is also a bidirectional and forward cursor

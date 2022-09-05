@@ -49,12 +49,12 @@ unconstrained types), always use explicit copy and free (for pointers and
 controlled types) and never use `realloc` (for types that rely on their
 address).
 
-.. index: conts-elements.ads
+.. index: gal-elements.ads
 .. index: element traits
 
 Instead, this library introduces the concept of *Element Traits*, which are
 packages that describe the various properties of elements. Such a package
-is defined in :file:`conts-elements.ads`, and provides the following
+is defined in :file:`gal-elements.ads`, and provides the following
 information:
 
   ``Element_Type``
@@ -122,40 +122,40 @@ general very simple implementations (expression functions will often be
 enough). However, the library provides a number of higher-level packages to
 make it even easier:
 
-  :file:`conts-elements-definite.ads`
+  :file:`gal-elements-definite.ads`
 
      A simple generic package that only requires an ``Element_Type`` and
      provides all the other fields. It is suitable for scalars and simple
      records, but not for pointer types (since it copies the elements
      directly).
 
-  :file:`conts-elements-indefinite.ads`
+  :file:`gal-elements-indefinite.ads`
 
      A simple generic package that only requires an ``Element_Type``, which
      could be any type (unconstrained, class-wide, ...). It will allocate
      memory to store the element in containers.
 
-  :file:`conts-elements-indefinite_ref.ads`
+  :file:`gal-elements-indefinite_ref.ads`
 
-     Similar to :file:`conts-elements-indefinite.ads`, but returns a
+     Similar to :file:`gal-elements-indefinite.ads`, but returns a
      reference type rather than the type itself. This will often be more
      efficient.
 
-  :file:`conts-elements-indefinte_spark.ads`
+  :file:`gal-elements-indefinte_spark.ads`
 
-     Similar to :file:`conts-elements-indefinite.ads`, but hides the
+     Similar to :file:`gal-elements-indefinite.ads`, but hides the
      access types. This is suitable for use with the SPARK language.
 
-  :file:`conts-elements-null_elements.ads`
+  :file:`gal-elements-null_elements.ads`
 
      Storing a null record. This can be used when no additional information
      is needed in fact. For instance, a graph associates some information with
      each of its vertices. But sometimes you have no need for that, and you
      can simply use this package for the type of the extra information.
 
-  :file:`conts-elements-arrays.ads`
+  :file:`gal-elements-arrays.ads`
 
-     Similar to :file:`conts-elements-indefinite.ads`, but slightly optimized
+     Similar to :file:`gal-elements-indefinite.ads`, but slightly optimized
      for arrays. In particular, this will avoid allocating memory when the
      array is small, which might in some cases improve efficiency (although
      the data structure will be bigger, so you should measure whether you
