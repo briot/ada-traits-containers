@@ -78,11 +78,10 @@ package GAL.Elements with SPARK_Mode is
       --  since copying would create an alias and it would be impossible to
       --  know who the owner of the element is and when to free it.
 
-      Movable : Boolean := True;
+      Movable : Boolean := False;
       --  If True, a stored_Element can be moved in memory (as part of a
       --  realloc call for instance), bypassing Adjust and Finalize calls
       --  on controlled types.
-      --
       --  This is very similar to Copyable, but no aliasing issue occurs, so
       --  this should be safe for access types.
       --  When an element is not Movable, a copy is made (via Copy), and the
@@ -102,6 +101,7 @@ package GAL.Elements with SPARK_Mode is
       function To_Element_Type
         (E : Constant_Returned_Type) return Element_Type
         renames To_Element;
+
    end Traits;
 
 end GAL.Elements;

@@ -35,9 +35,10 @@ generic
    --  nothing, but this procedure is useful if the Element_Type is an
    --  access type that you want to deallocate.
 
-   Movable  : Boolean := True;    --  should be False for controlled types
+   Movable  : Boolean := False;
+   --  should be False for controlled types
 
-   Copyable : Boolean := True;
+   Copyable : Boolean := False;
    --  should be False for controlled types and access types. For such types,
    --  use gal-elements-indefinite.ads instead and let it do the allocations.
 

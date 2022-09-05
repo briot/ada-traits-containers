@@ -37,7 +37,7 @@ package Report is
    --  Tests are grouped into categories (the overall part of the code they are
    --  testing). Those categories result in separate tables in the output.
 
-   Default_Minimum_Running_Time : constant Duration := 1.0;
+   Default_Minimum_Running_Time : constant Duration := 0.2;
    --  Ensures that a test is repeated often enough that the total time is at
    --  least this many seconds.
 

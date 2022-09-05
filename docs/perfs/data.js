@@ -9,7 +9,7 @@ var data = {
        "size": 24,
        "tests": {
           "fill": {
-             "duration": 0.003477000,
+             "duration": 0.004218000,
              "group":true,
              "allocated": 4800000,
              "allocs": 200000,
@@ -17,7 +17,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.003426000,
+             "duration": 0.004719000,
              "group":false,
              "allocated": 4800000,
              "allocs": 200000,
@@ -25,7 +25,7 @@ var data = {
              "frees": 200000
         },
           "cursor loop": {
-             "duration": 0.001207000,
+             "duration": 0.000713000,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -33,7 +33,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000838000,
+             "duration": 0.000626000,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -41,7 +41,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000519000,
+             "duration": 0.000520000,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -56,7 +56,7 @@ var data = {
        "size": 40,
        "tests": {
           "fill": {
-             "duration": 0.001336737,
+             "duration": 0.001520364,
              "group":true,
              "allocated": 4800000,
              "allocs": 200000,
@@ -64,7 +64,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.001385345,
+             "duration": 0.001370815,
              "group":false,
              "allocated": 4800000,
              "allocs": 200000,
@@ -72,7 +72,7 @@ var data = {
              "frees": 200000
         },
           "cursor loop": {
-             "duration": 0.000230723,
+             "duration": 0.000483923,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -80,7 +80,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000474573,
+             "duration": 0.000286312,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -95,7 +95,7 @@ var data = {
        "size": 2400040,
        "tests": {
           "fill": {
-             "duration": 0.000354159,
+             "duration": 0.000353867,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -103,7 +103,7 @@ var data = {
              "frees": 0
         },
           "copy": {
-             "duration": 0.000083154,
+             "duration": 0.000082364,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -111,7 +111,7 @@ var data = {
              "frees": 0
         },
           "cursor loop": {
-             "duration": 0.000339375,
+             "duration": 0.000338149,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -119,7 +119,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000394851,
+             "duration": 0.000384029,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -134,7 +134,7 @@ var data = {
        "size": 40,
        "tests": {
           "fill": {
-             "duration": 0.002692836,
+             "duration": 0.002652671,
              "group":true,
              "allocated": 5600000,
              "allocs": 400000,
@@ -142,7 +142,7 @@ var data = {
              "frees": 400000
         },
           "copy": {
-             "duration": 0.002832898,
+             "duration": 0.003149828,
              "group":false,
              "allocated": 5600000,
              "allocs": 400000,
@@ -150,7 +150,7 @@ var data = {
              "frees": 400000
         },
           "cursor loop": {
-             "duration": 0.000668377,
+             "duration": 0.000673455,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -158,7 +158,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000608533,
+             "duration": 0.000691307,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -173,7 +173,7 @@ var data = {
        "size": 2400032,
        "tests": {
           "fill": {
-             "duration": 0.000517893,
+             "duration": 0.000539563,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -181,7 +181,7 @@ var data = {
              "frees": 0
         },
           "copy": {
-             "duration": 0.000091970,
+             "duration": 0.000082217,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -189,7 +189,7 @@ var data = {
              "frees": 0
         },
           "cursor loop": {
-             "duration": 0.000304328,
+             "duration": 0.000300548,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -197,7 +197,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000268414,
+             "duration": 0.000269016,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -205,7 +205,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000307487,
+             "duration": 0.000282206,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -220,7 +220,7 @@ var data = {
        "size": 2400032,
        "tests": {
           "fill": {
-             "duration": 0.000456256,
+             "duration": 0.000424413,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -228,7 +228,7 @@ var data = {
              "frees": 0
         },
           "copy": {
-             "duration": 0.000087898,
+             "duration": 0.000084286,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -236,7 +236,7 @@ var data = {
              "frees": 0
         },
           "cursor loop": {
-             "duration": 0.000268560,
+             "duration": 0.000269429,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -244,7 +244,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000268158,
+             "duration": 0.000269968,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -252,7 +252,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000284112,
+             "duration": 0.000283477,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -267,7 +267,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.001871721,
+             "duration": 0.001638463,
              "group":true,
              "allocated": 4800000,
              "allocs": 200000,
@@ -275,7 +275,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.001711292,
+             "duration": 0.001668367,
              "group":false,
              "allocated": 4800000,
              "allocs": 200000,
@@ -283,7 +283,7 @@ var data = {
              "frees": 200000
         },
           "cursor loop": {
-             "duration": 0.000239007,
+             "duration": 0.000233759,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -291,7 +291,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000453621,
+             "duration": 0.000490218,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -299,7 +299,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000227438,
+             "duration": 0.000239368,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -314,7 +314,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.001737891,
+             "duration": 0.001550000,
              "group":true,
              "allocated": 4800000,
              "allocs": 200000,
@@ -322,7 +322,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.001694998,
+             "duration": 0.001839560,
              "group":false,
              "allocated": 4800000,
              "allocs": 200000,
@@ -330,7 +330,7 @@ var data = {
              "frees": 200000
         },
           "cursor loop": {
-             "duration": 0.000274315,
+             "duration": 0.000280146,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -338,7 +338,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000510479,
+             "duration": 0.000500795,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -346,7 +346,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000310089,
+             "duration": 0.000275511,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -361,7 +361,7 @@ var data = {
        "size": 3200032,
        "tests": {
           "fill": {
-             "duration": 0.002029454,
+             "duration": 0.001941067,
              "group":true,
              "allocated": 800000,
              "allocs": 200000,
@@ -369,7 +369,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.002052475,
+             "duration": 0.002276239,
              "group":false,
              "allocated": 800000,
              "allocs": 200000,
@@ -377,7 +377,7 @@ var data = {
              "frees": 200000
         },
           "cursor loop": {
-             "duration": 0.000353703,
+             "duration": 0.000317052,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -385,7 +385,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000299999,
+             "duration": 0.000328790,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -393,7 +393,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000415050,
+             "duration": 0.000313036,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -408,7 +408,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.003310670,
+             "duration": 0.003619143,
              "group":true,
              "allocated": 5600000,
              "allocs": 400000,
@@ -416,7 +416,7 @@ var data = {
              "frees": 400000
         },
           "copy": {
-             "duration": 0.005990216,
+             "duration": 0.005367553,
              "group":false,
              "allocated": 5600000,
              "allocs": 400000,
@@ -424,7 +424,7 @@ var data = {
              "frees": 400000
         },
           "cursor loop": {
-             "duration": 0.001141728,
+             "duration": 0.000596640,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -432,7 +432,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000684894,
+             "duration": 0.000523843,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -440,7 +440,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000688735,
+             "duration": 0.000586237,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -455,7 +455,7 @@ var data = {
        "size": 40,
        "tests": {
           "fill": {
-             "duration": 0.004122210,
+             "duration": 0.003755537,
              "group":true,
              "allocated": 10754528,
              "allocs": 200001,
@@ -463,7 +463,7 @@ var data = {
              "frees": 200001
         },
           "copy": {
-             "duration": 0.003811722,
+             "duration": 0.002878200,
              "group":false,
              "allocated": 4118112,
              "allocs": 200001,
@@ -471,7 +471,7 @@ var data = {
              "frees": 200001
         },
           "cursor loop": {
-             "duration": 0.000395595,
+             "duration": 0.000332799,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -479,7 +479,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000359213,
+             "duration": 0.000333345,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -487,7 +487,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000371351,
+             "duration": 0.000347326,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -502,7 +502,7 @@ var data = {
        "size": 24,
        "tests": {
           "fill": {
-             "duration": 0.007733000,
+             "duration": 0.008850000,
              "group":true,
              "allocated": 14800000,
              "allocs": 300000,
@@ -510,7 +510,7 @@ var data = {
              "frees": 300000
         },
           "copy": {
-             "duration": 0.011781000,
+             "duration": 0.011788000,
              "group":false,
              "allocated": 14800000,
              "allocs": 300000,
@@ -518,7 +518,7 @@ var data = {
              "frees": 300000
         },
           "cursor loop": {
-             "duration": 0.004681000,
+             "duration": 0.002986000,
              "group":true,
              "allocated": 5200000,
              "allocs": 100000,
@@ -526,7 +526,7 @@ var data = {
              "frees": 100000
         },
           "for-of loop": {
-             "duration": 0.002716000,
+             "duration": 0.003066000,
              "group":false,
              "allocated": 5200000,
              "allocs": 100000,
@@ -534,7 +534,7 @@ var data = {
              "frees": 100000
         },
           "count_if": {
-             "duration": 0.002285000,
+             "duration": 0.002966000,
              "group":false,
              "allocated": 5200000,
              "allocs": 100000,
@@ -549,7 +549,7 @@ var data = {
        "size": 40,
        "tests": {
           "fill": {
-             "duration": 0.007252239,
+             "duration": 0.007360786,
              "group":true,
              "allocated": 9596004,
              "allocs": 400000,
@@ -557,7 +557,7 @@ var data = {
              "frees": 400000
         },
           "copy": {
-             "duration": 0.003729651,
+             "duration": 0.004073340,
              "group":false,
              "allocated": 9596004,
              "allocs": 400000,
@@ -565,7 +565,7 @@ var data = {
              "frees": 400000
         },
           "cursor loop": {
-             "duration": 0.001661168,
+             "duration": 0.001685034,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -573,7 +573,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000497344,
+             "duration": 0.000549367,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -588,7 +588,7 @@ var data = {
        "size": 4800032,
        "tests": {
           "fill": {
-             "duration": 0.004438102,
+             "duration": 0.004448822,
              "group":true,
              "allocated": 7200000,
              "allocs": 200000,
@@ -596,7 +596,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.005137554,
+             "duration": 0.003612107,
              "group":false,
              "allocated": 7200000,
              "allocs": 200000,
@@ -604,7 +604,7 @@ var data = {
              "frees": 200000
         },
           "cursor loop": {
-             "duration": 0.001871680,
+             "duration": 0.001596103,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -612,7 +612,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.001888058,
+             "duration": 0.001731448,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -620,7 +620,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.001861636,
+             "duration": 0.001583402,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -635,7 +635,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.007270101,
+             "duration": 0.006191667,
              "group":true,
              "allocated": 13600000,
              "allocs": 400000,
@@ -643,7 +643,7 @@ var data = {
              "frees": 400000
         },
           "copy": {
-             "duration": 0.008010720,
+             "duration": 0.006143455,
              "group":false,
              "allocated": 13600000,
              "allocs": 400000,
@@ -651,7 +651,7 @@ var data = {
              "frees": 400000
         },
           "cursor loop": {
-             "duration": 0.001833306,
+             "duration": 0.001951223,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -659,7 +659,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.001961075,
+             "duration": 0.002002376,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -667,7 +667,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.002643937,
+             "duration": 0.002120863,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -682,7 +682,7 @@ var data = {
        "size": 40,
        "tests": {
           "fill": {
-             "duration": 0.005509258,
+             "duration": 0.005814857,
              "group":true,
              "allocated": 22131792,
              "allocs": 200001,
@@ -690,7 +690,7 @@ var data = {
              "frees": 200001
         },
           "copy": {
-             "duration": 0.004157212,
+             "duration": 0.003547000,
              "group":false,
              "allocated": 12177168,
              "allocs": 200001,
@@ -698,7 +698,7 @@ var data = {
              "frees": 200001
         },
           "cursor loop": {
-             "duration": 0.004392075,
+             "duration": 0.003316557,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -706,7 +706,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.003180276,
+             "duration": 0.003230274,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -714,7 +714,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.003846819,
+             "duration": 0.003231871,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -729,7 +729,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.012661797,
+             "duration": 0.012223588,
              "group":true,
              "allocated": 18400000,
              "allocs": 300000,
@@ -737,7 +737,7 @@ var data = {
              "frees": 300000
         },
           "copy": {
-             "duration": 0.010130313,
+             "duration": 0.011258111,
              "group":false,
              "allocated": 12800000,
              "allocs": 200000,
@@ -745,7 +745,7 @@ var data = {
              "frees": 200000
         },
           "cursor loop": {
-             "duration": 0.002713162,
+             "duration": 0.002911652,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -753,7 +753,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.015785578,
+             "duration": 0.004678512,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -761,7 +761,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.006861116,
+             "duration": 0.002812528,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -776,7 +776,7 @@ var data = {
        "size": 24,
        "tests": {
           "fill": {
-             "duration": 0.004685000,
+             "duration": 0.005720000,
              "group":true,
              "allocated": 2097148,
              "allocs": 19,
@@ -784,7 +784,7 @@ var data = {
              "frees": 19
         },
           "copy": {
-             "duration": 0.000026000,
+             "duration": 0.000029000,
              "group":false,
              "allocated": 800000,
              "allocs": 1,
@@ -792,7 +792,7 @@ var data = {
              "frees": 1
         },
           "cursor loop": {
-             "duration": 0.000020000,
+             "duration": 0.000030000,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -800,7 +800,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000016000,
+             "duration": 0.000017000,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -808,7 +808,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000027000,
+             "duration": 0.000029000,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -831,7 +831,7 @@ var data = {
        "size": 800000,
        "tests": {
           "fill": {
-             "duration": 0.000019186,
+             "duration": 0.000019004,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -847,7 +847,7 @@ var data = {
              "frees": 0
         },
           "cursor loop": {
-             "duration": 0.000287629,
+             "duration": 0.000281734,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -855,7 +855,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000290706,
+             "duration": 0.000284673,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -863,7 +863,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000017635,
+             "duration": 0.000017657,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -878,7 +878,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.000135215,
+             "duration": 0.000141895,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -886,7 +886,7 @@ var data = {
              "frees": 0
         },
           "copy": {
-             "duration": 0.000025811,
+             "duration": 0.000022973,
              "group":false,
              "allocated": 800004,
              "allocs": 1,
@@ -894,7 +894,7 @@ var data = {
              "frees": 1
         },
           "cursor loop": {
-             "duration": 0.000326262,
+             "duration": 0.000308685,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -902,7 +902,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000320163,
+             "duration": 0.000297160,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -917,7 +917,7 @@ var data = {
        "size": 800024,
        "tests": {
           "fill": {
-             "duration": 0.000017552,
+             "duration": 0.000017498,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -925,7 +925,7 @@ var data = {
              "frees": 0
         },
           "copy": {
-             "duration": 0.000026643,
+             "duration": 0.000028786,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -933,7 +933,7 @@ var data = {
              "frees": 0
         },
           "cursor loop": {
-             "duration": 0.000355038,
+             "duration": 0.000322272,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -941,7 +941,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000323800,
+             "duration": 0.000309707,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -956,7 +956,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.001616183,
+             "duration": 0.001515182,
              "group":true,
              "allocated": 800000,
              "allocs": 200000,
@@ -964,7 +964,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.004048121,
+             "duration": 0.003765722,
              "group":false,
              "allocated": 2400008,
              "allocs": 200001,
@@ -972,7 +972,7 @@ var data = {
              "frees": 200001
         },
           "cursor loop": {
-             "duration": 0.000283695,
+             "duration": 0.000290093,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -980,7 +980,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000296502,
+             "duration": 0.000310400,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -995,7 +995,7 @@ var data = {
        "size": 800024,
        "tests": {
           "fill": {
-             "duration": 0.000108068,
+             "duration": 0.000109388,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -1003,7 +1003,7 @@ var data = {
              "frees": 0
         },
           "copy": {
-             "duration": 0.000024457,
+             "duration": 0.000051165,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1011,7 +1011,7 @@ var data = {
              "frees": 0
         },
           "cursor loop": {
-             "duration": 0.000062118,
+             "duration": 0.000093485,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1019,7 +1019,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000075233,
+             "duration": 0.000121236,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1027,7 +1027,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000061920,
+             "duration": 0.000085810,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1035,7 +1035,7 @@ var data = {
              "frees": 0
         },
           "indexed": {
-             "duration": 0.000017306,
+             "duration": 0.000020883,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1050,7 +1050,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.000159342,
+             "duration": 0.000127997,
              "group":true,
              "allocated": 2488608,
              "allocs": 1,
@@ -1058,7 +1058,7 @@ var data = {
              "frees": 1
         },
           "copy": {
-             "duration": 0.000026180,
+             "duration": 0.000039929,
              "group":false,
              "allocated": 800000,
              "allocs": 1,
@@ -1066,7 +1066,7 @@ var data = {
              "frees": 1
         },
           "cursor loop": {
-             "duration": 0.000289780,
+             "duration": 0.000382164,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1074,7 +1074,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000293829,
+             "duration": 0.000387048,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1082,7 +1082,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000286287,
+             "duration": 0.000307243,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1090,7 +1090,7 @@ var data = {
              "frees": 0
         },
           "indexed": {
-             "duration": 0.000016740,
+             "duration": 0.000016707,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1105,7 +1105,7 @@ var data = {
        "size": 1600024,
        "tests": {
           "fill": {
-             "duration": 0.001528156,
+             "duration": 0.001677450,
              "group":true,
              "allocated": 800000,
              "allocs": 200000,
@@ -1113,7 +1113,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.001591763,
+             "duration": 0.001739930,
              "group":false,
              "allocated": 800000,
              "allocs": 200000,
@@ -1121,7 +1121,7 @@ var data = {
              "frees": 200000
         },
           "cursor loop": {
-             "duration": 0.000151806,
+             "duration": 0.000177674,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1129,7 +1129,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000170180,
+             "duration": 0.000251011,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1137,7 +1137,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000152216,
+             "duration": 0.000180593,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1145,7 +1145,7 @@ var data = {
              "frees": 0
         },
           "indexed": {
-             "duration": 0.000159855,
+             "duration": 0.000160722,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1160,7 +1160,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.003028051,
+             "duration": 0.003032485,
              "group":true,
              "allocated": 5777216,
              "allocs": 200001,
@@ -1168,7 +1168,7 @@ var data = {
              "frees": 200001
         },
           "copy": {
-             "duration": 0.002915685,
+             "duration": 0.002784403,
              "group":false,
              "allocated": 2400000,
              "allocs": 200001,
@@ -1176,7 +1176,7 @@ var data = {
              "frees": 200001
         },
           "cursor loop": {
-             "duration": 0.000277823,
+             "duration": 0.000279794,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1184,7 +1184,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000283265,
+             "duration": 0.000289941,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1192,7 +1192,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000148788,
+             "duration": 0.000159436,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1200,7 +1200,7 @@ var data = {
              "frees": 0
         },
           "indexed": {
-             "duration": 0.000273740,
+             "duration": 0.000289511,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1215,7 +1215,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.008865044,
+             "duration": 0.008511000,
              "group":true,
              "allocated": 7436296,
              "allocs": 614798,
@@ -1223,7 +1223,7 @@ var data = {
              "frees": 614798
         },
           "copy": {
-             "duration": 0.002819313,
+             "duration": 0.002968868,
              "group":false,
              "allocated": 2400000,
              "allocs": 200001,
@@ -1231,7 +1231,7 @@ var data = {
              "frees": 200001
         },
           "cursor loop": {
-             "duration": 0.000282506,
+             "duration": 0.000279113,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1239,7 +1239,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000278029,
+             "duration": 0.000276264,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1247,7 +1247,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000148572,
+             "duration": 0.000145548,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1255,7 +1255,7 @@ var data = {
              "frees": 0
         },
           "indexed": {
-             "duration": 0.000276740,
+             "duration": 0.000291690,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1270,7 +1270,7 @@ var data = {
        "size": 24,
        "tests": {
           "fill": {
-             "duration": 0.002409000,
+             "duration": 0.002987000,
              "group":true,
              "allocated": 21977184,
              "allocs": 100019,
@@ -1278,7 +1278,7 @@ var data = {
              "frees": 100019
         },
           "copy": {
-             "duration": 0.001783000,
+             "duration": 0.001902000,
              "group":false,
              "allocated": 11600000,
              "allocs": 100001,
@@ -1286,7 +1286,7 @@ var data = {
              "frees": 100001
         },
           "cursor loop": {
-             "duration": 0.001423000,
+             "duration": 0.001524000,
              "group":true,
              "allocated": 5200000,
              "allocs": 100000,
@@ -1294,7 +1294,7 @@ var data = {
              "frees": 100000
         },
           "for-of loop": {
-             "duration": 0.001585000,
+             "duration": 0.001516000,
              "group":false,
              "allocated": 5200000,
              "allocs": 100000,
@@ -1302,7 +1302,7 @@ var data = {
              "frees": 100000
         },
           "count_if": {
-             "duration": 0.001515000,
+             "duration": 0.001470000,
              "group":false,
              "allocated": 5200000,
              "allocs": 100000,
@@ -1325,7 +1325,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.005837890,
+             "duration": 0.005498919,
              "group":true,
              "allocated": 3196004,
              "allocs": 200000,
@@ -1333,7 +1333,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.004416678,
+             "duration": 0.004500533,
              "group":false,
              "allocated": 6396012,
              "allocs": 200001,
@@ -1341,7 +1341,7 @@ var data = {
              "frees": 200001
         },
           "cursor loop": {
-             "duration": 0.001540954,
+             "duration": 0.001462241,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1349,7 +1349,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000336177,
+             "duration": 0.000314160,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1364,7 +1364,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.020674653,
+             "duration": 0.021081300,
              "group":true,
              "allocated": 25509312,
              "allocs": 100028,
@@ -1372,7 +1372,7 @@ var data = {
              "frees": 100028
         },
           "copy": {
-             "duration": 0.007197417,
+             "duration": 0.004280596,
              "group":false,
              "allocated": 6400016,
              "allocs": 1,
@@ -1380,7 +1380,7 @@ var data = {
              "frees": 1
         },
           "cursor loop": {
-             "duration": 0.002894792,
+             "duration": 0.002506350,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1388,7 +1388,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.003051476,
+             "duration": 0.002500912,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1396,7 +1396,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.002873487,
+             "duration": 0.003638091,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1404,7 +1404,7 @@ var data = {
              "frees": 0
         },
           "indexed": {
-             "duration": 0.002634321,
+             "duration": 0.004127429,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1419,7 +1419,7 @@ var data = {
        "size": 3200024,
        "tests": {
           "fill": {
-             "duration": 0.003837103,
+             "duration": 0.003710407,
              "group":true,
              "allocated": 7200000,
              "allocs": 200000,
@@ -1427,7 +1427,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.004813942,
+             "duration": 0.004251878,
              "group":false,
              "allocated": 7200000,
              "allocs": 200000,
@@ -1435,7 +1435,7 @@ var data = {
              "frees": 200000
         },
           "cursor loop": {
-             "duration": 0.001709573,
+             "duration": 0.004213333,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1443,7 +1443,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.001718392,
+             "duration": 0.002970721,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1451,7 +1451,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.001651805,
+             "duration": 0.002399738,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1459,7 +1459,7 @@ var data = {
              "frees": 0
         },
           "indexed": {
-             "duration": 0.001691076,
+             "duration": 0.001725560,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1474,7 +1474,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.005611950,
+             "duration": 0.005153128,
              "group":true,
              "allocated": 17154432,
              "allocs": 200001,
@@ -1482,7 +1482,7 @@ var data = {
              "frees": 200001
         },
           "copy": {
-             "duration": 0.004969431,
+             "duration": 0.003902788,
              "group":false,
              "allocated": 10400000,
              "allocs": 200001,
@@ -1490,7 +1490,7 @@ var data = {
              "frees": 200001
         },
           "cursor loop": {
-             "duration": 0.001630956,
+             "duration": 0.001563453,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1498,7 +1498,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.001608177,
+             "duration": 0.001571406,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1506,7 +1506,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.001517294,
+             "duration": 0.001645951,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1514,7 +1514,7 @@ var data = {
              "frees": 0
         },
           "indexed": {
-             "duration": 0.001687489,
+             "duration": 0.001719966,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1529,7 +1529,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.013416693,
+             "duration": 0.013779933,
              "group":true,
              "allocated": 20177216,
              "allocs": 300001,
@@ -1537,7 +1537,7 @@ var data = {
              "frees": 300001
         },
           "copy": {
-             "duration": 0.007237986,
+             "duration": 0.006858733,
              "group":false,
              "allocated": 11200000,
              "allocs": 200001,
@@ -1545,7 +1545,7 @@ var data = {
              "frees": 200001
         },
           "cursor loop": {
-             "duration": 0.002559325,
+             "duration": 0.002919319,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1553,7 +1553,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.002689253,
+             "duration": 0.003055212,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1561,7 +1561,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.003679331,
+             "duration": 0.002599247,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1569,7 +1569,7 @@ var data = {
              "frees": 0
         },
           "indexed": {
-             "duration": 0.002846472,
+             "duration": 0.002641553,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1584,7 +1584,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.011295169,
+             "duration": 0.011738611,
              "group":true,
              "allocated": 32086488,
              "allocs": 614798,
@@ -1592,7 +1592,7 @@ var data = {
              "frees": 614798
         },
           "copy": {
-             "duration": 0.004488295,
+             "duration": 0.004266340,
              "group":false,
              "allocated": 10400000,
              "allocs": 200001,
@@ -1600,7 +1600,7 @@ var data = {
              "frees": 200001
         },
           "cursor loop": {
-             "duration": 0.003428521,
+             "duration": 0.003544018,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1608,7 +1608,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.003273725,
+             "duration": 0.003605714,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1616,7 +1616,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.003250666,
+             "duration": 0.004294404,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1624,7 +1624,7 @@ var data = {
              "frees": 0
         },
           "indexed": {
-             "duration": 0.004230008,
+             "duration": 0.006361688,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1639,7 +1639,7 @@ var data = {
        "size": 56,
        "tests": {
           "fill": {
-             "duration": 0.003899000,
+             "duration": 0.004591000,
              "group":true,
              "allocated": 8734968,
              "allocs": 200015,
@@ -1647,7 +1647,7 @@ var data = {
              "frees": 200015
         },
           "copy": {
-             "duration": 0.002451000,
+             "duration": 0.002491000,
              "group":false,
              "allocated": 6008488,
              "allocs": 200001,
@@ -1655,7 +1655,7 @@ var data = {
              "frees": 200001
         },
           "cursor loop": {
-             "duration": 0.000487000,
+             "duration": 0.000476000,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -1663,7 +1663,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000408000,
+             "duration": 0.000376000,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1671,7 +1671,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000261000,
+             "duration": 0.000260000,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1679,7 +1679,7 @@ var data = {
              "frees": 0
         },
           "find": {
-             "duration": 0.000444000,
+             "duration": 0.000521000,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -1694,7 +1694,7 @@ var data = {
        "size": 48,
        "tests": {
           "fill": {
-             "duration": 0.016838000,
+             "duration": 0.017622000,
              "group":true,
              "allocated": 8000000,
              "allocs": 200000,
@@ -1702,7 +1702,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.002976000,
+             "duration": 0.005334000,
              "group":false,
              "allocated": 8000000,
              "allocs": 200000,
@@ -1710,7 +1710,7 @@ var data = {
              "frees": 200000
         },
           "cursor loop": {
-             "duration": 0.001835000,
+             "duration": 0.002355000,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -1718,7 +1718,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.001619000,
+             "duration": 0.001826000,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1726,7 +1726,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.001087000,
+             "duration": 0.001322000,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1734,7 +1734,7 @@ var data = {
              "frees": 0
         },
           "find": {
-             "duration": 0.009928000,
+             "duration": 0.010769000,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -1749,7 +1749,7 @@ var data = {
        "size": 56,
        "tests": {
           "fill": {
-             "duration": 0.011270124,
+             "duration": 0.012516688,
              "group":true,
              "allocated": 8000000,
              "allocs": 200000,
@@ -1757,7 +1757,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.002722440,
+             "duration": 0.003404017,
              "group":false,
              "allocated": 8000000,
              "allocs": 200000,
@@ -1765,7 +1765,7 @@ var data = {
              "frees": 200000
         },
           "cursor loop": {
-             "duration": 0.000870070,
+             "duration": 0.001033412,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1773,7 +1773,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000998944,
+             "duration": 0.000904590,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1788,7 +1788,7 @@ var data = {
        "size": 4800040,
        "tests": {
           "fill": {
-             "duration": 0.022527600,
+             "duration": 0.024046556,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -1796,7 +1796,7 @@ var data = {
              "frees": 0
         },
           "copy": {
-             "duration": 0.000183358,
+             "duration": 0.000193417,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1804,7 +1804,7 @@ var data = {
              "frees": 0
         },
           "cursor loop": {
-             "duration": 0.000858397,
+             "duration": 0.000874616,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1812,7 +1812,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000858797,
+             "duration": 0.000876882,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1827,7 +1827,7 @@ var data = {
        "size": 56,
        "tests": {
           "fill": {
-             "duration": 0.028026861,
+             "duration": 0.030899286,
              "group":true,
              "allocated": 11200000,
              "allocs": 600000,
@@ -1835,7 +1835,7 @@ var data = {
              "frees": 600000
         },
           "copy": {
-             "duration": 0.012873321,
+             "duration": 0.015770846,
              "group":false,
              "allocated": 11200000,
              "allocs": 600000,
@@ -1843,7 +1843,7 @@ var data = {
              "frees": 600000
         },
           "cursor loop": {
-             "duration": 0.001895059,
+             "duration": 0.002626597,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1851,7 +1851,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.001696941,
+             "duration": 0.002777151,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1866,7 +1866,7 @@ var data = {
        "size": 48,
        "tests": {
           "fill": {
-             "duration": 0.002120949,
+             "duration": 0.002188043,
              "group":true,
              "allocated": 3200000,
              "allocs": 200000,
@@ -1874,7 +1874,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.003580057,
+             "duration": 0.003738204,
              "group":false,
              "allocated": 6345936,
              "allocs": 200001,
@@ -1882,7 +1882,7 @@ var data = {
              "frees": 200001
         },
           "cursor loop": {
-             "duration": 0.000384808,
+             "duration": 0.000391084,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1890,7 +1890,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000413520,
+             "duration": 0.000376793,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1905,7 +1905,7 @@ var data = {
        "size": 6594336,
        "tests": {
           "fill": {
-             "duration": 0.000982129,
+             "duration": 0.000762943,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -1913,7 +1913,7 @@ var data = {
              "frees": 0
         },
           "copy": {
-             "duration": 0.000565453,
+             "duration": 0.000274278,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1921,7 +1921,7 @@ var data = {
              "frees": 0
         },
           "cursor loop": {
-             "duration": 0.002366466,
+             "duration": 0.001635187,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1929,7 +1929,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.001707652,
+             "duration": 0.001629854,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1944,7 +1944,7 @@ var data = {
        "size": 48,
        "tests": {
           "fill": {
-             "duration": 0.005692028,
+             "duration": 0.004795214,
              "group":true,
              "allocated": 6400000,
              "allocs": 600000,
@@ -1952,7 +1952,7 @@ var data = {
              "frees": 600000
         },
           "copy": {
-             "duration": 0.011656465,
+             "duration": 0.010676947,
              "group":false,
              "allocated": 9545936,
              "allocs": 600001,
@@ -1960,7 +1960,7 @@ var data = {
              "frees": 600001
         },
           "cursor loop": {
-             "duration": 0.000991308,
+             "duration": 0.000981627,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1968,7 +1968,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.002284294,
+             "duration": 0.001016274,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -1983,7 +1983,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.001168491,
+             "duration": 0.001172813,
              "group":true,
              "allocated": 11184840,
              "allocs": 9,
@@ -1991,7 +1991,7 @@ var data = {
              "frees": 9
         },
           "copy": {
-             "duration": 0.000395343,
+             "duration": 0.000390248,
              "group":false,
              "allocated": 8388616,
              "allocs": 1,
@@ -1999,7 +1999,7 @@ var data = {
              "frees": 1
         },
           "cursor loop": {
-             "duration": 0.000332486,
+             "duration": 0.000328767,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2007,7 +2007,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.000785546,
+             "duration": 0.000560936,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2015,7 +2015,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000458101,
+             "duration": 0.000361716,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2023,7 +2023,7 @@ var data = {
              "frees": 0
         },
           "find": {
-             "duration": 0.000320254,
+             "duration": 0.000310564,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2038,7 +2038,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.006032120,
+             "duration": 0.005169949,
              "group":true,
              "allocated": 17577224,
              "allocs": 200009,
@@ -2046,7 +2046,7 @@ var data = {
              "frees": 200009
         },
           "copy": {
-             "duration": 0.007057531,
+             "duration": 0.004643864,
              "group":false,
              "allocated": 13382920,
              "allocs": 200001,
@@ -2054,7 +2054,7 @@ var data = {
              "frees": 200001
         },
           "cursor loop": {
-             "duration": 0.000430076,
+             "duration": 0.000421093,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2062,7 +2062,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.001595884,
+             "duration": 0.000901441,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2070,7 +2070,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.000632851,
+             "duration": 0.000458915,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2078,7 +2078,7 @@ var data = {
              "frees": 0
         },
           "find": {
-             "duration": 0.000614063,
+             "duration": 0.000332339,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2093,7 +2093,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.009260991,
+             "duration": 0.007563889,
              "group":true,
              "allocated": 18377224,
              "allocs": 400009,
@@ -2101,7 +2101,7 @@ var data = {
              "frees": 400009
         },
           "copy": {
-             "duration": 0.008649259,
+             "duration": 0.007661148,
              "group":false,
              "allocated": 14182920,
              "allocs": 400001,
@@ -2109,7 +2109,7 @@ var data = {
              "frees": 400001
         },
           "cursor loop": {
-             "duration": 0.001317681,
+             "duration": 0.001170448,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2117,7 +2117,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.002002850,
+             "duration": 0.001431529,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2125,7 +2125,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.001920509,
+             "duration": 0.001237259,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2133,7 +2133,7 @@ var data = {
              "frees": 0
         },
           "find": {
-             "duration": 0.000574439,
+             "duration": 0.000614975,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2148,7 +2148,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.008375258,
+             "duration": 0.007984808,
              "group":true,
              "allocated": 18377224,
              "allocs": 400009,
@@ -2156,7 +2156,7 @@ var data = {
              "frees": 400009
         },
           "copy": {
-             "duration": 0.008620385,
+             "duration": 0.007627593,
              "group":false,
              "allocated": 14182920,
              "allocs": 400001,
@@ -2164,7 +2164,7 @@ var data = {
              "frees": 400001
         },
           "cursor loop": {
-             "duration": 0.001097340,
+             "duration": 0.001270968,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2172,7 +2172,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.002295700,
+             "duration": 0.001524689,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2180,7 +2180,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.001244518,
+             "duration": 0.001351622,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2188,7 +2188,7 @@ var data = {
              "frees": 0
         },
           "find": {
-             "duration": 0.001912623,
+             "duration": 0.000625956,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2203,7 +2203,7 @@ var data = {
        "size": 48,
        "tests": {
           "fill": {
-             "duration": 0.029692000,
+             "duration": 0.029768000,
              "group":true,
              "allocated": 14400000,
              "allocs": 200000,
@@ -2211,7 +2211,7 @@ var data = {
              "frees": 200000
         },
           "copy": {
-             "duration": 0.012492000,
+             "duration": 0.015360000,
              "group":false,
              "allocated": 14400000,
              "allocs": 200000,
@@ -2219,7 +2219,7 @@ var data = {
              "frees": 200000
         },
           "cursor loop": {
-             "duration": 0.002005000,
+             "duration": 0.002482000,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -2227,7 +2227,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.001568000,
+             "duration": 0.002631000,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2235,7 +2235,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.001840000,
+             "duration": 0.002420000,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2243,7 +2243,7 @@ var data = {
              "frees": 0
         },
           "find": {
-             "duration": 0.020529000,
+             "duration": 0.021866000,
              "group":true,
              "allocated": 0,
              "allocs": 0,
@@ -2258,7 +2258,7 @@ var data = {
        "size": 56,
        "tests": {
           "fill": {
-             "duration": 0.051337350,
+             "duration": 0.045056000,
              "group":true,
              "allocated": 15196004,
              "allocs": 600000,
@@ -2266,7 +2266,7 @@ var data = {
              "frees": 600000
         },
           "copy": {
-             "duration": 0.036852714,
+             "duration": 0.020022000,
              "group":false,
              "allocated": 15196004,
              "allocs": 600000,
@@ -2274,7 +2274,7 @@ var data = {
              "frees": 600000
         },
           "cursor loop": {
-             "duration": 0.011046022,
+             "duration": 0.003067409,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2282,7 +2282,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.011183769,
+             "duration": 0.004128041,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2297,7 +2297,7 @@ var data = {
        "size": 48,
        "tests": {
           "fill": {
-             "duration": 0.047751591,
+             "duration": 0.029547875,
              "group":true,
              "allocated": 10396004,
              "allocs": 600000,
@@ -2305,7 +2305,7 @@ var data = {
              "frees": 600000
         },
           "copy": {
-             "duration": 0.060926412,
+             "duration": 0.048656800,
              "group":false,
              "allocated": 13541940,
              "allocs": 600001,
@@ -2313,7 +2313,7 @@ var data = {
              "frees": 600001
         },
           "cursor loop": {
-             "duration": 0.003764767,
+             "duration": 0.003346900,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2321,7 +2321,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.005450804,
+             "duration": 0.003776241,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2336,7 +2336,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.044793261,
+             "duration": 0.020288200,
              "group":true,
              "allocated": 25565612,
              "allocs": 200009,
@@ -2344,7 +2344,7 @@ var data = {
              "frees": 200009
         },
           "copy": {
-             "duration": 0.024120738,
+             "duration": 0.010530158,
              "group":false,
              "allocated": 19973228,
              "allocs": 200001,
@@ -2352,7 +2352,7 @@ var data = {
              "frees": 200001
         },
           "cursor loop": {
-             "duration": 0.001802728,
+             "duration": 0.001688050,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2360,7 +2360,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.022804841,
+             "duration": 0.012105824,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2368,7 +2368,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.001608071,
+             "duration": 0.001636797,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2376,7 +2376,7 @@ var data = {
              "frees": 0
         },
           "find": {
-             "duration": 0.011972774,
+             "duration": 0.012068529,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2391,7 +2391,7 @@ var data = {
        "size": 56,
        "tests": {
           "fill": {
-             "duration": 0.040580000,
+             "duration": 0.056962000,
              "group":true,
              "allocated": 26734968,
              "allocs": 300015,
@@ -2399,7 +2399,7 @@ var data = {
              "frees": 300015
         },
           "copy": {
-             "duration": 0.024750000,
+             "duration": 0.028501000,
              "group":false,
              "allocated": 24008488,
              "allocs": 300001,
@@ -2407,7 +2407,7 @@ var data = {
              "frees": 300001
         },
           "cursor loop": {
-             "duration": 0.015400000,
+             "duration": 0.016603000,
              "group":true,
              "allocated": 5200000,
              "allocs": 100000,
@@ -2415,7 +2415,7 @@ var data = {
              "frees": 100000
         },
           "for-of loop": {
-             "duration": 0.011260000,
+             "duration": 0.012277000,
              "group":false,
              "allocated": 5200000,
              "allocs": 100000,
@@ -2423,7 +2423,7 @@ var data = {
              "frees": 100000
         },
           "count_if": {
-             "duration": 0.010931000,
+             "duration": 0.014103000,
              "group":false,
              "allocated": 5200000,
              "allocs": 100000,
@@ -2431,7 +2431,7 @@ var data = {
              "frees": 100000
         },
           "find": {
-             "duration": 0.027881000,
+             "duration": 0.031249000,
              "group":true,
              "allocated": 5200000,
              "allocs": 100000,
@@ -2446,7 +2446,7 @@ var data = {
        "size": 48,
        "tests": {
           "fill": {
-             "duration": 0.032931000,
+             "duration": 0.032601000,
              "group":true,
              "allocated": 24400000,
              "allocs": 300000,
@@ -2454,7 +2454,7 @@ var data = {
              "frees": 300000
         },
           "copy": {
-             "duration": 0.014340000,
+             "duration": 0.016480000,
              "group":false,
              "allocated": 24400000,
              "allocs": 300000,
@@ -2462,7 +2462,7 @@ var data = {
              "frees": 300000
         },
           "cursor loop": {
-             "duration": 0.004968000,
+             "duration": 0.005919000,
              "group":true,
              "allocated": 5200000,
              "allocs": 100000,
@@ -2470,7 +2470,7 @@ var data = {
              "frees": 100000
         },
           "for-of loop": {
-             "duration": 0.004890000,
+             "duration": 0.005406000,
              "group":false,
              "allocated": 5200000,
              "allocs": 100000,
@@ -2478,7 +2478,7 @@ var data = {
              "frees": 100000
         },
           "count_if": {
-             "duration": 0.006084000,
+             "duration": 0.005857000,
              "group":false,
              "allocated": 5200000,
              "allocs": 100000,
@@ -2486,7 +2486,7 @@ var data = {
              "frees": 100000
         },
           "find": {
-             "duration": 0.026514000,
+             "duration": 0.026888000,
              "group":true,
              "allocated": 5200000,
              "allocs": 100000,
@@ -2501,7 +2501,7 @@ var data = {
        "size": 56,
        "tests": {
           "fill": {
-             "duration": 0.073411643,
+             "duration": 0.057882750,
              "group":true,
              "allocated": 19192008,
              "allocs": 600000,
@@ -2509,7 +2509,7 @@ var data = {
              "frees": 600000
         },
           "copy": {
-             "duration": 0.056808000,
+             "duration": 0.027277250,
              "group":false,
              "allocated": 19192008,
              "allocs": 600000,
@@ -2517,7 +2517,7 @@ var data = {
              "frees": 600000
         },
           "cursor loop": {
-             "duration": 0.017444103,
+             "duration": 0.005329474,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2525,7 +2525,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.013737110,
+             "duration": 0.003824830,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2540,7 +2540,7 @@ var data = {
        "size": 48,
        "tests": {
           "fill": {
-             "duration": 0.038742308,
+             "duration": 0.034444167,
              "group":true,
              "allocated": 14392008,
              "allocs": 600000,
@@ -2548,7 +2548,7 @@ var data = {
              "frees": 600000
         },
           "copy": {
-             "duration": 0.061625824,
+             "duration": 0.049713400,
              "group":false,
              "allocated": 17537944,
              "allocs": 600001,
@@ -2556,7 +2556,7 @@ var data = {
              "frees": 600001
         },
           "cursor loop": {
-             "duration": 0.017461362,
+             "duration": 0.011807353,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2564,7 +2564,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.003482094,
+             "duration": 0.003800604,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2579,7 +2579,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.037055333,
+             "duration": 0.030266857,
              "group":true,
              "allocated": 38357996,
              "allocs": 400009,
@@ -2587,7 +2587,7 @@ var data = {
              "frees": 400009
         },
           "copy": {
-             "duration": 0.031675563,
+             "duration": 0.020787300,
              "group":false,
              "allocated": 31367532,
              "allocs": 400001,
@@ -2595,7 +2595,7 @@ var data = {
              "frees": 400001
         },
           "cursor loop": {
-             "duration": 0.011267843,
+             "duration": 0.007616852,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2603,7 +2603,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.026569079,
+             "duration": 0.021600100,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2611,7 +2611,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.008017864,
+             "duration": 0.008022192,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2619,7 +2619,7 @@ var data = {
              "frees": 0
         },
           "find": {
-             "duration": 0.018975321,
+             "duration": 0.020268300,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2634,7 +2634,7 @@ var data = {
        "size": 32,
        "tests": {
           "fill": {
-             "duration": 0.029278314,
+             "duration": 0.029963286,
              "group":true,
              "allocated": 38357996,
              "allocs": 400009,
@@ -2642,7 +2642,7 @@ var data = {
              "frees": 400009
         },
           "copy": {
-             "duration": 0.023993667,
+             "duration": 0.021299000,
              "group":false,
              "allocated": 31367532,
              "allocs": 400001,
@@ -2650,7 +2650,7 @@ var data = {
              "frees": 400001
         },
           "cursor loop": {
-             "duration": 0.010413216,
+             "duration": 0.011329500,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2658,7 +2658,7 @@ var data = {
              "frees": 0
         },
           "for-of loop": {
-             "duration": 0.041361960,
+             "duration": 0.030262714,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2666,7 +2666,7 @@ var data = {
              "frees": 0
         },
           "count_if": {
-             "duration": 0.018250309,
+             "duration": 0.010849895,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2674,7 +2674,7 @@ var data = {
              "frees": 0
         },
           "find": {
-             "duration": 0.050554000,
+             "duration": 0.021454500,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2689,7 +2689,7 @@ var data = {
        "size": 56,
        "tests": {
           "fill": {
-             "duration": 0.012469000,
+             "duration": 0.012257000,
              "group":true,
              "allocated": 43760153,
              "allocs": 600022,
@@ -2697,7 +2697,7 @@ var data = {
              "frees": 600022
         },
           "dfs": {
-             "duration": 0.010093000,
+             "duration": 0.010729000,
              "group":true,
              "allocated": 38548696,
              "allocs": 21,
@@ -2721,7 +2721,7 @@ var data = {
              "frees": 0
         },
           "scc": {
-             "duration": 0.011237000,
+             "duration": 0.012177000,
              "group":true,
              "allocated": 44230888,
              "allocs": 3160,
@@ -2736,7 +2736,7 @@ var data = {
        "size": 72,
        "tests": {
           "fill": {
-             "duration": 0.357064333,
+             "duration": 0.219239000,
              "group":true,
              "allocated": 17599992,
              "allocs": 400001,
@@ -2744,7 +2744,7 @@ var data = {
              "frees": 400001
         },
           "dfs": {
-             "duration": 0.002700782,
+             "duration": 0.003077292,
              "group":true,
              "allocated": 11600000,
              "allocs": 2,
@@ -2752,7 +2752,7 @@ var data = {
              "frees": 2
         },
           "dfs-recursive": {
-             "duration": 0.004535649,
+             "duration": 0.004865429,
              "group":false,
              "allocated": 200000,
              "allocs": 1,
@@ -2760,7 +2760,7 @@ var data = {
              "frees": 1
         },
           "is_acyclic": {
-             "duration": 0.004953069,
+             "duration": 0.002839394,
              "group":false,
              "allocated": 11600000,
              "allocs": 2,
@@ -2768,7 +2768,7 @@ var data = {
              "frees": 2
         },
           "scc": {
-             "duration": 0.004815713,
+             "duration": 0.003742519,
              "group":true,
              "allocated": 16200000,
              "allocs": 5,
@@ -2783,7 +2783,7 @@ var data = {
        "size": 200000,
        "tests": {
           "dfs": {
-             "duration": 0.000939183,
+             "duration": 0.000975359,
              "group":false,
              "allocated": 7600000,
              "allocs": 1,
@@ -2791,7 +2791,7 @@ var data = {
              "frees": 1
         },
           "dfs-recursive": {
-             "duration": 0.001745754,
+             "duration": 0.001825955,
              "group":false,
              "allocated": 0,
              "allocs": 0,
@@ -2806,7 +2806,7 @@ var data = {
        "size": 56,
        "tests": {
           "fill": {
-             "duration": 45.182272000,
+             "duration": 6.434693000,
              "group":true,
              "allocated": 1600124545,
              "allocs": 100269987,
@@ -2814,7 +2814,7 @@ var data = {
              "frees": 100269987
         },
           "dfs": {
-             "duration": 0.132760000,
+             "duration": 0.118663000,
              "group":true,
              "allocated": 2399252,
              "allocs": 17,
@@ -2838,7 +2838,7 @@ var data = {
              "frees": 0
         },
           "scc": {
-             "duration": 0.471562000,
+             "duration": 0.286118000,
              "group":true,
              "allocated": 3444564,
              "allocs": 183,
@@ -2853,7 +2853,7 @@ var data = {
        "size": 72,
        "tests": {
           "fill": {
-             "duration": 2.330197333,
+             "duration": 1.960187333,
              "group":true,
              "allocated": 5314205312,
              "allocs": 100000001,
@@ -2861,7 +2861,7 @@ var data = {
              "frees": 100000001
         },
           "dfs": {
-             "duration": 0.491181667,
+             "duration": 0.233323000,
              "group":true,
              "allocated": 250000,
              "allocs": 2,
@@ -2869,7 +2869,7 @@ var data = {
              "frees": 2
         },
           "dfs-recursive": {
-             "duration": 0.567461333,
+             "duration": 0.233835333,
              "group":false,
              "allocated": 10000,
              "allocs": 1,
@@ -2877,7 +2877,7 @@ var data = {
              "frees": 1
         },
           "is_acyclic": {
-             "duration": 0.000004572,
+             "duration": 0.000003646,
              "group":false,
              "allocated": 250000,
              "allocs": 2,
@@ -2885,7 +2885,7 @@ var data = {
              "frees": 2
         },
           "scc": {
-             "duration": 0.276781250,
+             "duration": 0.250877000,
              "group":true,
              "allocated": 370000,
              "allocs": 5,
@@ -2900,7 +2900,7 @@ var data = {
        "size": 0,
        "tests": {
           "random-vec-small": {
-             "duration": 0.000611190,
+             "duration": 0.000590044,
              "group":true,
              "allocated": 40004,
              "allocs": 1,
@@ -2908,7 +2908,7 @@ var data = {
              "frees": 1
         },
           "sorted-vec-small": {
-             "duration": 0.000386536,
+             "duration": 0.000393128,
              "group":false,
              "allocated": 40004,
              "allocs": 1,
@@ -2916,7 +2916,7 @@ var data = {
              "frees": 1
         },
           "reversed-vec-small": {
-             "duration": 0.000423019,
+             "duration": 0.000439015,
              "group":false,
              "allocated": 40004,
              "allocs": 1,
@@ -2924,7 +2924,7 @@ var data = {
              "frees": 1
         },
           "constant-vec-small": {
-             "duration": 0.000181550,
+             "duration": 0.000189525,
              "group":false,
              "allocated": 40004,
              "allocs": 1,
@@ -2932,7 +2932,7 @@ var data = {
              "frees": 1
         },
           "random-vec-large": {
-             "duration": 0.120596333,
+             "duration": 0.100171000,
              "group":true,
              "allocated": 4000004,
              "allocs": 1,
@@ -2940,7 +2940,7 @@ var data = {
              "frees": 1
         },
           "sorted-vec-large": {
-             "duration": 0.048831619,
+             "duration": 0.047276800,
              "group":false,
              "allocated": 4000004,
              "allocs": 1,
@@ -2948,7 +2948,7 @@ var data = {
              "frees": 1
         },
           "reversed-vec-large": {
-             "duration": 0.058172000,
+             "duration": 0.051913250,
              "group":false,
              "allocated": 4000004,
              "allocs": 1,
@@ -2956,7 +2956,7 @@ var data = {
              "frees": 1
         },
           "constant-vec-large": {
-             "duration": 0.027596649,
+             "duration": 0.026014500,
              "group":false,
              "allocated": 4000004,
              "allocs": 1,
@@ -2971,7 +2971,7 @@ var data = {
        "size": 0,
        "tests": {
           "random-vec-small": {
-             "duration": 0.000456521,
+             "duration": 0.000426657,
              "group":true,
              "allocated": 80000,
              "allocs": 2,
@@ -2979,7 +2979,7 @@ var data = {
              "frees": 2
         },
           "sorted-vec-small": {
-             "duration": 0.000085785,
+             "duration": 0.000082827,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -2987,7 +2987,7 @@ var data = {
              "frees": 2
         },
           "reversed-vec-small": {
-             "duration": 0.000085053,
+             "duration": 0.000086940,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -2995,7 +2995,7 @@ var data = {
              "frees": 2
         },
           "constant-vec-small": {
-             "duration": 0.000192398,
+             "duration": 0.000175747,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -3003,7 +3003,7 @@ var data = {
              "frees": 2
         },
           "random-vec-large": {
-             "duration": 0.068749267,
+             "duration": 0.074547000,
              "group":true,
              "allocated": 8000000,
              "allocs": 2,
@@ -3011,7 +3011,7 @@ var data = {
              "frees": 2
         },
           "sorted-vec-large": {
-             "duration": 0.012574025,
+             "duration": 0.013953867,
              "group":false,
              "allocated": 8000000,
              "allocs": 2,
@@ -3019,7 +3019,7 @@ var data = {
              "frees": 2
         },
           "reversed-vec-large": {
-             "duration": 0.013546203,
+             "duration": 0.014511500,
              "group":false,
              "allocated": 8000000,
              "allocs": 2,
@@ -3027,7 +3027,7 @@ var data = {
              "frees": 2
         },
           "constant-vec-large": {
-             "duration": 0.021889565,
+             "duration": 0.021754100,
              "group":false,
              "allocated": 8000000,
              "allocs": 2,
@@ -3042,7 +3042,7 @@ var data = {
        "size": 0,
        "tests": {
           "random-vec-small": {
-             "duration": 0.000551370,
+             "duration": 0.000554388,
              "group":true,
              "allocated": 80000,
              "allocs": 2,
@@ -3050,7 +3050,7 @@ var data = {
              "frees": 2
         },
           "sorted-vec-small": {
-             "duration": 0.000113254,
+             "duration": 0.000113303,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -3058,7 +3058,7 @@ var data = {
              "frees": 2
         },
           "reversed-vec-small": {
-             "duration": 0.000112155,
+             "duration": 0.000112563,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -3066,7 +3066,7 @@ var data = {
              "frees": 2
         },
           "constant-vec-small": {
-             "duration": 0.000130329,
+             "duration": 0.000125921,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -3074,7 +3074,7 @@ var data = {
              "frees": 2
         },
           "random-vec-large": {
-             "duration": 0.079578308,
+             "duration": 0.081422000,
              "group":true,
              "allocated": 8000000,
              "allocs": 2,
@@ -3082,7 +3082,7 @@ var data = {
              "frees": 2
         },
           "sorted-vec-large": {
-             "duration": 0.016056238,
+             "duration": 0.015708462,
              "group":false,
              "allocated": 8000000,
              "allocs": 2,
@@ -3090,7 +3090,7 @@ var data = {
              "frees": 2
         },
           "reversed-vec-large": {
-             "duration": 0.016705767,
+             "duration": 0.015780538,
              "group":false,
              "allocated": 8000000,
              "allocs": 2,
@@ -3098,7 +3098,7 @@ var data = {
              "frees": 2
         },
           "constant-vec-large": {
-             "duration": 0.018103375,
+             "duration": 0.016558615,
              "group":false,
              "allocated": 8000000,
              "allocs": 2,
@@ -3113,7 +3113,7 @@ var data = {
        "size": 0,
        "tests": {
           "random-vec-small": {
-             "duration": 0.029112829,
+             "duration": 0.027664125,
              "group":true,
              "allocated": 80000,
              "allocs": 2,
@@ -3121,7 +3121,7 @@ var data = {
              "frees": 2
         },
           "sorted-vec-small": {
-             "duration": 0.000005408,
+             "duration": 0.000005278,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -3129,7 +3129,7 @@ var data = {
              "frees": 2
         },
           "reversed-vec-small": {
-             "duration": 0.055592556,
+             "duration": 0.055668750,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -3137,7 +3137,7 @@ var data = {
              "frees": 2
         },
           "constant-vec-small": {
-             "duration": 0.056228111,
+             "duration": 0.055093500,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -3152,7 +3152,7 @@ var data = {
        "size": 0,
        "tests": {
           "random-vec-small": {
-             "duration": 0.000590380,
+             "duration": 0.000598651,
              "group":true,
              "allocated": 80000,
              "allocs": 2,
@@ -3160,7 +3160,7 @@ var data = {
              "frees": 2
         },
           "sorted-vec-small": {
-             "duration": 0.000054007,
+             "duration": 0.000053027,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -3168,7 +3168,7 @@ var data = {
              "frees": 2
         },
           "reversed-vec-small": {
-             "duration": 0.000134886,
+             "duration": 0.000136118,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -3176,7 +3176,7 @@ var data = {
              "frees": 2
         },
           "constant-vec-small": {
-             "duration": 0.085179917,
+             "duration": 0.080274000,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -3191,7 +3191,7 @@ var data = {
        "size": 0,
        "tests": {
           "random-vec-small": {
-             "duration": 0.000569852,
+             "duration": 0.000547798,
              "group":true,
              "allocated": 80000,
              "allocs": 2,
@@ -3199,7 +3199,7 @@ var data = {
              "frees": 2
         },
           "sorted-vec-small": {
-             "duration": 0.000046196,
+             "duration": 0.000041500,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -3207,7 +3207,7 @@ var data = {
              "frees": 2
         },
           "reversed-vec-small": {
-             "duration": 0.000095479,
+             "duration": 0.000093175,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
@@ -3215,7 +3215,7 @@ var data = {
              "frees": 2
         },
           "constant-vec-small": {
-             "duration": 0.066545250,
+             "duration": 0.070593333,
              "group":false,
              "allocated": 80000,
              "allocs": 2,
