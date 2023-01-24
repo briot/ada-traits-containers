@@ -40,6 +40,9 @@ can be edited with any text editor.
 
 ** MAYBE should we implement the Random packages as input cursors ?
 
+** TODO maps, use more performant probing maps
+   https://www.youtube.com/watch?v=ncHmEUmJZf4
+
 ** TODO ranges
    Similar to the C++ concept, these are ways to apply algorithms to whole
    containers or subsets of them, and dynamically filter them for instance.
@@ -407,6 +410,9 @@ http://ootips.org/yonat/4dev/smart-pointers.html
    Some implementations do this by using one bit to store whether this is a
    long or short string, and this bit is stored as part of the size.
    See http://info.prelert.com/blog/cpp-stdstring-implementations.
+
+** Optimized hashed maps in C++ (and Rust)
+   https://abseil.io/about/design/swisstables
 
 ** C++ Growing strategies
    Some stl implementation will grow data structures by multiplying their size
